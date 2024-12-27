@@ -1,0 +1,38 @@
+name: Release Frontend
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14'
+
+    - name: Install dependencies
+      working-directory: frontend
+      run: npm install
+
+    - name: Build Vue project
+      working-directory: frontend
+      run: npm run build
+
+    - name: Create frontend-v{tag}.zip
+      run: |
+        tag=$(echo $GITHUB_REF | cut -d'/' -f3)
+        zip -r frontend-v${tag}.zip frontend/dist
+
+    - name: Upload frontend-v{tag}.zip as artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: frontend-v${{ github.ref_name }}
+        path: frontend-v${{ github.ref_name }}.zip
