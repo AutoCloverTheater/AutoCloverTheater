@@ -11,7 +11,7 @@ from mac.emulator.mumu import Mumu
 
 # 可用的模拟器驱动
 UsefulEmulator = {
-    "drawn": {
+    "darwin": {
         "mumu": Mumu,
         "bluestacks": Bluestacks,
     },

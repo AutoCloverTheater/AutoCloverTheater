@@ -8,6 +8,19 @@ class Mumu:
     def getSerial(self)-> list:
         return self._mumuTollInfoAll()
 
+    def getAllSerial(self)-> list:
+        total = 0
+        while 1:
+            try:
+                return self._mumuTollInfoAll()
+            except Exception as e:
+                if total > 3:
+                    raise Exception("模拟器启动失败")
+                logging.error(e)
+                self._openmumu()
+                time.sleep(3)
+                total += 1
+
     def _mumuTollInfoAll(self):
         toolPath = Config.get("app", {}).get("emulatorPath", "")
         cmd = f"{toolPath}/mumutool info all"
@@ -19,6 +32,9 @@ class Mumu:
             )
         output, error = process.communicate()
         if error.decode() != "":
+            if error.decode() == "Error: invalidPort\n":
+                raise Exception("mumu模拟器尚未启动")
+
             logging.error(f"mumutool cmd({cmd}) err:{error.decode()}")
             return []
         else:
@@ -27,7 +43,7 @@ class Mumu:
 
     def _openmumu(self):
         toolPath = Config.get("app", {}).get("emulatorPath", "")
-        cmd = f"open -a {toolPath}/MuMuPlayer"
+        cmd = f"open -a {toolPath}/MuMuPlayer && osascript -e 'tell application \"MuMuPlayer\" to minimize'"
         subprocess.Popen(cmd, shell=True)
     def _openDevice(self, index: int) -> bool:
         toolPath = Config.get("app", {}).get("emulatorPath", "")
