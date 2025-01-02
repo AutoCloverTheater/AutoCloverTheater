@@ -30,7 +30,7 @@ class WorldTreeSelectWindow:
         1 远见
         2 友爱
         3 生存
-        :param img:
+        :param:
         :return:
         """
         return False

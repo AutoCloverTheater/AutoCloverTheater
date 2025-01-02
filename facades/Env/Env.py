@@ -28,6 +28,10 @@ class EnvDriver:
     def get(self, key: str, default=None):
         return self.data.get(key, default)
 
+    def setValue(self,key: str, value):
+        self.data[key] = value
+        return True
+
     def exist(self, key:str):
         return key in self.data
 def Env(key: str, default=None):

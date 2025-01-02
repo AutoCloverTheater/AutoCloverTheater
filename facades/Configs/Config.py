@@ -28,8 +28,5 @@ def load_configs_from_directory(directory):
                 merged_config.setdefault(module_name, configValue)
     return dict(merged_config)
 
-# 自动加载同目录下的所有配置文件
-config = load_configs_from_directory(CONFIG_PATH)
-Config = config
-if __name__ == "__main__":
-    print(Config)
+def Config(key:str, default = None):
+    return  load_configs_from_directory(CONFIG_PATH).get(key, default)

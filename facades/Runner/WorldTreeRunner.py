@@ -28,9 +28,9 @@ class WorldTreeRunner(Runner):
             loginNeedAccountAndPass, ok = main.isNeedLogin()
             if ok :
                 logging.info(f"识别到页面:{loginNeedAccountAndPass.name}")
-                loginNeedAccountAndPass.input(Config.get("app").get("account"))
+                loginNeedAccountAndPass.input(Config("app").get("account"))
                 logging.info(f"输入账号")
-                loginNeedAccountAndPass.input(Config.get("app").get("password"))
+                loginNeedAccountAndPass.input(Config("app").get("password"))
                 logging.info(f"输入密码")
                 loginNeedAccountAndPass.click((0,0))
                 logging.info(f"点击登录")

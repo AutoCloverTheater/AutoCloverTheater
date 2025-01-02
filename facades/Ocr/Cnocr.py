@@ -5,7 +5,7 @@ class Cnocr:
     rec_root = "runtime/cnocr"
 
     def ocr(self, img : numpy.array):
-        ocr = CnOcr(det_model_name='naive_det', det_root=self.rec_root)
+        ocr = CnOcr(model_name='naive_det', root=self.rec_root)
         out = ocr.ocr(img)
 
         print(out)
@@ -16,7 +16,7 @@ class Cnocr:
         :param img:
         :return:
         """
-        ocr = CnOcr(det_model_name='naive_det', det_root=self.rec_root)
+        ocr = CnOcr(model_name='naive_det', root=self.rec_root)
         out = ocr.ocr_for_single_line(img)
 
         print(out)

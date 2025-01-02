@@ -160,9 +160,12 @@ def saveBaseSetting():
     data = request.get_json()
     envx = EnvDriver().iniFromFile(ROOT_PATH.joinpath("env.yaml"))
     for key, value in data.items():
-        if envx.exist(key):
-            envx.set(key, value)
-    return envx.saveToFile(ROOT_PATH.joinpath("env.yaml"))
+        envx.setValue(key.upper(), value)
+    envx.saveToFile(ROOT_PATH.joinpath("env.yaml"))
+    return {
+        "code":0,
+        "msg":"success"
+    }
 
 
 @app.errorhandler(Exception)

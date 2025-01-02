@@ -41,3 +41,5 @@ FodyWeavers.xsd
 
 # Tools
 dist/
+
+env.yaml

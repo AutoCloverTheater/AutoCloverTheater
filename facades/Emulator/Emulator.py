@@ -35,10 +35,10 @@ class Emulator:
         if platform is None:
             raise Exception(f"不支持平台「{platform}」")
 
-        if UsefulEmulator[platform].get(Config.get("emulator"), None) is None:
-            raise Exception(f"平台「{platform}」,不支持模拟器「{Config.get('emulator')}」")
+        if UsefulEmulator[platform].get(Config("emulator"), None) is None:
+            raise Exception(f"平台「{platform}」,不支持模拟器「{Config('emulator')}」")
 
-        instance = UsefulEmulator[sys.platform][Config.get('emulator')]()
+        instance = UsefulEmulator[sys.platform][Config('emulator')]()
         self.instance = instance
 
     def ConnectDevice(self) -> str:
