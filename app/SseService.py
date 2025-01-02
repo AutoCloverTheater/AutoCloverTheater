@@ -1,11 +1,14 @@
+import logging
+import sys
 import traceback
 
-from flask import Flask
+from flask import Flask, Response, request, jsonify
 from flask_cors import CORS
 from threading import Lock, Event
 
 from config.app import get_config
 from facades.Constant.Constant import ROOT_PATH
+from facades.Emulator.Emulator import UsefulEmulator
 from facades.Env.Env import EnvDriver
 
 app = Flask(__name__)
@@ -20,7 +23,7 @@ data_queue = []
 
 def generate(client_id):
     while True:
-        send_event.wait(1)  # 等待事件触发
+        send_event.wait(0.3)  # 等待事件触发
         send_event.clear()  # 清除事件
 
         with clients_lock:
@@ -29,69 +32,7 @@ def generate(client_id):
         if data_queue:
             data = data_queue.pop(0)
         else:
-            data = f"data: {time.strftime("%Y-%m-%d %H:%M:%S")}\n\n"
-        yield data
-
-@app.route('/api/getEmulatorType', methods=['GET'])
-def getEmulatorType():
-    allName = UsefulEmulator[sys.platform]
-    allIn =[]
-    for name, className in enumerate(allName):
-        allIn.append(name)
-    return {
-        "code":0,
-        "message":"SUCCESS",
-        "list":allIn
-    }
-
-@app.route('/api/getEmulatorList', methods=['GET'])
-def getEmulatorList():
-    data = request.get_json()
-    allName = UsefulEmulator[sys.platform]
-    className = allName[data.get("type")]()
-    AllSerial = className.getAllSerial()
-    allIn  =[]
-    for serial in AllSerial:
-        allIn.append({"name":serial.name,"serial":serial.index})
-
-    return {
-        "code":0,
-        "message":"SUCCESS",
-        "data":allIn
-    }
-
-
-import sys
-import time
-
-from flask import Flask, Response, render_template, request, jsonify
-from flask_cors import CORS
-from threading import Lock, Event
-
-from facades.Emulator.Emulator import UsefulEmulator
-
-app = Flask(__name__)
-CORS(app)  # 启用 CORS
-# 用于存储 SSE 客户端的连接
-clients = {}
-clients_lock = Lock()
-
-# 用于触发发送数据的事件
-send_event = Event()
-data_queue = []
-
-def generate(client_id):
-    while True:
-        send_event.wait(1)  # 等待事件触发
-        send_event.clear()  # 清除事件
-
-        with clients_lock:
-            if client_id not in clients:
-                break
-        if data_queue:
-            data = data_queue.pop(0)
-        else:
-            data = f"data: {time.strftime('%Y-%m-%d %H:%M:%S')}\n\n"
+            data = f"1"
         yield data
 
 @app.route('/stream')
@@ -102,10 +43,6 @@ def stream():
     with clients_lock:
         clients[client_id] = response
     return response
-
-@app.route('/')
-def index():
-    return render_template('index.html')
 
 @app.route('/trigger', methods=['POST'])
 def trigger():
@@ -181,4 +118,6 @@ def handle_exception(e):
     }), 500
 
 if __name__ == '__main__':
+    logging.getLogger("flask").setLevel(logging.ERROR)
+    logging.getLogger("werkzeug").setLevel(logging.ERROR)
     app.run(port=8233)
