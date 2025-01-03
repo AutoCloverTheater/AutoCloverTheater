@@ -1,14 +1,14 @@
 import numpy
 from cnocr import CnOcr
 
-class Cnocr:
+
+class MyCnocr:
     rec_root = "runtime/cnocr"
 
     def ocr(self, img : numpy.array):
-        ocr = CnOcr(model_name='naive_det', root=self.rec_root)
+        ocr = CnOcr()
         out = ocr.ocr(img)
-
-        print(out)
+        return out
 
     def ocr_for_single_line(self, img : numpy.array):
         """
