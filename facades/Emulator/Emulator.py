@@ -6,6 +6,7 @@ from airtest.core.android import Android
 from airtest.core.api import connect_device
 from facades.Configs.Config import Config
 from facades.Emulator import EmulatorFacades
+from facades.Logx import Logx
 from mac.emulator.bluestacks import Bluestacks
 from mac.emulator.mumu import Mumu
 
@@ -35,10 +36,10 @@ class Emulator:
         if platform is None:
             raise Exception(f"不支持平台「{platform}」")
 
-        if UsefulEmulator[platform].get(Config("emulator"), None) is None:
-            raise Exception(f"平台「{platform}」,不支持模拟器「{Config('emulator')}」")
+        if platform.get(Config("app").get('emulatorType'), None) is None:
+            raise Exception(f"平台「{sys.platform}」,不支持模拟器「{Config('app').get('emulatorType')}」")
 
-        instance = UsefulEmulator[sys.platform][Config('emulator')]()
+        instance = UsefulEmulator[sys.platform][Config('app').get('emulatorType')]()
         self.instance = instance
 
     def ConnectDevice(self) -> str:
@@ -48,10 +49,11 @@ class Emulator:
         Returns:
             device instance
         """
-        serial = self.instance.getSerial()
-        self.device = connect_device(serial)
-        EmulatorFacades.ActivityEmulator = self
-        return connect_device(serial).snapshot()
+        serial = self.instance.searchAndOpenDevice()
+        Logx.info(f"准备连接设备「Android:///127.0.0.1:{serial}」")
+        self.device = connect_device(f"Android:///127.0.0.1:{serial}")
+        Logx.info(f"连接设备成功「Android:///127.0.0.1:{serial}」")
+        return self.device
 
     def selfGetCachedSnapShot(self):
         return Snapshot(self.snapshotCache)
@@ -77,6 +79,13 @@ class Snapshot:
 
     def toNpArray(self) -> numpy.array:
         return numpy.array(self.img)
+
+def ConnectEmulator() -> str:
+    """
+    连接模拟器
+    """
+    ActivityEmulator = Emulator()
+    return ActivityEmulator.ConnectDevice()
 
 # 公共方法全局使用
 def UpdateSnapShot():

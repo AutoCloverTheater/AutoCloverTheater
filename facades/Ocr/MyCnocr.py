@@ -1,12 +1,15 @@
 import numpy
 from cnocr import CnOcr
 
+from facades.Constant.Constant import RUNTIME_PATH
+
 
 class MyCnocr:
-    rec_root = "runtime/cnocr"
+    rec_root = RUNTIME_PATH.joinpath("cnocr")
+    det_root = RUNTIME_PATH.joinpath("cnstd")
 
     def ocr(self, img : numpy.array):
-        ocr = CnOcr()
+        ocr = CnOcr(det_root=self.rec_root,rec_root=self.det_root)
         out = ocr.ocr(img)
         return out
 
@@ -16,7 +19,7 @@ class MyCnocr:
         :param img:
         :return:
         """
-        ocr = CnOcr(model_name='naive_det', root=self.rec_root)
+        ocr = CnOcr(det_root=self.rec_root,rec_root=self.det_root)
         out = ocr.ocr_for_single_line(img)
 
         print(out)

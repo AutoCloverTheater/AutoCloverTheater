@@ -22,7 +22,7 @@ class Mumu:
                 total += 1
 
     def _mumuTollInfoAll(self):
-        toolPath = Config.get("app", {}).get("emulatorPath", "")
+        toolPath = Config("app", {}).get("emulatorPath", "")
         cmd = f"{toolPath}/mumutool info all"
         process = subprocess.Popen(
             cmd,
@@ -42,11 +42,11 @@ class Mumu:
             return obj["return"]["results"]
 
     def _openmumu(self):
-        toolPath = Config.get("app", {}).get("emulatorPath", "")
+        toolPath = Config("app", {}).get("emulatorPath", "")
         cmd = f"open -a {toolPath}/MuMuPlayer && osascript -e 'tell application \"MuMuPlayer\" to minimize'"
         subprocess.Popen(cmd, shell=True)
     def _openDevice(self, index: int) -> bool:
-        toolPath = Config.get("app", {}).get("emulatorPath", "")
+        toolPath = Config("app", {}).get("emulatorPath", "")
         cmd = f"{toolPath}/mumutool open {index}"
         process = subprocess.Popen(
             cmd,
@@ -62,7 +62,7 @@ class Mumu:
             logging.info(f"打开了设备:{index}")
         return True
     def _closeDevice(self, index: int) -> bool:
-        toolPath = Config.get("app", {}).get("emulatorPath", "")
+        toolPath = Config("app", {}).get("emulatorPath", "")
         cmd = f"{toolPath}/mumutool close {index}"
         process = subprocess.Popen(
             cmd,
@@ -83,7 +83,47 @@ class Mumu:
             logging.info(f"关闭了设备:{index}")
         return True
 
-    def searchAndOpenDevice(self, port) -> str:
+    def searchAndOpenDevice(self) -> str:
+        devices = self._mumuTollInfoAll()
+        if len(devices) == 0:
+            self._openmumu()
+            time.sleep(3)
+            devices = self._mumuTollInfoAll()
+
+        openIndex = Config("app", {}).get("serial")
+        prot = ""
+        for index, device in enumerate(devices) :
+            if index == int(openIndex):
+                if device.get("state") == "running":
+                    prot = device.get('adb_port')
+                    break
+                if device.get("state") != "running":
+                    self._openDevice(index)
+                    ## 等待设备启动
+                    total = 0
+                    while 1:
+                        openedDevices = self._mumuTollInfoAll()
+                        if openedDevices[index].get("adb_port", 0) == 0:
+                            logging.info(f"等待设备：{openedDevices[index].get('name')}启动")
+                            time.sleep(1)
+                            total += 1
+                            logging.info(f"等待设备：启动 等待：{total} 秒")
+                            if total > 10:
+                                raise Exception(f"设备{openedDevices[index].get('name')}启动失败")
+                            continue
+                        else:
+                            logging.info(
+                                f"设备：{openedDevices[index].get('name')} prot:{openedDevices[index].get('adb_port')} 启动成功")
+                            port = openedDevices[index].get("adb_port")
+                            break
+            else: print(f"设备：{device.get('name')} 状态：{device.get('state')}")
+
+        if prot != "":
+            return prot
+
+        raise Exception(f"没有找到设备 index of {openIndex}")
+
+    def _searchAndOpenDevice(self, port) -> str:
         """
         搜索并且打开模拟器
         ⚠️：mumu最好是通过索引来打开设备
@@ -123,7 +163,7 @@ class Mumu:
                 time.sleep(0.2)
                 continue
             else:
-                serial = Config.get("app", {}).get("adb", "") + ":" + port
+                serial = Config("app", {}).get("adb", "") + ":" + port
                 break
 
         return serial

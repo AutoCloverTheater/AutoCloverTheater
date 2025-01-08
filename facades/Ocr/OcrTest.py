@@ -3,20 +3,11 @@ import cv2
 from facades.Constant.Constant import ROOT_PATH
 from facades.Ocr.MyCnocr import MyCnocr
 
-
-def TestOcr():
+def TestOcr_for_single_line():
     path = ROOT_PATH.joinpath("img").joinpath("WorldTree")
-
     出发冒险 = cv2.imread(f"{path}/chufamaoxian.png")
-    选择 = cv2.imread(f"{path}/xuanze.png")
-    exit = cv2.imread(f"{path}/exit.png")
-
-    list = [出发冒险, 选择, exit]
-
     ocr = MyCnocr()
-    for img in list:
-        print(ocr.ocr(img))
+    print(ocr.ocr(出发冒险))
 
-
-if __name__ == "__main__":
-    TestOcr()
+def test_ocr(benchmark):
+    benchmark(TestOcr_for_single_line)

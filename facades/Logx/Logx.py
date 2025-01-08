@@ -29,7 +29,8 @@ class Logx:
             tagStart = ("<green>", "</green>")
             if record['level'].name == "ERROR":
                 tagStart = ("<red>", "</red>")
-            return f"{tagStart[0]}{record['time'].strftime("%Y-%m-%d %H:%M:%S")} | {record['level']} | {record['file'].path}:{record['line']} - {record['message']}\n{tagStart[1]}"
+            timeToStr = record['time'].strftime("%Y-%m-%d %H:%M:%S")
+            return f"{tagStart[0]}{timeToStr} | {record['level']} | {record['file'].path}:{record['line']} - {record['message']}\n{tagStart[1]}"
 
         # 添加文件日志记录器
         logger.add(
