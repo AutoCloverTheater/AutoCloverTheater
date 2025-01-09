@@ -42,7 +42,7 @@ class Emulator:
         instance = UsefulEmulator[sys.platform][Config('app').get('emulatorType')]()
         self.instance = instance
 
-    def ConnectDevice(self) -> str:
+    def ConnectDevice(self):
         """
         连接设备并返回设备序列号。
 
@@ -53,7 +53,8 @@ class Emulator:
         Logx.info(f"准备连接设备「Android:///127.0.0.1:{serial}」")
         self.device = connect_device(f"Android:///127.0.0.1:{serial}")
         Logx.info(f"连接设备成功「Android:///127.0.0.1:{serial}」")
-        return self.device
+        EmulatorFacades.ActivityEmulator = self
+        return self
 
     def selfGetCachedSnapShot(self):
         return Snapshot(self.snapshotCache)
@@ -80,15 +81,17 @@ class Snapshot:
     def toNpArray(self) -> numpy.array:
         return numpy.array(self.img)
 
-def ConnectEmulator() -> str:
+def ConnectEmulator() :
     """
     连接模拟器
     """
     ActivityEmulator = Emulator()
-    return ActivityEmulator.ConnectDevice()
+    EmulatorFacades.ActivityEmulator = ActivityEmulator.ConnectDevice()
 
 # 公共方法全局使用
 def UpdateSnapShot():
+    if EmulatorFacades.ActivityEmulator is None:
+        ConnectEmulator()
     EmulatorFacades.ActivityEmulator.selfSnapshot()
 def GetSnapShot()->numpy.array:
     return EmulatorFacades.ActivityEmulator.selfGetCachedSnapShot()

@@ -1,9 +1,12 @@
 import datetime
+import logging
 
 from loguru import logger
 import os
 from facades.Constant.Constant import RUNTIME_PATH
 
+# 这是设置airtest日志等级
+logging.getLogger('airtest').setLevel(logging.ERROR)
 
 class Logx:
     def __init__(self, log_level) -> None:

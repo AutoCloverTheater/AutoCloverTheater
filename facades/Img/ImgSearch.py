@@ -29,7 +29,13 @@ def imgSearch(img :numpy.array, template :numpy.array) -> (tuple, bool):
     if img is None or template is None:
         raise ValueError("输入图像或模板不能为空")
 
-    if len(img.shape) != 2 or len(template.shape) != 2:
+    if not hasattr(img, 'shape'):
+        raise ValueError("截图必须是二维数组")
+
+    if not hasattr(template, 'shape'):
+        raise ValueError("模板必须是二维数组")
+
+    if len(img.shape) < 2 or len(template.shape) < 2:
         raise ValueError("输入图像和模板必须是二维数组")
 
     image_x, image_y = template.shape[:2]

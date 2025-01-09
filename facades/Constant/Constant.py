@@ -4,6 +4,7 @@ ROOT_PATH = pathlib.Path.joinpath(pathlib.Path(__file__).parent.parent.parent)
 APP_PATH = ROOT_PATH.joinpath("app")
 CONFIG_PATH = ROOT_PATH.joinpath("config")
 RUNTIME_PATH = ROOT_PATH.joinpath("runtime")
+IMG_PATH = ROOT_PATH.joinpath("img")
 
 
 if __name__ == "__main__":
