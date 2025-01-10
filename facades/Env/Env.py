@@ -35,5 +35,11 @@ class EnvDriver:
     def exist(self, key:str):
         return key in self.data
 def Env(key: str, default=None):
-    env = EnvDriver().iniFromFile(ROOT_PATH.joinpath("env.yaml"))
-    return env.get(key, default)
+    temp = default
+    keyList = key.split(".")
+    obj = EnvDriver().iniFromFile(ROOT_PATH.joinpath("env.yaml"))
+    for i in keyList:
+        if i in obj :
+            obj = obj.get(i)
+            temp = obj
+    return temp

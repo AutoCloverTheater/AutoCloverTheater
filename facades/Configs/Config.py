@@ -29,4 +29,19 @@ def load_configs_from_directory(directory):
     return dict(merged_config)
 
 def Config(key:str, default = None):
-    return  load_configs_from_directory(CONFIG_PATH).get(key, default)
+    keyList = key.split(".")
+
+    temp = default
+
+    obj = load_configs_from_directory(CONFIG_PATH)
+
+    for i in keyList:
+        if i in obj :
+            obj = obj.get(i)
+            temp = obj
+
+    return  temp
+
+
+if __name__ == "__main__":
+    print(Config("app.emulatorPath"))

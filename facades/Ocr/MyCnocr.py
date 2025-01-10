@@ -3,8 +3,7 @@ from cnocr import CnOcr
 
 from facades.Constant.Constant import RUNTIME_PATH
 
-
-class MyCnocr:
+class Cnocr:
     rec_root = RUNTIME_PATH.joinpath("cnocr")
     det_root = RUNTIME_PATH.joinpath("cnstd")
 
@@ -23,3 +22,5 @@ class MyCnocr:
         out = ocr.ocr_for_single_line(img)
 
         print(out)
+
+MyCnocr = Cnocr()

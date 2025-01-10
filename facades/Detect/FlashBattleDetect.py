@@ -1,20 +1,31 @@
+import cv2
 import numpy
+
+from facades.Constant.Constant import IMG_PATH
+from facades.Emulator.Emulator import GetSnapShot
+from facades.Img.ImgSearch import imgSearch
 
 
 class FlashBattleDetect:
-    def isFlashBattle(self) -> bool:
+    def isOpenFlashBattle(self):
         """
         判断是否快闪表演
         :return:
         """
-        return False
+        path = IMG_PATH.joinpath("Main").joinpath("flashBattleClosed.png")
+        mainWindow = cv2.imread(f"{path}")
+        pot, ok  = imgSearch(GetSnapShot().img, mainWindow)
+        return {"name":"快闪表演-false","pot":pot},ok
 
-    def isSkipFormation(self) -> bool:
+    def isOpenSkipFormation(self):
         """
         判断是否跳过编队
         :return:
         """
-        return False
+        path = IMG_PATH.joinpath("Main").joinpath("skipFormationClosed.png")
+        mainWindow = cv2.imread(f"{path}")
+        pot, ok  = imgSearch(GetSnapShot().img, mainWindow)
+        return {"name":"跳过编队-false","pot":pot},ok
 
     def isInSuccessFlashBattleWindow(self)->bool :
         """
