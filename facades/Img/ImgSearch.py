@@ -1,5 +1,8 @@
 import cv2
 import numpy
+import numpy as np
+
+from facades.Constant.Constant import IMG_PATH
 
 
 def imgSearch(img :numpy.array, template :numpy.array) -> (tuple, bool):

@@ -30,12 +30,12 @@ class WorldTreeDetect:
         return {"name":"世界树bata2.0","pot":pot},ok
 
     @matchResult
-    def isInWorldTreeLeverSelectWindow(self):
+    def isInWorldTreeDifficultySelectWindow(self):
         """
         选择难度
         :return:
         """
-        path = IMG_PATH.joinpath("Main").joinpath("worldTreeBata.png")
+        path = IMG_PATH.joinpath("Main").joinpath("difficulty.png")
         mainWindow = cv2.imread(f"{path}")
         pot, ok  = imgSearch(GetSnapShot().img, mainWindow)
         return {"name":"世界树bata2.0","pot":pot},ok
@@ -45,16 +45,32 @@ class WorldTreeDetect:
         获取当前世界树等级
         :return:
         """
-        res = MyCnocr.ocr(img=GetSnapShot().img)
-        return 0
+        # 截取指定位置
+        dewXY = GetSnapShot().img
+        dewXY = dewXY[0:dewXY.shape[0], 0:dewXY]
+        res = MyCnocr.ocr(img=dewXY)
+        for roc in res:
+            self.dew,num = int(roc["text"])
+
+        return res
 
     def updateDew(self):
         """
         更新露水数量
         :return:
         """
-        res = MyCnocr.ocr(img=GetSnapShot().img)
-        return 0
+        dewXY = GetSnapShot().img
+        # 截取指定位置
+        dewXY = dewXY[0:dewXY.shape[0], 0:dewXY]
+
+        num = 0
+
+        res = MyCnocr.ocr(img=dewXY)
+        for roc in res:
+            if roc["text"] == "露水数量":
+                self.dew,num = int(roc["text"])
+
+        return num
     @matchResult
     def hasBizarreCard(self) :
         """
@@ -63,58 +79,17 @@ class WorldTreeDetect:
         """
         res = MyCnocr.ocr(img=GetSnapShot().img)
         return res, len(res)>0
-    @matchResult
-    def hasRabbitShopCard(self, img : numpy.array) -> bool:
-        """
-        是否存在兔子商店卡
-        :return:
-        """
-        return False
-    @matchResult
-    def hasDivinationRoomCard(self, img : numpy.array) -> bool:
-        """
-        是否存在占卜
-        :return:
-        """
-        return False
-    @matchResult
-    def hasTreasureBoxCard(self, img : numpy.array) -> bool:
-        """
-        是否存在宝箱
-        :return:
-        """
-        return False
-    @matchResult
-    def hasRelaxCard(self) -> bool:
-        """
-        是否存在休息卡
-        :return:
-        """
-        return False
 
     @matchResult
-    def hasEliteBattleCard(self) -> bool:
-        """
-        是否存在精英战卡
-        :return:
-        """
-        return False
-
-    @matchResult
-    def hasBattleCard(self) -> bool:
-        """
-        是否存在战斗卡
-        :return:
-        """
-        return False
-
-    @matchResult
-    def isInWorldTreeEndWindow(self)->bool :
+    def isInWorldTreeEndWindow(self) :
         """
         世界树探索结束窗口
         :return:
         """
-        return False
+        path = IMG_PATH.joinpath("Main").joinpath("worldTreeEnd.png")
+        mainWindow = cv2.imread(f"{path}")
+        pot, ok  = imgSearch(GetSnapShot().img, mainWindow)
+        return {"name":"探索结束","pot":pot},ok
 
     @matchResult
     def isInWorldTreeBattleReadyWindow(self):
@@ -130,7 +105,10 @@ class WorldTreeDetect:
         冒险列表窗口
         :return:
         """
-        pass
+        path = IMG_PATH.joinpath("Main").joinpath("blessingList.png")
+        mainWindow = cv2.imread(f"{path}")
+        pot, ok  = imgSearch(GetSnapShot().img, mainWindow)
+        return {"name":"游戏主界面","pot":pot},ok
 
     @matchResult
     def isInMainWindow(self):
@@ -153,7 +131,10 @@ class WorldTreeDetect:
         4 提升1.5%攻防生命
         :return:
         """
-        return False
+        path = IMG_PATH.joinpath("Main").joinpath("blessingList.png")
+        mainWindow = cv2.imread(f"{path}")
+        pot, ok  = imgSearch(GetSnapShot().img, mainWindow)
+        return {"name":"游戏主界面","pot":pot},ok
 
     @matchResult
     def canSeeDew(self):
@@ -161,4 +142,7 @@ class WorldTreeDetect:
         露水
         :return:
         """
-        pass
+        path = IMG_PATH.joinpath("Main").joinpath("dewNum.png")
+        mainWindow = cv2.imread(f"{path}")
+        pot, ok  = imgSearch(GetSnapShot().img, mainWindow)
+        return {"name":"露水数量","pot":pot},ok
