@@ -103,6 +103,9 @@ def InWorldTree():
             for Card in BizarreCard:
                 if Card['isSelected'] in AllowsCards:
                     cards.append(Card)
+            if len(cards) == 0:
+                Logx.error(f"没有可以选择的奇遇卡 ocr结果：{cards}")
+                break
             # 排好优先级后选择第一个
             click(cards[0])
             Logx.info(f"选择奇遇卡：{cards[0]['name']}")

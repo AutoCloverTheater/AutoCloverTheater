@@ -11,3 +11,15 @@ def TestOcr_for_single_line():
 
 def test_ocr(benchmark):
     benchmark(TestOcr_for_single_line)
+
+def test_tmp():
+    path = ROOT_PATH.joinpath("img").joinpath("WorldTree").joinpath("tmp.png")
+    img = cv2.imread(f"{path}")
+    y,x,_ = img.shape
+
+    cardxy = img[300:400,150:x-150]
+    cv2.imwrite("cardxy.png",cardxy)
+    res = MyCnocr.ocr(img)
+
+    rpc = [item for item in res if item["score"] > 0.4 and item['text'] != '']
+    print(rpc)

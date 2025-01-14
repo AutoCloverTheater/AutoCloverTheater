@@ -8,7 +8,7 @@ class Cnocr:
     det_root = RUNTIME_PATH.joinpath("cnstd")
 
     def ocr(self, img : numpy.array):
-        ocr = CnOcr(det_root=self.rec_root,rec_root=self.det_root)
+        ocr = CnOcr(det_root=self.rec_root,rec_root=self.det_root, rec_model_name="scene-densenet_lite_136-gru")
         out = ocr.ocr(img)
         return out
 
