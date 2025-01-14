@@ -131,7 +131,7 @@ class WorldTreeDetect:
         4 提升1.5%攻防生命
         :return:
         """
-        path = IMG_PATH.joinpath("Main").joinpath("blessingList.png")
+        path = IMG_PATH.joinpath("WorldTree").joinpath("blessing.png")
         mainWindow = cv2.imread(f"{path}")
         pot, ok  = imgSearch(GetSnapShot().img, mainWindow)
         return {"name":"游戏主界面","pot":pot},ok

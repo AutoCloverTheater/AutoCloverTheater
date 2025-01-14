@@ -4,11 +4,11 @@ from airtest.core.api import click, text
 
 from facades.Configs.Config import Config
 from facades.Detect.MainWindowDetect import MainWindowDetect
-from facades.Emulator.Emulator import UpdateSnapShot
+from facades.Emulator.Emulator import UpdateSnapShot, ConnectEmulator
 from facades.Logx import Logx
 
 
-def login():
+def Login():
     main = MainWindowDetect()
 
     # 返回runner是否匹配到了页面
@@ -21,6 +21,10 @@ def login():
             break
         # 更新截图
         UpdateSnapShot()
+        gameUi, ok = main.isInGameUiWindow()
+        if ok:
+            Logx.info("识别到游戏主页面登录流程结束")
+            break
         # 登录页面-需要登录
         loginNeedAccountAndPass, isNeedLoginOk = main.isNeedLogin()
         if isNeedLoginOk:
@@ -55,7 +59,7 @@ def login():
         # 主页面
         isMainWindowResp, ok = main.isMainWindow()
         if ok:
-            Logx.info(f"识别到页面:{isMainWindowResp['name']}")
+            Logx.info(f"开始登录流程")
             # y坐标增加60
             clickXy = (isMainWindowResp['pot'][0], isMainWindowResp['pot'][1] + 60)
             click(clickXy)
@@ -64,3 +68,7 @@ def login():
         times+=1
 
     return matchResult
+
+if __name__ == '__main__':
+    ConnectEmulator()
+    Login()
