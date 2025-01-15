@@ -6,7 +6,7 @@ from airtest.core.android import Android
 from airtest.core.api import connect_device
 from facades.Configs.Config import Config
 from facades.Emulator import EmulatorFacades
-from facades.Logx import Logx
+from facades.Logx.Logx import logx
 from mac.emulator.bluestacks import Bluestacks
 from mac.emulator.mumu import Mumu
 
@@ -50,9 +50,9 @@ class Emulator:
             device instance
         """
         serial = self.instance.searchAndOpenDevice()
-        Logx.info(f"准备连接设备「Android:///127.0.0.1:{serial}」")
+        logx.info(f"准备连接设备「Android:///127.0.0.1:{serial}」")
         self.device = connect_device(f"Android:///127.0.0.1:{serial}")
-        Logx.info(f"连接设备成功「Android:///127.0.0.1:{serial}」")
+        logx.info(f"连接设备成功「Android:///127.0.0.1:{serial}」")
         EmulatorFacades.ActivityEmulator = self
         return self
 

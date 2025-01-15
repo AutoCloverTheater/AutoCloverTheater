@@ -13,10 +13,12 @@ from facades.Ocr.MyCnocr import MyCnocr
 避战流派只打奇遇而且只会选第一个选项
 """
 class WorldTreeDetect:
-    dew = 0 # 露水数量
 
     def __init__(self):
-        pass
+        # 探索等级
+        self.lv = 0
+        # 露水数量
+        self.dew = 0
 
     @matchResult
     def isInWorldTreeMainWindow(self):
@@ -24,7 +26,7 @@ class WorldTreeDetect:
         在世界树探索bata2.0页面
         :return:
         """
-        path = IMG_PATH.joinpath("Main").joinpath("worldTreeBata.png")
+        path = IMG_PATH.joinpath("Main").joinpath("worldTree").joinpath("worldTreeBata.png")
         mainWindow = cv2.imread(f"{path}")
         pot, ok  = imgSearch(GetSnapShot().img, mainWindow)
         return {"name":"世界树bata2.0","pot":pot},ok
@@ -47,12 +49,14 @@ class WorldTreeDetect:
         """
         # 截取指定位置
         dewXY = GetSnapShot().img
-        dewXY = dewXY[0:dewXY.shape[0], 0:dewXY]
-        res = MyCnocr.ocr(img=dewXY)
+        dewXY = dewXY[490:545, 824:1195]
+        res = MyCnocr.ocrNum(img=dewXY)
+        lv = 0
         for roc in res:
-            self.dew,num = int(roc["text"])
-
-        return res
+            if "lv" in roc["text"]:
+                lv = int(roc["text"].replace('lv.', ''))
+        self.lv = lv
+        return lv
 
     def updateDew(self):
         """
@@ -61,16 +65,15 @@ class WorldTreeDetect:
         """
         dewXY = GetSnapShot().img
         # 截取指定位置
-        dewXY = dewXY[0:dewXY.shape[0], 0:dewXY]
+        dewXY = dewXY[43:80, 960:1150]
+        res = MyCnocr.ocrNum(img=dewXY)
 
-        num = 0
+        text = [item["text"] for item in res]
+        text = ''.join(text)
 
-        res = MyCnocr.ocr(img=dewXY)
-        for roc in res:
-            if roc["text"] == "露水数量":
-                self.dew,num = int(roc["text"])
+        self.dew = text.replace("露水数量", "")
 
-        return num
+        return self.dew
     @matchResult
     def hasBizarreCard(self) :
         """
@@ -105,10 +108,30 @@ class WorldTreeDetect:
         冒险列表窗口
         :return:
         """
-        path = IMG_PATH.joinpath("Main").joinpath("blessingList.png")
+        path = IMG_PATH.joinpath("Main").joinpath("adventure").joinpath("adventureList.png")
         mainWindow = cv2.imread(f"{path}")
         pot, ok  = imgSearch(GetSnapShot().img, mainWindow)
-        return {"name":"游戏主界面","pot":pot},ok
+        return {"name":"冒险之旅","pot":pot},ok
+    @matchResult
+    def hasWorldTreeButton(self):
+        """
+        是否有世界树按钮
+        :return:
+        """
+        path = IMG_PATH.joinpath("Main").joinpath("adventure").joinpath("worldTree.png")
+        mainWindow = cv2.imread(f"{path}")
+        pot, ok  = imgSearch(GetSnapShot().img, mainWindow)
+        return {"name":"世界树","pot":pot},ok
+
+    def searchStartWorldTreeAdvButton(self):
+        """
+        搜索是世界树开始冒险按钮
+        :return:
+        """
+        startWorldTree = IMG_PATH.joinpath("Main").joinpath("worldTree").joinpath("startWorldTreeAdventure.png")
+        startWorldTree = cv2.imread(f"{startWorldTree}")
+        pot, ok  = imgSearch(GetSnapShot().img, startWorldTree)
+        return {"name":"世界树「开始冒险」","pot":pot},ok
 
     @matchResult
     def isInMainWindow(self):
@@ -116,10 +139,10 @@ class WorldTreeDetect:
         游戏主页面
         :return:
         """
-        path = IMG_PATH.joinpath("Main").joinpath("inGaminMainWindow.png")
+        path = IMG_PATH.joinpath("Main").joinpath("adventure").joinpath("adventure.png")
         mainWindow = cv2.imread(f"{path}")
         pot, ok  = imgSearch(GetSnapShot().img, mainWindow)
-        return {"name":"游戏主界面","pot":pot},ok
+        return {"name":"游戏主界面ui","pot":pot},ok
 
     @matchResult
     def isInSelectYourBlessing(self):
@@ -142,7 +165,37 @@ class WorldTreeDetect:
         露水
         :return:
         """
-        path = IMG_PATH.joinpath("Main").joinpath("dewNum.png")
+        path = IMG_PATH.joinpath("Main").joinpath("worldTree").joinpath("dewNum_939_49_16_20_889_0_116_119.png")
         mainWindow = cv2.imread(f"{path}")
         pot, ok  = imgSearch(GetSnapShot().img, mainWindow)
         return {"name":"露水数量","pot":pot},ok
+
+    def hasTopLeverButton(self):
+        """
+        绝境难度按钮
+        :return:
+        """
+        path = IMG_PATH.joinpath("Main").joinpath("worldTree").joinpath("topLever.png")
+        topLever = cv2.imread(f"{path}")
+        pot, ok  = imgSearch(GetSnapShot().img, topLever)
+        return {"name":"死境难度","pot":pot},ok
+
+    def isInStartPerform(self):
+        """
+        开始表演
+        :return:
+        """
+        path = IMG_PATH.joinpath("Main").joinpath("worldTree").joinpath("startPerform_1039_644_133_38__989_594_233_126.png")
+        topLever = cv2.imread(f"{path}")
+        pot, ok  = imgSearch(GetSnapShot().img, topLever)
+        return {"name":"开始表演","pot":pot},ok
+
+    def isInworldTreeCardWindow(self):
+        """
+        世界树游戏中
+        :return:
+        """
+        path = IMG_PATH.joinpath("Main").joinpath("worldTree").joinpath("inGame.png")
+        inGame = cv2.imread(f"{path}")
+        pot, ok  = imgSearch(GetSnapShot().img, inGame)
+        return {"name":"世界树游戏中","pot":pot},ok

@@ -44,4 +44,5 @@ def Config(key:str, default = None):
 
 
 if __name__ == "__main__":
-    print(Config("app.emulatorPath"))
+    # print(Config("app.emulatorPath"))
+    print(Config("app.worldTree.lever"))

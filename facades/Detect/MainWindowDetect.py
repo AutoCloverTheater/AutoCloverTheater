@@ -7,7 +7,7 @@ from facades.Emulator.Emulator import GetSnapShot
 from facades.Img.ImgSearch import imgSearch
 
 
-class MainWindowDetect(BaseDetect):
+class MainWindowDetect:
     # 有注册按钮并且没有匹配到输入账号密码
     @matchResult
     def isNotNeedLogin(self):
@@ -23,11 +23,19 @@ class MainWindowDetect(BaseDetect):
         pot, ok  = imgSearch(GetSnapShot().img, mainWindow)
         return {"name":"需要账号密码","pot":pot},ok
     @matchResult
-    def isInDailySignWindow(self):
-        path = IMG_PATH.joinpath("Main").joinpath("needAccountToLogin.png")
+    def isInDailySignRewardWindow(self):
+        path = IMG_PATH.joinpath("Main").joinpath("dailyReward.png")
         mainWindow = cv2.imread(f"{path}")
         pot, ok  = imgSearch(GetSnapShot().img, mainWindow)
-        return {"name":"每日登录奖励","pot":pot},ok
+        return {"name":"每日签到奖励","pot":pot},ok
+
+    @matchResult
+    def isInDailySignWindow(self):
+        path = IMG_PATH.joinpath("Main").joinpath("dailySign.png")
+        mainWindow = cv2.imread(f"{path}")
+        pot, ok  = imgSearch(GetSnapShot().img, mainWindow)
+        return {"name":"每日签到奖励","pot":pot},ok
+
     @matchResult
     def isMainWindow(self):
         path = IMG_PATH.joinpath("Main").joinpath("main.png")

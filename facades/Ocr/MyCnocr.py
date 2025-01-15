@@ -12,6 +12,13 @@ class Cnocr:
         out = ocr.ocr(img)
         return out
 
+    def ocrNum(self,img : numpy.array):
+        ocr = CnOcr(det_root=self.rec_root,rec_root=self.det_root, rec_model_name="scene-densenet_lite_136-gru", cand_alphabet=[
+            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.','l','v','/','露','水','数','量'
+        ])
+        out = ocr.ocr(img)
+        return out
+
     def ocr_for_single_line(self, img : numpy.array):
         """
         识别单行文字

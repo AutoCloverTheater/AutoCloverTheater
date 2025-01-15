@@ -12,3 +12,7 @@ def get_config():
             "lever":Env("worldTree.lever")
         }
     }
+
+
+if __name__ == "__main__":
+    print(get_config())

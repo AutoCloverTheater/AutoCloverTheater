@@ -1,6 +1,7 @@
 import cv2
 import numpy
 import numpy as np
+from airtest.core.api import click
 
 from facades.Constant.Constant import IMG_PATH
 
@@ -29,8 +30,10 @@ def imgSearch(img :numpy.array, template :numpy.array) -> (tuple, bool):
         ...     print("模板匹配失败")
     """
     # 检查输入参数的有效性
-    if img is None or template is None:
-        raise ValueError("输入图像或模板不能为空")
+    if template is None:
+        raise ValueError("模板不能为空")
+    if img is None:
+        raise ValueError("输入图像不能为空")
 
     if not hasattr(img, 'shape'):
         raise ValueError("截图必须是二维数组")
@@ -51,3 +54,17 @@ def imgSearch(img :numpy.array, template :numpy.array) -> (tuple, bool):
     else:
         __center = (0, 0)
         return __center, False
+
+def imgSearchClick(img :numpy.array, template :numpy.array):
+    """
+    搜索并且点击图片
+    :param img:
+    :param template:
+    :return:
+    """
+    t,ok = imgSearch(img, template)
+    if ok:
+        click(t)
+        return t
+    else:
+        return None
