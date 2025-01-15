@@ -1,7 +1,9 @@
+import cv2
 import numpy
 from cnocr import CnOcr
 
-from facades.Constant.Constant import RUNTIME_PATH
+from facades.Constant.Constant import RUNTIME_PATH, IMG_PATH
+
 
 class Cnocr:
     rec_root = RUNTIME_PATH.joinpath("cnocr")
@@ -31,3 +33,8 @@ class Cnocr:
         print(out)
 
 MyCnocr = Cnocr()
+
+if __name__ == '__main__':
+    i = IMG_PATH.joinpath("WorldTree").joinpath("tmp.png")
+    img = cv2.imread(f"{i}")
+    print(MyCnocr.ocr(img))

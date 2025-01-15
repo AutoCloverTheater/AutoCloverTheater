@@ -34,13 +34,13 @@ def Login():
             accountInput = (460, 210)
             click(accountInput)
             time.sleep(1)
-            text(Config("app").get("account"))
+            text(f'{Config("app").get("account")}')
             logx.info(f"输入账号完毕")
             passwordInput = (460, 280)
             logx.info(f"输入密码")
             click(passwordInput)
             time.sleep(1)
-            text(Config("app").get("password"))
+            text(f'{Config("app").get("password")}')
             logx.info(f"输入账号完毕")
             # 等待登录完成
             break

@@ -1,8 +1,9 @@
 import json
-import logging
 import subprocess
 import time
 from facades.Configs.Config import Config
+from facades.Logx.Logx import logx
+
 
 class Mumu:
     def getSerial(self)-> list:
@@ -16,7 +17,7 @@ class Mumu:
             except Exception as e:
                 if total > 3:
                     raise Exception("模拟器启动失败")
-                logging.error(e)
+                logx.error(e)
                 self._openmumu()
                 time.sleep(3)
                 total += 1
@@ -35,7 +36,7 @@ class Mumu:
             if error.decode() == "Error: invalidPort\n":
                 raise Exception("mumu模拟器尚未启动")
 
-            logging.error(f"mumutool cmd({cmd}) err:{error.decode()}")
+            logx.error(f"mumutool cmd({cmd}) err:{error.decode()}")
             return []
         else:
             obj = json.loads(output.decode())
@@ -56,10 +57,10 @@ class Mumu:
             )
         output, error = process.communicate()
         if error.decode() != "":
-           logging.error(f"mumutool cmd({cmd}) err:{error.decode()}")
+           logx.error(f"mumutool cmd({cmd}) err:{error.decode()}")
            return False
         else:
-            logging.info(f"打开了设备:{index}")
+            logx.info(f"打开了设备:{index}")
         return True
     def _closeDevice(self, index: int) -> bool:
         toolPath = Config("app", {}).get("emulatorPath", "")
@@ -72,15 +73,15 @@ class Mumu:
             )
         output, error = process.communicate()
         if error.decode() != "":
-           logging.error(f"mumutool cmd({cmd}) err:{error.decode()}")
+           logx.error(f"mumutool cmd({cmd}) err:{error.decode()}")
            return False
         else:
             obj = json.loads(output.decode())
             if obj["return"].get("err", "") != "" and obj['return']["device"]["state"] != "stopped":
-                logging.error(f"关闭设备失败:{obj['return'].get('err', '')}, 准备重试")
+                logx.error(f"关闭设备失败:{obj['return'].get('err', '')}, 准备重试")
                 time.sleep(0.5)
                 self._closeDevice(index)
-            logging.info(f"关闭了设备:{index}")
+            logx.info(f"关闭了设备:{index}")
         return True
 
     def searchAndOpenDevice(self) -> str:
@@ -104,15 +105,15 @@ class Mumu:
                     while 1:
                         openedDevices = self._mumuTollInfoAll()
                         if openedDevices[index].get("adb_port", 0) == 0:
-                            logging.info(f"等待设备：{openedDevices[index].get('name')}启动")
+                            logx.info(f"等待设备：{openedDevices[index].get('name')}启动")
                             time.sleep(1)
                             total += 1
-                            logging.info(f"等待设备：启动 等待：{total} 秒")
+                            logx.info(f"等待设备：启动 等待：{total} 秒")
                             if total > 10:
                                 raise Exception(f"设备{openedDevices[index].get('name')}启动失败")
                             continue
                         else:
-                            logging.info(
+                            logx.info(
                                 f"设备：{openedDevices[index].get('name')} prot:{openedDevices[index].get('adb_port')} 启动成功")
                             port = openedDevices[index].get("adb_port")
                             break
@@ -145,20 +146,20 @@ class Mumu:
                     while 1:
                         openedDevices = self._mumuTollInfoAll()
                         if openedDevices[index].get("adb_port", 0) == 0:
-                            logging.info(f"等待设备：{openedDevices[index].get('name')}启动")
+                            logx.info(f"等待设备：{openedDevices[index].get('name')}启动")
                             time.sleep(1)
                             total += 1
-                            logging.info(f"等待设备：启动 等待：{total} 秒")
+                            logx.info(f"等待设备：启动 等待：{total} 秒")
                             if total > 10:
                                 raise Exception(f"设备{openedDevices[index].get('name')}启动失败")
                             continue
                         else:
-                            logging.info(f"设备：{openedDevices[index].get('name')} prot:{openedDevices[index].get('adb_port')} 启动成功")
+                            logx.info(f"设备：{openedDevices[index].get('name')} prot:{openedDevices[index].get('adb_port')} 启动成功")
                             break
 
             openedDevices = self._mumuTollInfoAll()
             if openedDevices[index].get("adb_port", 0) != int(port):
-                logging.info(f"设备：{openedDevices[index].get('name')} prot:{openedDevices[index].get('adb_port')},与需求端口{port}不匹配,准备关闭设备")
+                logx.info(f"设备：{openedDevices[index].get('name')} prot:{openedDevices[index].get('adb_port')},与需求端口{port}不匹配,准备关闭设备")
                 self._closeDevice(index)
                 time.sleep(0.2)
                 continue
