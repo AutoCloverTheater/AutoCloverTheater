@@ -8,16 +8,9 @@ from facades.Img.ImgSearch import imgSearch
 
 
 class MainWindowDetect:
-    # 有注册按钮并且没有匹配到输入账号密码
+    # 输入账号密码
     @matchResult
-    def isNotNeedLogin(self):
-        path = IMG_PATH.joinpath("Main").joinpath("needAccountToLogin.png")
-        mainWindow = cv2.imread(f"{path}")
-        pot, ok  = imgSearch(GetSnapShot().img, mainWindow)
-        return {"name":"不需要账号密码","pot":pot},ok
-
-    @matchResult
-    def isNeedLogin(self):
+    def pleaseInputAccount(self):
         path = IMG_PATH.joinpath("Main").joinpath("pleaseInputAccount.png")
         mainWindow = cv2.imread(f"{path}")
         pot, ok  = imgSearch(GetSnapShot().img, mainWindow)

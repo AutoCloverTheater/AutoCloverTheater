@@ -59,14 +59,19 @@ def BeforeInWorldTree():
             click(searchStartWorldTreeAdvButton['pot'])
             logx.info(f"点击出发冒险按钮，等待选择难度")
             continue
+        # 选择难度
         leverSelect,ok = worldTree.hasTopLeverButton()
         if ok:
             click(leverSelect['pot'])
-            logx.info(f"等待进入世界树战斗")
+            logx.info(f"选择难度")
+            continue
+        isLoading, ok = worldTree.isLoading()
+        if ok:
             continue
         startPerform, ok = worldTree.isInStartPerform()
         if ok:
             click(startPerform['pot'])
+            logx.info("开始表演")
             continue
         inGame, ok = worldTree.isInworldTreeCardWindow()
         if ok:
@@ -80,7 +85,7 @@ def AfterInWorldTree():
     pass
 def InWorldTree():
     """
-    世界树进行中
+    世界树入口选项
     :return:
     """
     worldTree = WorldTreeDetect()
@@ -114,28 +119,42 @@ def InWorldTree():
             time.sleep(0.1)
             logx.info(f"已跳过编队")
         # todo 这下面的还没有验
+        # 战斗中
+        inFastBattleWindow,ok = FlashBattle.inFastBattleWindow()
+        if ok :
+            # 啥也不干等着打完
+            time.sleep(1)
+        # 战斗失败
         isInFailedFlashBattleWindow,ok = FlashBattle.isInFailedFlashBattleWindow()
         if ok :
-            logx.info(f"探索失败返回世界树主页")
+            logx.info(f"战斗失败返回世界树主页")
             click(isInFailedFlashBattleWindow['pot'])
-            break
+            continue
+        # 战斗胜利
         isInSuccessFlashBattleWindow,ok = FlashBattle.isInSuccessFlashBattleWindow()
         if ok :
             logx.info(f"战斗胜利-点击下一步")
             click(isInSuccessFlashBattleWindow['pot'])
             continue
+        # 战斗结算
         isInBattleResultWindow,ok = FlashBattle.isInBattleResultWindow()
         if ok :
-            logx.info(f"战斗失败-点击下一步")
+            logx.info(f"战斗结算-点击下一步")
             click(isInBattleResultWindow['pot'])
             continue
+        # 祝福事件
+        isInSelectYourBlessing, ok = worldTree.isInSelectYourBlessing()
+        if ok:
+            click(isInSelectYourBlessing['pot'])
+            continue
+
         # 奇遇卡-这里最好使用ocr，然后再根据排序选择需要的卡
-        BizarreCard,ok = worldTree.hasBizarreCard()
-        if ok :
+        BizarreCard, ok = worldTree.hasBizarreCard()
+        if ok:
             # todo 这里写奇遇卡的处理逻辑
             cards = []
             for Card in BizarreCard:
-                if Card['isSelected'] in AllowsCards:
+                if Card['text'] in AllowsCards:
                     cards.append(Card)
             if len(cards) == 0:
                 logx.error(f"没有可以选择的奇遇卡 ocr结果：{cards}")
@@ -146,18 +165,15 @@ def InWorldTree():
             x = abs(cards[0]['position'][0][0] - cards[0]['position'][2][0] / 2)
             y = abs(cards[0]['position'][0][1] - cards[0]['position'][2][1] / 2)
             logx.info(f"点击奇遇卡ocr对角线坐标：{x},{y}")
-            click((x,y))
+            click((x, y))
             time.sleep(1)
             continue
-        isInSelectYourBlessing, ok = worldTree.isInSelectYourBlessing()
-        if ok:
-            click(isInSelectYourBlessing['pot'])
-            break
 
     return matchResult
 
 if __name__ == '__main__':
     ConnectEmulator()
-    Login()
-    BeforeInWorldTree()
-    # InWorldTree()
+    # Login()
+    # BeforeInWorldTree()
+    InWorldTree()
+    # InWordTreeGame()

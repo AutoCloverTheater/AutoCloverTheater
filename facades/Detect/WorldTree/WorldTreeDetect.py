@@ -5,7 +5,7 @@ from facades.Constant.Constant import IMG_PATH
 from facades.Detect.DetectLog import matchResult
 
 from facades.Emulator.Emulator import GetSnapShot
-from facades.Img.ImgSearch import imgSearch
+from facades.Img.ImgSearch import imgSearch, imgMultipleResultSearch
 from facades.Ocr.MyCnocr import MyCnocr
 
 """
@@ -174,9 +174,16 @@ class WorldTreeDetect:
         绝境难度按钮
         :return:
         """
-        path = IMG_PATH.joinpath("Main").joinpath("worldTree").joinpath("topLever.png")
+        path = IMG_PATH.joinpath("Main").joinpath("worldTree").joinpath("出发按钮__1122_503_54_23__1072_453_154_123.png")
         topLever = cv2.imread(f"{path}")
-        pot, ok  = imgSearch(GetSnapShot().img, topLever)
+        pots,ok = imgMultipleResultSearch(GetSnapShot().img, topLever)
+        # 去除相差小于10的
+
+        if ok :
+            pot = pots[-1]
+        else:
+            pot = (0,0)
+        # pot, ok  = 1imgSearch(GetSnapShot().img, topLever)
         return {"name":"死境难度","pot":pot},ok
 
     def isInStartPerform(self):
@@ -198,3 +205,13 @@ class WorldTreeDetect:
         inGame = cv2.imread(f"{path}")
         pot, ok  = imgSearch(GetSnapShot().img, inGame)
         return {"name":"世界树游戏中","pot":pot},ok
+
+    def isLoading(self):
+        """
+        正在加载
+        :return:
+        """
+        path = IMG_PATH.joinpath("lag").joinpath("loading.png")
+        inGame = cv2.imread(f"{path}")
+        pot, ok  = imgSearch(GetSnapShot().img, inGame)
+        return {"name":"正在加载...","pot":pot},ok

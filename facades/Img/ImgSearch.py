@@ -3,7 +3,7 @@ import numpy
 import numpy as np
 from airtest.core.api import click
 
-from facades.Constant.Constant import IMG_PATH
+from facades.Logx.Logx import logx
 
 
 def imgSearch(img :numpy.array, template :numpy.array) -> (tuple, bool):
@@ -54,6 +54,66 @@ def imgSearch(img :numpy.array, template :numpy.array) -> (tuple, bool):
     else:
         __center = (0, 0)
         return __center, False
+
+def imgMultipleResultSearch(img :numpy.array, template :numpy.array) -> ([tuple],bool):
+    """
+    多个结果搜索
+    :param img:
+    :param template:
+    :return:
+    """
+    # 检查输入参数的有效性
+    if template is None:
+        raise ValueError("模板不能为空")
+    if img is None:
+        raise ValueError("输入图像不能为空")
+
+    if not hasattr(img, 'shape'):
+        raise ValueError("截图必须是二维数组")
+
+    if not hasattr(template, 'shape'):
+        raise ValueError("模板必须是二维数组")
+
+    if len(img.shape) < 2 or len(template.shape) < 2:
+        raise ValueError("输入图像和模板必须是二维数组")
+
+    # 获取模板尺寸
+    template_height, template_width = template.shape[:2]
+
+    # 进行模板匹配
+    result = cv2.matchTemplate(img, template, cv2.TM_CCOEFF_NORMED)
+
+    # 设置匹配阈值
+    threshold = 0.9
+
+    # 找到所有大于阈值的位置
+    locations = np.where(result >= threshold)
+
+    results = []
+    # 遍历所有匹配结果
+
+    for pt in zip(*locations[::-1]):  # locations 是 (y, x) 格式，需要反转
+        logx.info(f"pt:{pt}")
+
+        # 获取匹配区域的左上角坐标
+        top_left = pt
+
+        # 计算中心点坐标
+        center_x = top_left[0] + template_width // 2
+        center_y = top_left[1] + template_height // 2
+
+        logx.info(f"匹配结果的中心点: ({center_x}, {center_y})")
+
+        # 在图像上绘制矩形框和中心点
+        bottom_right = (top_left[0] + template_width, top_left[1] + template_height)
+        center = (int(center_x), int(center_y))
+        results.append(center)
+        # 绘制矩形框
+        # cv2.rectangle(image, top_left, bottom_right, (0, 255, 0), 2)
+
+        # 绘制中心点
+        # cv2.circle(image, center, 5, (0, 0, 255), -1)
+    return results, len(results) > 0
 
 def imgSearchClick(img :numpy.array, template :numpy.array):
     """

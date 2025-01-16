@@ -34,10 +34,22 @@ class FlashBattleDetect:
         快闪战斗胜利
         :return:
         """
-        path = IMG_PATH.joinpath("Main").joinpath('fastBattle').joinpath("battleFailed_509_410_268_79_459_360_368_179.png")
+        path = IMG_PATH.joinpath("Main").joinpath('fastBattle').joinpath("battleSuccess__509_416_265_71__459_366_365_171.png")
         mainWindow = cv2.imread(f"{path}")
         pot, ok  = imgSearch(GetSnapShot().img, mainWindow)
         return {"name":"快闪战斗胜利","pot":pot},ok
+
+    @matchResult
+    def inFastBattleWindow(self) :
+        """
+        快闪战斗中
+        :return:
+        """
+        path = IMG_PATH.joinpath("Main").joinpath('fastBattle').joinpath("inFastBattle__1099_172_20_92__1049_122_120_192.png")
+        mainWindow = cv2.imread(f"{path}")
+        pot, ok  = imgSearch(GetSnapShot().img, mainWindow)
+        return {"name":"快闪战斗中。。。。","pot":pot},ok
+
     @matchResult
     def isInFailedFlashBattleWindow(self) :
         """
@@ -54,7 +66,7 @@ class FlashBattleDetect:
         是否打开了演出结算窗口
         :return:
         """
-        path = IMG_PATH.joinpath("Main").joinpath('fastBattle').joinpath("endGame_556_53_171_43__506_3_271_143.png")
+        path = IMG_PATH.joinpath("Main").joinpath('fastBattle').joinpath("settlementBattle__502_40_280_63__452_0_380_153.png")
         mainWindow = cv2.imread(f"{path}")
         pot, ok  = imgSearch(GetSnapShot().img, mainWindow)
-        return {"name":"快闪战斗失败","pot":pot},ok
+        return {"name":"演出结算","pot":pot},ok
