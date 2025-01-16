@@ -106,7 +106,7 @@ def imgMultipleResultSearch(img :numpy.array, template :numpy.array):
         center_x = top_left[0] + template_width // 2
         center_y = top_left[1] + template_height // 2
 
-        logx.info(f"匹配结果的中心点: ({center_x}, {center_y})")
+        # logx.info(f"匹配结果的中心点: ({center_x}, {center_y})")
 
         # 在图像上绘制矩形框和中心点
         bottom_right = (top_left[0] + template_width, top_left[1] + template_height)

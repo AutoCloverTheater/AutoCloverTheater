@@ -1,3 +1,11 @@
+import cv2
+from airtest.core.api import click
+
+from facades.Constant.Constant import IMG_PATH
+from facades.Emulator.Emulator import GetSnapShot
+from facades.Img.ImgSearch import imgSearch
+from facades.Logx.Logx import logx
+
 executionQueue = []
 max_executions = 10
 
@@ -36,6 +44,44 @@ def limit_executions():
 def my_function():
     print("函数执行中...\n")
     print(f"数组...{executionQueue}")
+
+
+def error_function(method):
+
+    def wrapper(*args, **kwargs):
+        # print("Before calling the method")
+        result = method(*args, **kwargs)
+        # print("After calling the method")
+
+        def hasErrorWindow():
+            """
+            未知错误
+            :return:
+            """
+            path = IMG_PATH.joinpath("error").joinpath("error__614_483_55_26__564_433_155_126.png")
+            mainWindow = cv2.imread(f"{path}")
+            pot, ok = imgSearch(GetSnapShot().img, mainWindow)
+            return {"name": "未知错误", "pot": pot}, ok
+
+        times = 0
+        while 1:
+            if times >= 3:
+                logx.error("未知错误，请求人工处理")
+                break
+            hasErrorWindowResp,ok = hasErrorWindow()
+            if ok:
+                click(hasErrorWindowResp['pot'])
+                # 恢复函数
+                result = method(*args, **kwargs)
+                continue
+            if not ok:
+                break
+            times+=1
+
+        return result
+
+    return wrapper
+
 
 if __name__ == '__main__':
     # 测试

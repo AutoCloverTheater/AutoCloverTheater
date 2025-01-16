@@ -8,9 +8,10 @@ from facades.Detect.WorldTree.BizarreDetect import AllowsCards
 from facades.Detect.WorldTree.WorldTreeDetect import WorldTreeDetect
 from facades.Emulator.Emulator import ConnectEmulator, UpdateSnapShot
 from facades.Logx.Logx import logx
+from facades.Runner.Limit import error_function
 from facades.Runner.layout.LoginRunner import Login
 
-
+@error_function
 def BeforeInWorldTree():
     """
     世界树冒险开始前
@@ -23,11 +24,17 @@ def BeforeInWorldTree():
     while 1:
         if times >= 3:
             matchResult = False
+            logx.warning("跳过世界树准备阶段")
             break
         # 更新截图
         UpdateSnapShot()
-        mainResp,MainWindowOk = worldTree.isInMainWindow()
-        if MainWindowOk:
+        # 加载
+        loading,ok = worldTree.isLoading()
+        if ok:
+            time.sleep(1)
+            continue
+        mainResp,ok = worldTree.isInMainWindow()
+        if ok:
             click(mainResp['pot'])
             logx.info("等待进入冒险")
             continue
@@ -67,6 +74,7 @@ def BeforeInWorldTree():
             continue
         isLoading, ok = worldTree.isLoading()
         if ok:
+            time.sleep(1)
             continue
         startPerform, ok = worldTree.isInStartPerform()
         if ok:
@@ -83,6 +91,7 @@ def BeforeInWorldTree():
 def AfterInWorldTree():
     # 记录等级
     pass
+@error_function
 def InWorldTree():
     """
     世界树入口选项
@@ -97,6 +106,7 @@ def InWorldTree():
     while 1:
         if times >= 3:
             matchResult = False
+            logx.warning("跳过世界树探索阶段")
             break
         # 更新截图
         UpdateSnapShot()
@@ -128,13 +138,14 @@ def InWorldTree():
         isInFailedFlashBattleWindow,ok = FlashBattle.isInFailedFlashBattleWindow()
         if ok :
             logx.info(f"战斗失败返回世界树主页")
-            click(isInFailedFlashBattleWindow['pot'])
+            pot = (0,0)
+            click(pot)
             continue
         # 战斗胜利
         isInSuccessFlashBattleWindow,ok = FlashBattle.isInSuccessFlashBattleWindow()
         if ok :
             logx.info(f"战斗胜利-点击下一步")
-            pot = (isInSuccessFlashBattleWindow['pot'][0], isInSuccessFlashBattleWindow['pot'][1] + 100)
+            pot = (0, 0)
             click(pot)
             continue
         # 战斗结算
@@ -144,32 +155,65 @@ def InWorldTree():
             pot = (0, 0)
             click(pot)
             continue
+        # 赠礼
+        se,ok = worldTree.survivalCard()
+        if ok:
+            click(se['pot'])
+        # 赠礼
+        lvpuls,ok = worldTree.lvPlusCard()
+        if ok:
+            click(lvpuls['pot'])
         # 祝福事件
         isInSelectYourBlessing, ok = worldTree.isInSelectYourBlessing()
         if ok:
             click(isInSelectYourBlessing['pot'])
-        # 选择祝福
-        selectBlessing,ok = worldTree.selectBlessing()
+        # 选择
+        selectBlessing,ok = worldTree.selectConfirm2()
         if ok:
             click(selectBlessing['pot'])
             continue
-        # 处理遭遇事件
-        event,ok = worldTree.hasEventConfirmButton()
+        selectBlessing, ok = worldTree.selectConfirm1()
         if ok:
-            for pot in event['pot']:
-                click(pot)
+            click(selectBlessing['pot'])
             continue
         # 结束购买
         endBuy,ok = worldTree.hasEndBuyButton()
         if ok:
             click(endBuy['pot'])
             continue
+        # 放弃奖励
+        givUpItem,ok = worldTree.giveUpItem()
+        if ok:
+            click(givUpItem['pot'])
+            continue
+        # 处理遭遇事件
+        event,ok = worldTree.hasEventConfirmButton()
+        if ok:
+            pot = event['pot'].pop(-1)
+            click(pot)
+            continue
+        # 获取奖励
+        getItems,ok = worldTree.getItems()
+        if ok:
+            click(getItems['pot'])
+            continue
+        # 探索结束
+        isInWorldTreeEndWindow,ok = worldTree.isInWorldTreeEndWindow()
+        if ok:
+            click((0,0))
+            continue
+        # 假设已经返回世界树冒险主页面
+        isInWorldTree2,ok = worldTree.isInWorldTreeMainWindow()
+        if ok:
+            logx.info("已经返回世界树冒险主页面")
+            BeforeInWorldTree()
+            continue
 
         # 奇遇卡-这里最好使用ocr，然后再根据排序选择需要的卡
-        BizarreCard, ok = worldTree.hasBizarreCard()
-        if ok:
-            # todo 这里写奇遇卡的处理逻辑
-            continue
+        # BizarreCard, ok = worldTree.hasBizarreCard()
+        # if ok:
+        #     # todo 这里写奇遇卡的处理逻辑
+        #     continue
         times += 1
 
     return matchResult
@@ -179,4 +223,3 @@ if __name__ == '__main__':
     Login()
     BeforeInWorldTree()
     InWorldTree()
-    # InWordTreeGame()

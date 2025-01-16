@@ -57,7 +57,10 @@ class WorldTreeDetect:
         lv = 0
         for roc in res:
             if "lv" in roc["text"]:
-                lv = int(roc["text"].replace('lv.', ''))
+                roc["text"] = roc["text"].replace('lv.', '')
+                roc["text"] = roc["text"].replace('l', '1')
+
+                lv = int(roc["text"])
         self.lv = lv
         return lv
 
@@ -95,9 +98,9 @@ class WorldTreeDetect:
         result2 = result
         result3 = result
         # 保存图片
-        l = result1[0:28,322:406]
-        m = result2[0:28,544:704]
-        r = result3[0:28,840:928]
+        l = result1[0:28,293:428] # 293:428
+        m = result2[0:28,556:688] # 556:688
+        r = result3[0:28,815:950] # 815:950
 
         lname = imagehash.average_hash(Image.fromarray(l))
         mname = imagehash.average_hash(Image.fromarray(m))
@@ -118,21 +121,13 @@ class WorldTreeDetect:
     @matchResult
     def isInWorldTreeEndWindow(self) :
         """
-        世界树探索结束窗口
+        探索结束
         :return:
         """
-        path = IMG_PATH.joinpath("Main").joinpath("worldTreeEnd.png")
+        path = IMG_PATH.joinpath("Main").joinpath("worldTree").joinpath("worldTreeEnd__556_55_164_40__506_5_264_140.png")
         mainWindow = cv2.imread(f"{path}")
         pot, ok  = imgSearch(GetSnapShot().img, mainWindow)
         return {"name":"探索结束","pot":pot},ok
-
-    @matchResult
-    def isInWorldTreeBattleReadyWindow(self):
-        """
-        世界树探索战斗准备窗口
-        :return:
-        """
-        pass
 
     @matchResult
     def isInAdventureListWindow(self):
@@ -154,7 +149,7 @@ class WorldTreeDetect:
         mainWindow = cv2.imread(f"{path}")
         pot, ok  = imgSearch(GetSnapShot().img, mainWindow)
         return {"name":"世界树","pot":pot},ok
-
+    @matchResult
     def searchStartWorldTreeAdvButton(self):
         """
         搜索是世界树开始冒险按钮
@@ -201,7 +196,7 @@ class WorldTreeDetect:
         mainWindow = cv2.imread(f"{path}")
         pot, ok  = imgSearch(GetSnapShot().img, mainWindow)
         return {"name":"露水数量","pot":pot},ok
-
+    @matchResult
     def hasTopLeverButton(self):
         """
         绝境难度按钮
@@ -220,17 +215,17 @@ class WorldTreeDetect:
             pot = (0,0)
         # pot, ok  = 1imgSearch(GetSnapShot().img, topLever)
         return {"name":"死境难度","pot":pot},ok
-
+    @matchResult
     def isInStartPerform(self):
         """
         开始表演
         :return:
         """
-        path = IMG_PATH.joinpath("Main").joinpath("worldTree").joinpath("startPerform_1039_644_133_38__989_594_233_126.png")
+        path = IMG_PATH.joinpath("Main").joinpath("worldTree").joinpath("startPerform__1047_647_119_29__997_597_219_123.png")
         topLever = cv2.imread(f"{path}")
         pot, ok  = imgSearch(GetSnapShot().img, topLever)
         return {"name":"开始表演","pot":pot},ok
-
+    @matchResult
     def isInworldTreeCardWindow(self):
         """
         世界树游戏中
@@ -241,33 +236,47 @@ class WorldTreeDetect:
         pot, ok  = imgSearch(GetSnapShot().img, inGame)
         return {"name":"世界树游戏中","pot":pot},ok
 
+    @matchResult
     def isLoading(self):
         """
         正在加载
         :return:
         """
-        path = IMG_PATH.joinpath("lag").joinpath("loading.png")
+        path = IMG_PATH.joinpath("Main").joinpath("worldTree").joinpath("loading__867_579_343_97__817_529_443_191.png")
         inGame = cv2.imread(f"{path}")
         pot, ok  = imgSearch(GetSnapShot().img, inGame)
         return {"name":"正在加载...","pot":pot},ok
-
-    def selectBlessing(self):
+    @matchResult
+    def selectConfirm2(self):
         """
-        确认选择祝福
+        确认选择
         Returns:
 
         """
-        path = IMG_PATH.joinpath("Main").joinpath("worldTree").joinpath("selectBlessing__606_651_68_29__556_601_168_119.png")
+        path = IMG_PATH.joinpath("Main").joinpath("worldTree").joinpath("selectConfirm2__606_650_69_31__556_600_169_120.png")
         selectBlessing = cv2.imread(f"{path}")
         pot, ok  = imgSearch(GetSnapShot().img, selectBlessing)
-        return {"name":"确认选择祝福","pot":pot},ok
+        return {"name":"确认选择","pot":pot},ok
+    @matchResult
+    def selectConfirm1(self):
+        """
+        确认选择
+        Returns:
 
+        """
+        path = IMG_PATH.joinpath("Main").joinpath("worldTree").joinpath("selectConfirm1__606_651_68_29__556_601_168_119.png")
+        selectBlessing = cv2.imread(f"{path}")
+        pot, ok  = imgSearch(GetSnapShot().img, selectBlessing)
+        return {"name":"确认选择1","pot":pot},ok
+
+    @matchResult
     def hasEventConfirmButton(self):
-        path = IMG_PATH.joinpath("Main").joinpath("worldTree").joinpath("selecEvent__968_218_47_24__918_168_147_124.png")
+        path = IMG_PATH.joinpath("Main").joinpath("worldTree").joinpath("selectEvent__968_218_47_24__918_168_147_124.png")
         selectBlessing = cv2.imread(f"{path}")
         pot, ok  = imgMultipleResultSearch(GetSnapShot().img, selectBlessing)
         return {"name":f"遭遇事件选项：{len(pot)} 个","pot":pot},ok
 
+    @matchResult
     def hasEndBuyButton(self):
         """
         兔子商店-结束购买
@@ -278,3 +287,49 @@ class WorldTreeDetect:
         endBuy = cv2.imread(f"{path}")
         pot, ok  = imgSearch(GetSnapShot().img, endBuy)
         return {"name":"结束购买","pot":pot},ok
+
+    @matchResult
+    def getItems(self):
+        """
+        获得道具
+        Returns:
+        """
+        path = IMG_PATH.joinpath("Main").joinpath("worldTree").joinpath("getItems__497_78_284_69__447_28_384_169.png")
+        items = cv2.imread(f"{path}")
+        pots,ok = imgSearch(GetSnapShot().img, items)
+        return {"name":"获得道具","pot":pots},ok
+
+    @matchResult
+    def giveUpItem(self):
+        """
+        放弃奖励
+        Returns:
+        """
+        path = IMG_PATH.joinpath("Main").joinpath("worldTree").joinpath("giveUpItem__586_580_109_27__536_530_209_127.png")
+        items = cv2.imread(f"{path}")
+        pots,ok = imgSearch(GetSnapShot().img, items)
+        return {"name":"放弃奖励","pot":pots},ok
+
+    @matchResult
+    def survivalCard(self):
+        """
+        选择赠礼
+        Returns:
+
+        """
+        path = IMG_PATH.joinpath("Main").joinpath("worldTree").joinpath("survival__1034_195_56_25__984_145_156_125.png")
+        items = cv2.imread(f"{path}")
+        pots,ok = imgSearch(GetSnapShot().img, items)
+        return {"name":"选择赠礼-生存","pot":pots},ok
+    @matchResult
+    def lvPlusCard(self):
+        """
+        选择赠礼
+        Returns:
+
+        """
+
+        path = IMG_PATH.joinpath("Main").joinpath("worldTree").joinpath("lvplus__194_193_55_28__144_143_155_128.png")
+        items = cv2.imread(f"{path}")
+        pots,ok = imgSearch(GetSnapShot().img, items)
+        return {"name":"选择赠礼-远见","pot":pots},ok

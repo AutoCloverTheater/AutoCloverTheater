@@ -6,8 +6,10 @@ from facades.Configs.Config import Config
 from facades.Detect.MainWindowDetect import MainWindowDetect
 from facades.Emulator.Emulator import UpdateSnapShot, ConnectEmulator
 from facades.Logx.Logx import logx
+from facades.Runner.Limit import error_function
 
 
+@error_function
 def Login():
     main = MainWindowDetect()
 
