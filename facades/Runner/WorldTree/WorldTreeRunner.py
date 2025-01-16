@@ -83,7 +83,7 @@ def BeforeInWorldTree():
             continue
         inGame, ok = worldTree.isInworldTreeCardWindow()
         if ok:
-            logx.info(f"世界树游戏中")
+            # todo 这里接到世界树探索方法
             break
         times +=1
 
@@ -128,7 +128,6 @@ def InWorldTree():
             click(SkipFormationResp['pot'])
             time.sleep(0.1)
             logx.info(f"已跳过编队")
-        # todo 这下面的还没有验
         # 战斗中
         inFastBattleWindow,ok = FlashBattle.inFastBattleWindow()
         if ok :
@@ -214,6 +213,12 @@ def InWorldTree():
         # if ok:
         #     # todo 这里写奇遇卡的处理逻辑
         #     continue
+        # 探索中
+        ingame,ok = worldTree.isInworldTreeCardWindow()
+        if ok :
+            # 探索
+            logx.info(f"探索中")
+            continue
         times += 1
 
     return matchResult
