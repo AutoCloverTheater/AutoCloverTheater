@@ -234,7 +234,7 @@ class WorldTreeDetect:
         path = IMG_PATH.joinpath("Main").joinpath("worldTree").joinpath("inGame.png")
         inGame = cv2.imread(f"{path}")
         pot, ok  = imgSearch(GetSnapShot().img, inGame)
-        return {"name":"世界树游戏中","pot":pot},ok
+        return {"name":"世界树探索中","pot":pot},ok
 
     @matchResult
     def isLoading(self):

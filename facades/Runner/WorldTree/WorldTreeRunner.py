@@ -83,7 +83,7 @@ def BeforeInWorldTree():
             continue
         inGame, ok = worldTree.isInworldTreeCardWindow()
         if ok:
-            logx.info(f"世界树游戏中")
+            # todo 这里接到世界树探索方法
             break
         times +=1
 
@@ -110,11 +110,11 @@ def InWorldTree():
             break
         # 更新截图
         UpdateSnapShot()
-        dewResp,ok = worldTree.canSeeDew()
-        if ok:
-            # 更新露水数量
-            dew = worldTree.updateDew()
-            logx.info(f"当前露水：{dew}")
+        # dewResp,ok = worldTree.canSeeDew()
+        # if ok:
+        #     # 更新露水数量
+        #     dew = worldTree.updateDew()
+        #     logx.info(f"当前露水：{dew}")
 
         # 开启快闪，跳过编队
         FlashBattleResp, ok = FlashBattle.isOpenFlashBattleClosed()
@@ -128,7 +128,6 @@ def InWorldTree():
             click(SkipFormationResp['pot'])
             time.sleep(0.1)
             logx.info(f"已跳过编队")
-        # todo 这下面的还没有验
         # 战斗中
         inFastBattleWindow,ok = FlashBattle.inFastBattleWindow()
         if ok :
@@ -140,6 +139,8 @@ def InWorldTree():
             logx.info(f"战斗失败返回世界树主页")
             pot = (0,0)
             click(pot)
+
+            times = 0
             continue
         # 战斗胜利
         isInSuccessFlashBattleWindow,ok = FlashBattle.isInSuccessFlashBattleWindow()
@@ -147,6 +148,8 @@ def InWorldTree():
             logx.info(f"战斗胜利-点击下一步")
             pot = (0, 0)
             click(pot)
+
+            times = 0
             continue
         # 战斗结算
         isInBattleResultWindow,ok = FlashBattle.isInBattleResultWindow()
@@ -154,6 +157,8 @@ def InWorldTree():
             logx.info(f"战斗结算-点击下一步")
             pot = (0, 0)
             click(pot)
+
+            times = 0
             continue
         # 赠礼
         se,ok = worldTree.survivalCard()
@@ -171,42 +176,58 @@ def InWorldTree():
         selectBlessing,ok = worldTree.selectConfirm2()
         if ok:
             click(selectBlessing['pot'])
+
+            times = 0
             continue
         selectBlessing, ok = worldTree.selectConfirm1()
         if ok:
             click(selectBlessing['pot'])
+
+            times = 0
             continue
         # 结束购买
         endBuy,ok = worldTree.hasEndBuyButton()
         if ok:
             click(endBuy['pot'])
+
+            times = 0
             continue
         # 放弃奖励
         givUpItem,ok = worldTree.giveUpItem()
         if ok:
             click(givUpItem['pot'])
+
+            times = 0
             continue
         # 处理遭遇事件
         event,ok = worldTree.hasEventConfirmButton()
         if ok:
             pot = event['pot'].pop(-1)
             click(pot)
+
+            times = 0
             continue
         # 获取奖励
         getItems,ok = worldTree.getItems()
         if ok:
             click(getItems['pot'])
+
+            times = 0
             continue
         # 探索结束
         isInWorldTreeEndWindow,ok = worldTree.isInWorldTreeEndWindow()
         if ok:
             click((0,0))
+
+            times = 0
             continue
         # 假设已经返回世界树冒险主页面
         isInWorldTree2,ok = worldTree.isInWorldTreeMainWindow()
         if ok:
             logx.info("已经返回世界树冒险主页面")
             BeforeInWorldTree()
+
+            times = 0
             continue
 
         # 奇遇卡-这里最好使用ocr，然后再根据排序选择需要的卡
@@ -214,7 +235,17 @@ def InWorldTree():
         # if ok:
         #     # todo 这里写奇遇卡的处理逻辑
         #     continue
+        # 探索中
+        ingame,ok = worldTree.isInworldTreeCardWindow()
+        if ok :
+            # 探索
+            logx.info(f"探索中")
+
+            times = 0
+            continue
+
         times += 1
+        logx.warning(f"执行次数：{times}")
 
     return matchResult
 
