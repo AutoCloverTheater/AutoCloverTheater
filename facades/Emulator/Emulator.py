@@ -8,19 +8,22 @@ from facades.Configs.Config import Config
 from facades.Emulator import EmulatorFacades
 from facades.Logx.Logx import logx
 from mac.emulator.bluestacks import Bluestacks
-from mac.emulator.mumu import Mumu
+from mac.emulator.mumu import Mumu as MumuMac
+from win.emulator.mumu import Mumu as MumuWin
 
 # 可用的模拟器驱动
 UsefulEmulator = {
     "darwin": {
-        "mumu": Mumu,
+        "mumu": MumuMac,
         "bluestacks": Bluestacks,
     },
-    "win32": {}
+    "win32": {
+        "mumu": MumuWin,
+    }
 }
 
 class Emulator:
-    instance = Mumu | Bluestacks
+    instance = MumuMac| MumuWin | Bluestacks
     device = Android
     snapshotCache = None
 

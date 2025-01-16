@@ -1,8 +1,13 @@
+import time
+from typing import List
+
 import cv2
 import numpy
 import numpy as np
 from airtest.core.api import click
 
+from facades.Constant.Constant import IMG_PATH
+from facades.Emulator.Emulator import ConnectEmulator, GetSnapShot, UpdateSnapShot
 from facades.Logx.Logx import logx
 
 
@@ -55,7 +60,7 @@ def imgSearch(img :numpy.array, template :numpy.array) -> (tuple, bool):
         __center = (0, 0)
         return __center, False
 
-def imgMultipleResultSearch(img :numpy.array, template :numpy.array) -> ([tuple],bool):
+def imgMultipleResultSearch(img :numpy.array, template :numpy.array):
     """
     多个结果搜索
     :param img:
@@ -93,7 +98,6 @@ def imgMultipleResultSearch(img :numpy.array, template :numpy.array) -> ([tuple]
     # 遍历所有匹配结果
 
     for pt in zip(*locations[::-1]):  # locations 是 (y, x) 格式，需要反转
-        logx.info(f"pt:{pt}")
 
         # 获取匹配区域的左上角坐标
         top_left = pt
@@ -128,3 +132,32 @@ def imgSearchClick(img :numpy.array, template :numpy.array):
         return t
     else:
         return None
+
+if __name__ == '__main__':
+    ConnectEmulator()
+    time.sleep(1)
+    lq = IMG_PATH.joinpath("Main").joinpath("worldTree").joinpath("cards").joinpath("m1.png")
+
+    UpdateSnapShot()
+    img = GetSnapShot().img
+
+    cvi = cv2.imread(f"{lq}")
+
+    # 获取图片数据
+    # data = cvi.getdata()
+    #
+    # # 创建一个新的像素列表
+    # new_data = []
+    # for item in data:
+    #     # 如果像素接近黑色（RGB 值小于某个阈值），则设置为透明
+    #     if item[0] < 50 and item[1] < 50 and item[2] < 50:  # 阈值可以根据需要调整
+    #         new_data.append((0, 0, 0, 0))  # 设置为完全透明
+    #     else:
+    #         new_data.append(item)  # 保留原像素
+
+    # 更新图片数据
+    # cvi.putdata(new_data)
+
+
+    res,ok = imgSearch(GetSnapShot().img, cvi)
+    print(res,ok)

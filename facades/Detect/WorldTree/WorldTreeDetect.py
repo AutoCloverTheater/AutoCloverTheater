@@ -1,11 +1,14 @@
 import cv2
 import numpy
-
+from PIL import Image
 from facades.Constant.Constant import IMG_PATH
 from facades.Detect.DetectLog import matchResult
+import imagehash
 
 from facades.Emulator.Emulator import GetSnapShot
+from facades.Img.ImgColor import imgGetColor
 from facades.Img.ImgSearch import imgSearch, imgMultipleResultSearch
+from facades.Logx.Logx import logx
 from facades.Ocr.MyCnocr import MyCnocr
 
 """
@@ -79,8 +82,38 @@ class WorldTreeDetect:
         是否存在奇遇卡片可选
         :return:
         """
-        res = MyCnocr.ocr(img=GetSnapShot().img)
-        return res, len(res)>0
+
+        img = GetSnapShot().img
+        y, x, _ = img.shape
+        cardxy = img[565:595, :]
+
+        # 将掩码外的像素设置为黑色
+        result = imgGetColor(img=cardxy, low="AB9F87", top="F9E9CF")
+
+        cv2.imwrite("result.png", result)
+        result1  = result
+        result2 = result
+        result3 = result
+        # 保存图片
+        l = result1[0:28,322:406]
+        m = result2[0:28,544:704]
+        r = result3[0:28,840:928]
+
+        lname = imagehash.average_hash(Image.fromarray(l))
+        mname = imagehash.average_hash(Image.fromarray(m))
+        rname = imagehash.average_hash(Image.fromarray(r))
+
+        lp = IMG_PATH.joinpath("Main/worldTree/cards").joinpath(f"l/{lname}.png")
+        mp = IMG_PATH.joinpath("Main/worldTree/cards").joinpath(f"m/{mname}.png")
+        rp = IMG_PATH.joinpath("Main/worldTree/cards").joinpath(f"r/{rname}.png")
+
+        res1 = cv2.imwrite(f"{lp}",l)
+        res2 = cv2.imwrite(f"{mp}",m)
+        res3 = cv2.imwrite(f"{rp}",r)
+        logx.info(f"保存结果 {res1},{res2},{res3}\n")
+
+        # res = MyCnocr.bizarreCardOcr(img=result1)
+        return {}, True
 
     @matchResult
     def isInWorldTreeEndWindow(self) :
@@ -153,10 +186,10 @@ class WorldTreeDetect:
         4 提升1.5%攻防生命
         :return:
         """
-        path = IMG_PATH.joinpath("WorldTree").joinpath("blessing.png")
+        path = IMG_PATH.joinpath("Main").joinpath("WorldTree").joinpath("blessing__1036_239_45_89__986_189_145_189.png")
         mainWindow = cv2.imread(f"{path}")
         pot, ok  = imgSearch(GetSnapShot().img, mainWindow)
-        return {"name":"游戏主界面","pot":pot},ok
+        return {"name":"选择你的祝福","pot":pot},ok
 
     @matchResult
     def canSeeDew(self):
@@ -174,7 +207,9 @@ class WorldTreeDetect:
         绝境难度按钮
         :return:
         """
-        path = IMG_PATH.joinpath("Main").joinpath("worldTree").joinpath("出发按钮__1122_503_54_23__1072_453_154_123.png")
+        path = IMG_PATH.joinpath("Main").joinpath("worldTree").joinpath("go__1122_503_54_23__1072_453_154_123.png")
+        path = f"{path}"
+        path = path.encode('utf-8').decode('utf-8')
         topLever = cv2.imread(f"{path}")
         pots,ok = imgMultipleResultSearch(GetSnapShot().img, topLever)
         # 去除相差小于10的
@@ -215,3 +250,31 @@ class WorldTreeDetect:
         inGame = cv2.imread(f"{path}")
         pot, ok  = imgSearch(GetSnapShot().img, inGame)
         return {"name":"正在加载...","pot":pot},ok
+
+    def selectBlessing(self):
+        """
+        确认选择祝福
+        Returns:
+
+        """
+        path = IMG_PATH.joinpath("Main").joinpath("worldTree").joinpath("selectBlessing__606_651_68_29__556_601_168_119.png")
+        selectBlessing = cv2.imread(f"{path}")
+        pot, ok  = imgSearch(GetSnapShot().img, selectBlessing)
+        return {"name":"确认选择祝福","pot":pot},ok
+
+    def hasEventConfirmButton(self):
+        path = IMG_PATH.joinpath("Main").joinpath("worldTree").joinpath("selecEvent__968_218_47_24__918_168_147_124.png")
+        selectBlessing = cv2.imread(f"{path}")
+        pot, ok  = imgMultipleResultSearch(GetSnapShot().img, selectBlessing)
+        return {"name":f"遭遇事件选项：{len(pot)} 个","pot":pot},ok
+
+    def hasEndBuyButton(self):
+        """
+        兔子商店-结束购买
+        Returns:
+
+        """
+        path = IMG_PATH.joinpath("Main").joinpath("worldTree").joinpath("endBuy__905_603_105_24__855_553_205_124.png")
+        endBuy = cv2.imread(f"{path}")
+        pot, ok  = imgSearch(GetSnapShot().img, endBuy)
+        return {"name":"结束购买","pot":pot},ok

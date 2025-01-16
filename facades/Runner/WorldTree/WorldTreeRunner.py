@@ -134,46 +134,49 @@ def InWorldTree():
         isInSuccessFlashBattleWindow,ok = FlashBattle.isInSuccessFlashBattleWindow()
         if ok :
             logx.info(f"战斗胜利-点击下一步")
-            click(isInSuccessFlashBattleWindow['pot'])
+            pot = (isInSuccessFlashBattleWindow['pot'][0], isInSuccessFlashBattleWindow['pot'][1] + 100)
+            click(pot)
             continue
         # 战斗结算
         isInBattleResultWindow,ok = FlashBattle.isInBattleResultWindow()
         if ok :
             logx.info(f"战斗结算-点击下一步")
-            click(isInBattleResultWindow['pot'])
+            pot = (0, 0)
+            click(pot)
             continue
         # 祝福事件
         isInSelectYourBlessing, ok = worldTree.isInSelectYourBlessing()
         if ok:
             click(isInSelectYourBlessing['pot'])
+        # 选择祝福
+        selectBlessing,ok = worldTree.selectBlessing()
+        if ok:
+            click(selectBlessing['pot'])
+            continue
+        # 处理遭遇事件
+        event,ok = worldTree.hasEventConfirmButton()
+        if ok:
+            for pot in event['pot']:
+                click(pot)
+            continue
+        # 结束购买
+        endBuy,ok = worldTree.hasEndBuyButton()
+        if ok:
+            click(endBuy['pot'])
             continue
 
         # 奇遇卡-这里最好使用ocr，然后再根据排序选择需要的卡
         BizarreCard, ok = worldTree.hasBizarreCard()
         if ok:
             # todo 这里写奇遇卡的处理逻辑
-            cards = []
-            for Card in BizarreCard:
-                if Card['text'] in AllowsCards:
-                    cards.append(Card)
-            if len(cards) == 0:
-                logx.error(f"没有可以选择的奇遇卡 ocr结果：{cards}")
-                continue
-            # 排好优先级后选择第一个
-            logx.info(f"选择奇遇卡：{cards[0]['name']}")
-            # 点击坐标是对角线的中点
-            x = abs(cards[0]['position'][0][0] - cards[0]['position'][2][0] / 2)
-            y = abs(cards[0]['position'][0][1] - cards[0]['position'][2][1] / 2)
-            logx.info(f"点击奇遇卡ocr对角线坐标：{x},{y}")
-            click((x, y))
-            time.sleep(1)
             continue
+        times += 1
 
     return matchResult
 
 if __name__ == '__main__':
     ConnectEmulator()
-    # Login()
-    # BeforeInWorldTree()
+    Login()
+    BeforeInWorldTree()
     InWorldTree()
     # InWordTreeGame()
