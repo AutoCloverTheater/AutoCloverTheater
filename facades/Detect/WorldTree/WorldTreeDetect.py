@@ -74,7 +74,6 @@ class WorldTreeDetect:
         self.dew = text.replace("露水数量", "")
 
         return self.dew
-    @matchResult
     def hasBizarreCard(self) :
         """
         是否存在奇遇卡片可选

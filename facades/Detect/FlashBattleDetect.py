@@ -29,12 +29,15 @@ class FlashBattleDetect:
         pot, ok  = imgSearch(GetSnapShot().img, mainWindow)
         return {"name":"跳过编队-关闭","pot":pot},ok
     @matchResult
-    def isInSuccessFlashBattleWindow(self)->bool :
+    def isInSuccessFlashBattleWindow(self) :
         """
         快闪战斗胜利
         :return:
         """
-        return False
+        path = IMG_PATH.joinpath("Main").joinpath('fastBattle').joinpath("battleFailed_509_410_268_79_459_360_368_179.png")
+        mainWindow = cv2.imread(f"{path}")
+        pot, ok  = imgSearch(GetSnapShot().img, mainWindow)
+        return {"name":"快闪战斗胜利","pot":pot},ok
     @matchResult
     def isInFailedFlashBattleWindow(self) :
         """

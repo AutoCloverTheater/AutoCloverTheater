@@ -49,3 +49,10 @@ class MainWindowDetect:
         mainWindow = cv2.imread(f"{path}")
         pot, ok  = imgSearch(GetSnapShot().img, mainWindow)
         return {"name":"游戏主ui","pot":pot},ok
+
+    @matchResult
+    def hasLoginButton(self):
+        path = IMG_PATH.joinpath("Main").joinpath("loginButton.png")
+        mainWindow = cv2.imread(f"{path}")
+        pot, ok  = imgSearch(GetSnapShot().img, mainWindow)
+        return {"name":"登录按钮","pot":pot},ok

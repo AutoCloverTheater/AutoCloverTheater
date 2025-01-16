@@ -43,7 +43,11 @@ def Login():
             text(f'{Config("app").get("password")}')
             logx.info(f"输入账号完毕")
             # 等待登录完成
-            break
+            continue
+        login, ok = main.hasLoginButton()
+        if ok and not isNeedLoginOk:
+            logx.info(f"点击登录")
+            click(login['pot'])
         # 登录页面-不需要登录
         isNotNeedLoginResp, ok = main.isNotNeedLogin()
         if ok and not isNeedLoginOk:
@@ -64,7 +68,6 @@ def Login():
         # 主页面
         isMainWindowResp, ok = main.isMainWindow()
         if ok:
-
             logx.info(f"开始登录流程")
             # y坐标增加60
             clickXy = (isMainWindowResp['pot'][0], isMainWindowResp['pot'][1] + 60)

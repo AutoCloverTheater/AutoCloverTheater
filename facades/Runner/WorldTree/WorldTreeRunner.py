@@ -26,24 +26,22 @@ def BeforeInWorldTree():
             break
         # 更新截图
         UpdateSnapShot()
-        mainResp,ok = worldTree.isInMainWindow()
-        if ok:
-            adventureButton = (0, 0)
-            click(adventureButton)
-            logx.info(f"点击冒险按钮，等待进入冒险之旅")
+        mainResp,MainWindowOk = worldTree.isInMainWindow()
+        if MainWindowOk:
+            click(mainResp['pot'])
+            logx.info("等待进入冒险")
             continue
         worldTreeButton,ok = worldTree.hasWorldTreeButton()
         if ok:
             click(worldTreeButton['pot'])
-            logx.info(f"点击世界树按钮，等待进入世界树")
+            logx.info(f"点击世界树按钮，等待选择世界树主页面")
             continue
         adventureListResp,ok = worldTree.isInAdventureListWindow()
         if ok:
             logx.info(f"开始滑动搜索世界树入口按钮")
-            # 从右向左滑动150
-            right = (900,60)
-            left = (800,62)
-            swipe(right, left)
+            # 从右向左滑动
+            swipe((400, 100), (200, 100), duration=0.2,steps=2)
+            time.sleep(1)
             continue
         adventureMainResp, ok = worldTree.isInWorldTreeMainWindow()
         if ok:
@@ -59,7 +57,7 @@ def BeforeInWorldTree():
         searchStartWorldTreeAdvButton, ok = worldTree.searchStartWorldTreeAdvButton()
         if ok and worldTree.lv < Config("app.worldTree.lever"):
             click(searchStartWorldTreeAdvButton['pot'])
-            logx.info(f"点击世界树冒险按钮，等待选择难度")
+            logx.info(f"点击出发冒险按钮，等待选择难度")
             continue
         leverSelect,ok = worldTree.hasTopLeverButton()
         if ok:
@@ -141,7 +139,7 @@ def InWorldTree():
                     cards.append(Card)
             if len(cards) == 0:
                 logx.error(f"没有可以选择的奇遇卡 ocr结果：{cards}")
-                break
+                continue
             # 排好优先级后选择第一个
             logx.info(f"选择奇遇卡：{cards[0]['name']}")
             # 点击坐标是对角线的中点
@@ -162,4 +160,4 @@ if __name__ == '__main__':
     ConnectEmulator()
     Login()
     BeforeInWorldTree()
-    InWorldTree()
+    # InWorldTree()
