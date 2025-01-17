@@ -46,7 +46,7 @@ class WorldTreeDetect:
         path = IMG_PATH.joinpath("Main").joinpath("difficulty.png")
         mainWindow = cv2.imread(f"{path}")
         pot, ok  = imgSearch(GetSnapShot().img, mainWindow)
-        return {"name":"世界树bata2.0","pot":pot},ok
+        return {"name":"选择难度","pot":pot},ok
 
     def getLever(self):
         """
@@ -105,7 +105,7 @@ class WorldTreeDetect:
                 for file in png_files:
                     tempImg = cv2.imread(file)
 
-                    pot, ok = imgSearchArea(GetSnapShot().img, tempImg, roi, 0.8)
+                    pots, ok = imgSearchArea(GetSnapShot().img, tempImg, roi, 0.8)
                     if ok:
                         fName = file.split('/')[-1].split('.')[0]
                         result.append({"pot": (roi[0], roi[1]), "name": fName})
@@ -175,12 +175,16 @@ class WorldTreeDetect:
     @matchResult
     def isInAdventureListWindow(self):
         """
-        冒险列表窗口
+        冒险之旅窗口
         :return:
         """
-        path = IMG_PATH.joinpath("Main").joinpath("adventure").joinpath("adventureList.png")
+        path = IMG_PATH.joinpath("Main").joinpath("adventure").joinpath("adventureList__96_23_93_22__46_0_193_95.png")
         mainWindow = cv2.imread(f"{path}")
-        pot, ok  = imgSearch(GetSnapShot().img, mainWindow)
+        pots, ok  = imgSearchArea(GetSnapShot().img, mainWindow, [96, 23, 93, 22])
+        if ok:
+            pot = pots[0]
+        else:
+            pot = (0,0)
         return {"name":"冒险之旅","pot":pot},ok
     @matchResult
     def hasWorldTreeButton(self):
@@ -396,4 +400,8 @@ class WorldTreeDetect:
         path = IMG_PATH.joinpath("Main").joinpath("worldTree").joinpath("exit__530_652_234_23__480_602_334_118.png")
         items = cv2.imread(f"{path}")
         pots,ok = imgSearchArea(GetSnapShot().img, items, [530,652,234,23])
-        return {"name":"点击空白区域退出","pot":pots},ok
+        if ok:
+            pot = pots[-1]
+        else:
+            pot = (0,0)
+        return {"name":"点击空白区域退出","pot":pot},ok

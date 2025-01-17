@@ -1,7 +1,7 @@
 import logging
 import threading
 
-from facades.Runner.WorldTree.WorldTreeRunner import WorldTreeRunner
+from facades.Runner.WorldTreeRunner import WorldTreeRunner
 
 
 class App:

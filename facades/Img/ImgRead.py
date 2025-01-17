@@ -7,7 +7,7 @@ from facades.Constant.Constant import IMG_PATH
 IMG_POOL = {}
 
 def MyImread(path:pathlib.PurePath|str):
-    p = f"f{path}"
+    p = f"{path}"
 
     if p in IMG_POOL:
         return IMG_POOL[p]

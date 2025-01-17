@@ -4,7 +4,6 @@ from airtest.core.api import click, swipe
 
 from facades.Configs.Config import Config
 from facades.Detect.FlashBattleDetect import FlashBattleDetect
-from facades.Detect.WorldTree.BizarreDetect import AllowsCards
 from facades.Detect.WorldTree.WorldTreeDetect import WorldTreeDetect
 from facades.Emulator.Emulator import ConnectEmulator, UpdateSnapShot
 from facades.Logx.Logx import logx
@@ -170,9 +169,9 @@ def InWorldTree():
         if ok:
             click(se['pot'])
         # 赠礼
-        lvpuls,ok = worldTree.lvPlusCard()
+        lvPlus,ok = worldTree.lvPlusCard()
         if ok:
-            click(lvpuls['pot'])
+            click(lvPlus['pot'])
         # 祝福
         isInSelectYourBlessing, ok = worldTree.isInSelectYourBlessing()
         if ok:
@@ -237,13 +236,13 @@ def InWorldTree():
 
             times = 0
             continue
-        exit, ok = worldTree.hasExit()
+        exits, ok = worldTree.hasExit()
         if ok:
-            click(exit['pot'])
+            click(exits['pot'])
             times = 0
             continue
         # 探索中
-        ingame, ok = worldTree.isInworldTreeCardWindow()
+        inGame, ok = worldTree.isInworldTreeCardWindow()
         if ok:
             times = 0
             time.sleep(0.2)

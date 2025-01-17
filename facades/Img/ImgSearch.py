@@ -62,7 +62,7 @@ def imgSearch(img :numpy.array, template :numpy.array) -> (tuple, bool):
         __center = (0, 0)
         return __center, False
 
-def imgMultipleResultSearch(img :numpy.array, template :numpy.array):
+def imgMultipleResultSearch(img :numpy.array, template :numpy.array, threshold=0.92):
     """
     多个结果搜索
     :param img:
@@ -91,7 +91,6 @@ def imgMultipleResultSearch(img :numpy.array, template :numpy.array):
     result = cv2.matchTemplate(img, template, cv2.TM_CCOEFF_NORMED)
 
     # 设置匹配阈值
-    threshold = 0.92
 
     # 找到所有大于阈值的位置
     locations = np.where(result >= threshold)
@@ -136,7 +135,7 @@ def imgSearchClick(img :numpy.array, template :numpy.array):
 
 def imgSearchArea(image :numpy.array, template :numpy.array,roi, threshold=0.9):
     """
-    匹配局部区域
+    匹配局部区域,返回所有可能的位置
     :param image:
     :param template:
     :param roi :[x,y,w,h] 左上角坐标，宽，高
@@ -200,7 +199,7 @@ def imgSearchArea(image :numpy.array, template :numpy.array,roi, threshold=0.9):
         # 在原始图像上绘制矩形框
         # cv2.rectangle(image, top_left, bottom_right, (0, 255, 0), 2)
     if len(results) > 0:
-        return results.pop(), True
+        return results, True
     else:
         return [], False
         # 显示结果
@@ -223,10 +222,11 @@ def mask():
         for file in png_files:
             tempImg = cv2.imread(file)
             # imgSearchArea(img, tempImg,[(293,428),(293+135,428+30)])
-            pot, ok = imgSearchArea(GetSnapShot().img, tempImg, roi, 0.87)
+            pots, ok = imgSearchArea(GetSnapShot().img, tempImg, roi, 0.87)
             if ok:
+                pot = pots[0]
                 fName = file.split('/')[-1].split('.')[0]
-                result.append({"pot": (roi[0], roi[1]), "name": fName})
+                result.append({"pot": (pot[0], pot[1]), "name": fName})
                 # 找到了就直接返回
                 break
 
