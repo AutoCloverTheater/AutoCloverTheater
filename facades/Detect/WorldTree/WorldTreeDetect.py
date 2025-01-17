@@ -1,13 +1,12 @@
+import glob
+import os
+
 import cv2
-import numpy
-from PIL import Image
 from facades.Constant.Constant import IMG_PATH
 from facades.Detect.DetectLog import matchResult
-import imagehash
 
 from facades.Emulator.Emulator import GetSnapShot
-from facades.Img.ImgColor import imgGetColor
-from facades.Img.ImgSearch import imgSearch, imgMultipleResultSearch
+from facades.Img.ImgSearch import imgSearch, imgMultipleResultSearch, imgSearchArea
 from facades.Logx.Logx import logx
 from facades.Ocr.MyCnocr import MyCnocr
 
@@ -83,40 +82,58 @@ class WorldTreeDetect:
     def hasBizarreCard(self) :
         """
         是否存在奇遇卡片可选
+        一共三个位置，同时匹配
         :return:
         """
 
-        img = GetSnapShot().img
-        y, x, _ = img.shape
-        cardxy = img[565:595, :]
+        def matchCards():
+            cardRoi = [[293, 565, 200, 40], [555, 565, 200, 40], [800, 565, 200, 40]]
+            path = ['l', 'm', 'r']
 
-        # 将掩码外的像素设置为黑色
-        result = imgGetColor(img=cardxy, low="AB9F87", top="F9E9CF")
+            result = []
+            # 第一个位置要是一个都没有就直接返回 False
+            for i, roi in enumerate(cardRoi):
+                # 定义目录路径
+                directory = f"{IMG_PATH.joinpath(f'Main/worldTree/cards/{path[i]}')}"
 
-        cv2.imwrite("result.png", result)
-        result1  = result
-        result2 = result
-        result3 = result
-        # 保存图片
-        l = result1[0:28,293:428] # 293:428
-        m = result2[0:28,556:688] # 556:688
-        r = result3[0:28,815:950] # 815:950
+                # 使用 glob 读取目录下的 .png 文件
+                png_files = glob.glob(os.path.join(directory, "*.png"))
+                for file in png_files:
+                    tempImg = cv2.imread(file)
 
-        lname = imagehash.average_hash(Image.fromarray(l))
-        mname = imagehash.average_hash(Image.fromarray(m))
-        rname = imagehash.average_hash(Image.fromarray(r))
+                    pot, ok = imgSearchArea(GetSnapShot().img, tempImg, roi, 0.86)
+                    if ok:
+                        fName = file.split('/')[-1].split('.')[0]
+                        result.append({"pot": (roi[0], roi[1]), "name": fName})
+                        # 找到了就直接返回
+                        break
 
-        lp = IMG_PATH.joinpath("Main/worldTree/cards").joinpath(f"l/{lname}.png")
-        mp = IMG_PATH.joinpath("Main/worldTree/cards").joinpath(f"m/{mname}.png")
-        rp = IMG_PATH.joinpath("Main/worldTree/cards").joinpath(f"r/{rname}.png")
+            return result
 
-        res1 = cv2.imwrite(f"{lp}",l)
-        res2 = cv2.imwrite(f"{mp}",m)
-        res3 = cv2.imwrite(f"{rp}",r)
-        logx.info(f"保存结果 {res1},{res2},{res3}\n")
+        imgWithRoi = matchCards()
+        # 没有匹配结果直接返回
+        if len(imgWithRoi) == 0:
+            return {}, False
 
-        # res = MyCnocr.bizarreCardOcr(img=result1)
-        return {}, True
+        logx.info("原始识别结果")
+        logx.info([item['name'] for item in imgWithRoi])
+
+        cards = []
+        # 开始组装卡片, 战斗类的排到最后面
+        for img in imgWithRoi:
+            # 创建映射表，删除所有数字
+            translation_table = str.maketrans("", "", "0123456789")
+            # 使用 translate 删除数字
+            name = img['name'].translate(translation_table)
+
+            if name in ['普通战斗', '精英战斗']:
+                cards.append({"name": name, "pot": img['pot']})
+            else:
+                cards = [{"name": name, "pot": img['pot']}] + cards
+
+        logx.info("排序点击后的结果")
+        logx.info([item['name'] for item in cards])
+        return cards[0], True
 
     @matchResult
     def isInWorldTreeEndWindow(self) :
@@ -256,7 +273,7 @@ class WorldTreeDetect:
         path = IMG_PATH.joinpath("Main").joinpath("worldTree").joinpath("selectConfirm2__606_650_69_31__556_600_169_120.png")
         selectBlessing = cv2.imread(f"{path}")
         pot, ok  = imgSearch(GetSnapShot().img, selectBlessing)
-        return {"name":"确认选择","pot":pot},ok
+        return {"name":"确认选择2","pot":pot},ok
     @matchResult
     def selectConfirm1(self):
         """
@@ -311,9 +328,20 @@ class WorldTreeDetect:
         return {"name":"放弃奖励","pot":pots},ok
 
     @matchResult
+    def wealthCard(self):
+        """
+        赠礼
+        Returns:
+        """
+        path = IMG_PATH.joinpath("Main").joinpath("worldTree").joinpath("wealth__613_194_55_27__563_144_155_127.png")
+        items = cv2.imread(f"{path}")
+        pots,ok = imgSearch(GetSnapShot().img, items)
+        return {"name":"选择赠礼-财富","pot":pots},ok
+
+    @matchResult
     def survivalCard(self):
         """
-        选择赠礼
+        赠礼
         Returns:
 
         """
@@ -333,3 +361,13 @@ class WorldTreeDetect:
         items = cv2.imread(f"{path}")
         pots,ok = imgSearch(GetSnapShot().img, items)
         return {"name":"选择赠礼-远见","pot":pots},ok
+
+    def hasExit(self):
+        """
+        点击空白区域退出
+        Returns:
+        """
+        path = IMG_PATH.joinpath("Main").joinpath("worldTree").joinpath("exit__530_652_234_23__480_602_334_118.png")
+        items = cv2.imread(f"{path}")
+        pots,ok = imgSearchArea(GetSnapShot().img, items, [530,652,234,23])
+        return {"name":"点击空白区域退出","pot":pots},ok

@@ -1,3 +1,5 @@
+import glob
+import os
 import time
 from typing import List
 
@@ -89,11 +91,10 @@ def imgMultipleResultSearch(img :numpy.array, template :numpy.array):
     result = cv2.matchTemplate(img, template, cv2.TM_CCOEFF_NORMED)
 
     # 设置匹配阈值
-    threshold = 0.9
+    threshold = 0.92
 
     # 找到所有大于阈值的位置
     locations = np.where(result >= threshold)
-
     results = []
     # 遍历所有匹配结果
 
@@ -133,31 +134,108 @@ def imgSearchClick(img :numpy.array, template :numpy.array):
     else:
         return None
 
+def imgSearchArea(image :numpy.array, template :numpy.array,roi, threshold=0.9):
+    """
+    匹配局部区域
+    :param image:
+    :param template:
+    :param roi :[x,y,w,h] 左上角坐标，宽，高
+    :param threshold:可信度
+    :return:
+    """
+    # 检查输入参数的有效性
+    if template is None:
+        raise ValueError("模板不能为空")
+    if image is None:
+        raise ValueError("输入图像不能为空")
+
+    if not hasattr(image, 'shape'):
+        raise ValueError("截图必须是二维数组")
+
+    if not hasattr(template, 'shape'):
+        raise ValueError("模板必须是二维数组")
+
+    if len(image.shape) < 2 or len(template.shape) < 2:
+        raise ValueError("输入图像和模板必须是二维数组")
+
+    # 读取图像和模板
+    # 获取模板尺寸
+    template_height, template_width = template.shape[:2]
+
+    # 定义局部区域的左上角和右下角坐标
+    x1, y1 = (roi[0] , roi[1])  # 局部区域的左上角
+    x2, y2 = (roi[0] + roi[2], roi[1] + roi[3])  # 局部区域的右下角
+
+    # 提取局部区域
+    local_region = image[y1:y2, x1:x2]
+
+    # 进行模板匹配
+    result = cv2.matchTemplate(local_region, template, cv2.TM_CCOEFF_NORMED)
+
+    # 找到所有大于阈值的位置
+    locations = np.where(result >= threshold)
+
+    results = []
+    # 遍历所有匹配结果
+
+    for pt in zip(*locations[::-1]):  # locations 是 (y, x) 格式，需要反转
+        if len(results) >0:
+            break
+        # 获取匹配区域的左上角坐标
+        top = pt
+
+        # 计算中心点坐标
+        center_x = top[0] + template_width // 2
+        center_y = top[1] + template_height // 2
+
+        # results.append((int(center_x), int(center_y)))
+
+        # 找到最佳匹配位置
+        # 将局部区域的坐标转换为全局坐标
+        top_left = (int(top[0] + x1), int(top[1] + y1))
+
+        bottom_right = (top_left[0] + template_width, top_left[1] + template_height)
+        results.append(top_left)
+
+        # 在原始图像上绘制矩形框
+        # cv2.rectangle(image, top_left, bottom_right, (0, 255, 0), 2)
+    if len(results) > 0:
+        return results.pop(), True
+    else:
+        return [], False
+        # 显示结果
+        # cv2.imshow("Match Result", image)
+        # cv2.waitKey(2000)
+        # cv2.destroyAllWindows()
+
+def mask():
+    cardRoi = [[293, 565, 200, 40], [555, 565, 200, 40], [800, 565, 200, 40]]
+    path = ['l', 'm', 'r']
+
+    result = []
+    # 第一个位置要是一个都没有就直接返回 False
+    for i, roi in enumerate(cardRoi):
+        # 定义目录路径
+        directory = f"{IMG_PATH.joinpath(f'Main/worldTree/cards/{path[i]}')}"
+
+        # 使用 glob 读取目录下的 .png 文件
+        png_files = glob.glob(os.path.join(directory, "*.png"))
+        for file in png_files:
+            tempImg = cv2.imread(file)
+            # imgSearchArea(img, tempImg,[(293,428),(293+135,428+30)])
+            pot, ok = imgSearchArea(GetSnapShot().img, tempImg, roi, 0.87)
+            if ok:
+                fName = file.split('/')[-1].split('.')[0]
+                result.append({"pot": (roi[0], roi[1]), "name": fName})
+                # 找到了就直接返回
+                break
+
+
+    return result
+
 if __name__ == '__main__':
     ConnectEmulator()
-    time.sleep(1)
-    lq = IMG_PATH.joinpath("Main").joinpath("worldTree").joinpath("cards").joinpath("m1.png")
-
     UpdateSnapShot()
-    img = GetSnapShot().img
-
-    cvi = cv2.imread(f"{lq}")
-
-    # 获取图片数据
-    # data = cvi.getdata()
-    #
-    # # 创建一个新的像素列表
-    # new_data = []
-    # for item in data:
-    #     # 如果像素接近黑色（RGB 值小于某个阈值），则设置为透明
-    #     if item[0] < 50 and item[1] < 50 and item[2] < 50:  # 阈值可以根据需要调整
-    #         new_data.append((0, 0, 0, 0))  # 设置为完全透明
-    #     else:
-    #         new_data.append(item)  # 保留原像素
-
-    # 更新图片数据
-    # cvi.putdata(new_data)
-
-
-    res,ok = imgSearch(GetSnapShot().img, cvi)
-    print(res,ok)
+    res = mask()
+    logx.info("原始识别结果")
+    logx.info([item['name'] for item in res])
