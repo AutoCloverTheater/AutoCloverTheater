@@ -43,5 +43,5 @@ MyCnocr = Cnocr()
 
 if __name__ == '__main__':
     i = IMG_PATH.joinpath("WorldTree").joinpath("tmp.png")
-    img = cv2.imread(f"{i}")
+    img = MyImread(f"{i}")
     print(MyCnocr.ocr(img))

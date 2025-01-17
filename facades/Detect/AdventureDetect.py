@@ -4,7 +4,7 @@ import numpy
 
 class AdventureDetect:
     def isInAdventure(self, img : numpy.array):
-        needLogin = cv2.imread("")
+        needLogin = MyImread("")
         # 将源图像转换为灰度图像
         img_gray = cv2.cvtColor(needLogin, cv2.COLOR_BGR2GRAY)
         _, max_val, _, _  = cv2.minMaxLoc(cv2.matchTemplate(img, img_gray, cv2.TM_CCOEFF_NORMED))
@@ -22,7 +22,7 @@ class AdventureDetect:
 
             Returns:[string]
         """
-        needLogin = cv2.imread("")
+        needLogin = MyImread("")
         # 将源图像转换为灰度图像
         img_gray = cv2.cvtColor(needLogin, cv2.COLOR_BGR2GRAY)
         # 只去识别x-y行的字体
@@ -34,7 +34,7 @@ class AdventureDetect:
 
             Returns:bool
         """
-        needLogin = cv2.imread("")
+        needLogin = MyImread("")
         # 将源图像转换为灰度图像
         img_gray = cv2.cvtColor(needLogin, cv2.COLOR_BGR2GRAY)
         _, max_val, _, _  = cv2.minMaxLoc(cv2.matchTemplate(img, img_gray, cv2.TM_CCOEFF_NORMED))
@@ -51,7 +51,7 @@ class AdventureDetect:
 
             Returns:bool
         """
-        needLogin = cv2.imread("")
+        needLogin = MyImread("")
         # 将源图像转换为灰度图像
         img_gray = cv2.cvtColor(needLogin, cv2.COLOR_BGR2GRAY)
         _, max_val, _, _  = cv2.minMaxLoc(cv2.matchTemplate(img, img_gray, cv2.TM_CCOEFF_NORMED))
@@ -68,7 +68,7 @@ class AdventureDetect:
 
             Returns:bool
         """
-        needLogin = cv2.imread("")
+        needLogin = MyImread("")
         # 将源图像转换为灰度图像
         img_gray = cv2.cvtColor(needLogin, cv2.COLOR_BGR2GRAY)
         _, max_val, _, _  = cv2.minMaxLoc(cv2.matchTemplate(img, img_gray, cv2.TM_CCOEFF_NORMED))
@@ -85,7 +85,7 @@ class AdventureDetect:
 
             Returns:bool
         """
-        needLogin = cv2.imread("")
+        needLogin = MyImread("")
         # 将源图像转换为灰度图像
         img_gray = cv2.cvtColor(needLogin, cv2.COLOR_BGR2GRAY)
         _, max_val, _, _  = cv2.minMaxLoc(cv2.matchTemplate(img, img_gray, cv2.TM_CCOEFF_NORMED))
@@ -102,7 +102,7 @@ class AdventureDetect:
 
             Returns:bool
         """
-        needLogin = cv2.imread("")
+        needLogin = MyImread("")
         # 将源图像转换为灰度图像
         img_gray = cv2.cvtColor(needLogin, cv2.COLOR_BGR2GRAY)
         _, max_val, _, _  = cv2.minMaxLoc(cv2.matchTemplate(img, img_gray, cv2.TM_CCOEFF_NORMED))

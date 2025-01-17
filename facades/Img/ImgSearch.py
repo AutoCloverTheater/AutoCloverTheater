@@ -220,7 +220,7 @@ def mask():
         # 使用 glob 读取目录下的 .png 文件
         png_files = glob.glob(os.path.join(directory, "*.png"))
         for file in png_files:
-            tempImg = cv2.imread(file)
+            tempImg = MyImread(file)
             # imgSearchArea(img, tempImg,[(293,428),(293+135,428+30)])
             pots, ok = imgSearchArea(GetSnapShot().img, tempImg, roi, 0.87)
             if ok:

@@ -2,13 +2,14 @@ import cv2
 
 from facades.Constant.Constant import IMG_PATH
 from facades.Emulator.Emulator import GetSnapShot
+from facades.Img.ImgRead import MyImread
 from facades.Img.ImgSearch import imgSearch
 
 
 class BattleDetect:
     def beforeBattle(self):
         path = IMG_PATH.joinpath("Main").joinpath("beforeBattle.png")
-        beforeBattle = cv2.imread(f"{path}")
+        beforeBattle = MyImread(path)
         pot, ok  = imgSearch(GetSnapShot().img, beforeBattle)
         return pot, ok
 
@@ -18,7 +19,7 @@ class BattleDetect:
         :return:
         """
         path = IMG_PATH.joinpath("Main").joinpath("battling.png")
-        battling = cv2.imread(f"{path}")
+        battling = MyImread(path)
         pot, ok  = imgSearch(GetSnapShot().img, battling)
         return pot, ok
 
@@ -28,7 +29,7 @@ class BattleDetect:
         :return:
         """
         path = IMG_PATH.joinpath("Main").joinpath("battleFailed.png")
-        battleFailed = cv2.imread(f"{path}")
+        battleFailed = MyImread(path)
         pot, ok  = imgSearch(GetSnapShot().img, battleFailed)
         return pot, ok
 
@@ -38,6 +39,6 @@ class BattleDetect:
         :return:
         """
         path = IMG_PATH.joinpath("Main").joinpath("battleSuccess.png")
-        battleSuccess = cv2.imread(f"{path}")
+        battleSuccess = MyImread(path)
         pot, ok  = imgSearch(GetSnapShot().img, battleSuccess)
         return pot, ok

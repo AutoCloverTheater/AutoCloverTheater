@@ -3,6 +3,7 @@ from airtest.core.api import click
 
 from facades.Constant.Constant import IMG_PATH
 from facades.Emulator.Emulator import GetSnapShot
+from facades.Img.ImgRead import MyImread
 from facades.Img.ImgSearch import imgSearch
 from facades.Logx.Logx import logx
 
@@ -59,7 +60,7 @@ def error_function(method):
             :return:
             """
             path = IMG_PATH.joinpath("error").joinpath("error__614_483_55_26__564_433_155_126.png")
-            mainWindow = cv2.imread(f"{path}")
+            mainWindow = MyImread(path)
             pot, ok = imgSearch(GetSnapShot().img, mainWindow)
             return {"name": "未知错误", "pot": pot}, ok
 

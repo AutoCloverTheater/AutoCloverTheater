@@ -68,5 +68,5 @@ def colorSearch(img: np.ndarray, color_rgb):
 
 if __name__ == "__main__":
     img = IMG_PATH.joinpath("WorldTree").joinpath("quit.png")
-    imgL = cv2.imread(f"{img}")
+    imgL = MyImread(f"{img}")
     colorSearch(imgL, [130, 97, 70])

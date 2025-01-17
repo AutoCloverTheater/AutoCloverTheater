@@ -3,7 +3,7 @@ import time
 from airtest.core.api import click, swipe
 
 from facades.Configs.Config import Config
-from facades.Detect.FlashBattleDetect import FlashBattleDetect
+from facades.Detect.Common.FlashBattleDetect import FlashBattleDetect
 from facades.Detect.WorldTree.WorldTreeDetect import WorldTreeDetect
 from facades.Emulator.Emulator import ConnectEmulator, UpdateSnapShot
 from facades.Logx.Logx import logx
@@ -49,16 +49,12 @@ def BeforeInWorldTree():
             swipe((400, 100), (200, 100), duration=0.2,steps=2)
             time.sleep(1)
             continue
-        adventureMainResp, ok = worldTree.isInWorldTreeMainWindow()
+        # 识别等级
+        _,ok = worldTree.isLeverMax()
         if ok:
-            logx.info(f"开始识别等级与分数")
-            lever = worldTree.getLever()
-            logx.info(f"识别到等级：lv {lever}")
-            if Config("app.worldTree.lever") > lever:
-                logx.info(f"等级符合，进入世界树")
-            else :
-                logx.info(f"等级不符合，退出世界树")
-                break
+            logx.info(f"已到达最大等级，退出世界树")
+            times = 3
+            break
         # 出发冒险按钮
         searchStartWorldTreeAdvButton, ok = worldTree.searchStartWorldTreeAdvButton()
         if ok and worldTree.lv < Config("app.worldTree.lever"):
@@ -231,10 +227,12 @@ def InWorldTree():
         # 假设已经返回世界树冒险主页面
         isInWorldTree2,ok = worldTree.isInWorldTreeMainWindow()
         if ok:
-            logx.info("已经返回世界树冒险主页面")
-            BeforeInWorldTree()
-
-            times = 0
+            # 识别等级
+            _, ok = worldTree.isLeverMax()
+            if ok:
+                logx.info(f"已到达最大等级，退出世界树")
+                times = 3
+                break
             continue
         exits, ok = worldTree.hasExit()
         if ok:

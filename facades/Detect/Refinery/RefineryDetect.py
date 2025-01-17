@@ -69,7 +69,7 @@ class RefineryDetect:
         冒险之旅
         :return:
         """
-        path = IMG_PATH.joinpath("Main/refinery/adventureList__96_23_93_22__46_0_193_95.png")
+        path = IMG_PATH.joinpath("Main/adventure/adventureList__96_23_93_22__46_0_193_95.png")
         mainWindow = MyImread(path)
         pots, ok  = imgSearchArea(GetSnapShot().img, mainWindow, [96, 23, 93, 22])
         if not ok:
@@ -127,15 +127,17 @@ class RefineryDetect:
     @matchResult
     def fastBattle(self):
         """
-        快闪战斗
+        识别可快闪的矿场
         :return:
         """
         path = IMG_PATH.joinpath("Main/refinery/fastBattle__1139_506_61_83__1089_456_161_183.png")
         img = MyImread(path)
-        pots, ok  = imgSearchArea(GetSnapShot().img, img, [1098, 640, 118, 30], 0.96)
+        # 这里的roi填的是包含了三个按钮的
+        pots, ok  = imgSearchArea(GetSnapShot().img, img, [1124,130,88,465], 0.8)
+        num = len(pots)
         if not ok:
             pots = [(0,0)]
-        return {"name":"识别到快闪战斗","pot":pots.pop()},ok
+        return {"name":f"识别可快闪的矿场数量{num}","pot":pots.pop()},ok
 
     @matchResult
     def isZeroCountForToday(self):
@@ -143,9 +145,9 @@ class RefineryDetect:
         今日次数是否用光
         :return:
         """
-        path = IMG_PATH.joinpath("Main/refinery/zeroCountForToday__1139_506_61_83__1089_456_161_183.png")
+        path = IMG_PATH.joinpath("Main/refinery/zeroCountForToday__1065_18_151_19__1015_0_251_87.png")
         img = MyImread(path)
-        pots, ok  = imgSearch(GetSnapShot().img, img)
+        pots, ok  = imgSearchArea(GetSnapShot().img, img, [1065, 18, 151, 19], 0.96)
         if not ok:
             pots = [(0,0)]
         return {"name":"今日次数已用光","pot":pots.pop()},ok
