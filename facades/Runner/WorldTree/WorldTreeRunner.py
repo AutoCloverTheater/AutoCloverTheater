@@ -83,7 +83,7 @@ def BeforeInWorldTree():
             continue
         inGame, ok = worldTree.isInworldTreeCardWindow()
         if ok:
-            # todo 这里接到世界树探索方法
+            time.sleep(0.1)
             break
         times +=1
 
@@ -132,6 +132,7 @@ def InWorldTree():
         inFastBattleWindow,ok = FlashBattle.inFastBattleWindow()
         if ok :
             # 啥也不干等着打完
+            times = 0
             time.sleep(1)
         # 战斗失败
         isInFailedFlashBattleWindow,ok = FlashBattle.isInFailedFlashBattleWindow()
@@ -161,6 +162,10 @@ def InWorldTree():
             times = 0
             continue
         # 赠礼
+        wealthCard, ok = worldTree.wealthCard()
+        if ok:
+            click(wealthCard['pot'])
+        # 赠礼
         se,ok = worldTree.survivalCard()
         if ok:
             click(se['pot'])
@@ -168,27 +173,30 @@ def InWorldTree():
         lvpuls,ok = worldTree.lvPlusCard()
         if ok:
             click(lvpuls['pot'])
-        # 祝福事件
+        # 祝福
         isInSelectYourBlessing, ok = worldTree.isInSelectYourBlessing()
         if ok:
             click(isInSelectYourBlessing['pot'])
         # 选择
-        selectBlessing,ok = worldTree.selectConfirm2()
+        Confirm,ok = worldTree.selectConfirm2()
         if ok:
-            click(selectBlessing['pot'])
+            click(Confirm['pot'],duration=0.3)
 
             times = 0
+            time.sleep(0.2)
             continue
-        selectBlessing, ok = worldTree.selectConfirm1()
+        # 选择
+        Confirm, ok = worldTree.selectConfirm1()
         if ok:
-            click(selectBlessing['pot'])
+            click(Confirm['pot'],duration=0.3)
 
             times = 0
+            time.sleep(0.2)
             continue
         # 结束购买
         endBuy,ok = worldTree.hasEndBuyButton()
         if ok:
-            click(endBuy['pot'])
+            click(endBuy['pot'],duration=0.3)
 
             times = 0
             continue
@@ -229,18 +237,20 @@ def InWorldTree():
 
             times = 0
             continue
-
-        # 奇遇卡-这里最好使用ocr，然后再根据排序选择需要的卡
-        # BizarreCard, ok = worldTree.hasBizarreCard()
-        # if ok:
-        #     # todo 这里写奇遇卡的处理逻辑
-        #     continue
+        exit, ok = worldTree.hasExit()
+        if ok:
+            click(exit['pot'])
+            times = 0
+            continue
         # 探索中
-        ingame,ok = worldTree.isInworldTreeCardWindow()
-        if ok :
-            # 探索
-            logx.info(f"探索中")
-
+        ingame, ok = worldTree.isInworldTreeCardWindow()
+        if ok:
+            times = 0
+            time.sleep(0.2)
+        # 奇遇卡-这里最好使用ocr，然后再根据排序选择需要的卡
+        BizarreCard, ok = worldTree.hasBizarreCard()
+        if ok:
+            click(BizarreCard['pot'])
             times = 0
             continue
 
