@@ -1,7 +1,11 @@
 import glob
 import os
+import time
+from collections import Counter
 
 import cv2
+from airtest.core.api import click
+
 from facades.Constant.Constant import IMG_PATH
 from facades.Detect.DetectLog import matchResult
 
@@ -15,7 +19,7 @@ from facades.Ocr.MyCnocr import MyCnocr
 避战流派只打奇遇而且只会选第一个选项
 """
 class WorldTreeDetect:
-
+    memeryOf = []
     def __init__(self):
         # 探索等级
         self.lv = 0
@@ -139,6 +143,22 @@ class WorldTreeDetect:
         cards = cards+ nb + eb
         logx.info("排序点击后的结果")
         logx.info([item['name'] for item in cards])
+
+        self.memeryOf.append(''.join([item['name'] for item in cards]))
+
+        if len(self.memeryOf) > 3:
+            self.memeryOf.pop(-1)
+
+        # 加入选择卡片的时候卡住了连续都是一样的卡片，则把三个坐标都点一遍
+        counter = Counter(self.memeryOf)
+        if counter[''.join([item['name'] for item in cards])] >=3:
+            logx.info("选择卡片卡住了，正在处理")
+            for roi in cards:
+                click(roi['pot'])
+                time.sleep(0.3)
+            # 处理完接下来就不用返回给上面了
+            return cards[0], False
+
         return cards[0], True
 
     @matchResult
