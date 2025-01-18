@@ -85,16 +85,6 @@ def InRefinery():
     refinery = RefineryDetect()
     fastBattle = FlashBattleDetect()
 
-    # 尝试识别今天是周几
-    weekday = refinery.mathDate()
-
-    # 在神秘矿厂内
-    _, ok = refinery.isInRefinery()
-    refineryRoi = refinery.returnRefineryRoi()
-    if ok and weekday == 6:
-        logx.info("随机选择矿场")
-        click(refineryRoi)
-
     matchResult = True
     times = 0
     while 1:
@@ -104,10 +94,31 @@ def InRefinery():
             break
         # 更新截图
         UpdateSnapShot()
+        # 处理快闪
+        resp, ok = fastBattle.isInBattleResultWindow()
+        if ok:
+            click((0, 0))
+            times = 0
+            continue
+        resp, ok = fastBattle.isInFailedFlashBattleWindow()
+        if ok:
+            click(resp['pot'])
+            times = 0
+            continue
+        resp, ok = fastBattle.isInSuccessFlashBattleWindow()
+        if ok:
+            click((0, 0))
+            times = 0
+            continue
+        resp, ok = fastBattle.inFastBattleWindow()
+        if ok:
+            time.sleep(1)
+            times = 0
+            continue
+
         # 尝试识别今天的次数是否用光，用光了则跳过
         countToday,ok = refinery.isZeroCountForToday()
-        if not ok:
-            logx.warning("今日矿厂次数用光，跳过")
+        if ok:
             break
         # 跳过编队
         FastFormation,ok = refinery.isCloseFastFormation()
@@ -119,29 +130,7 @@ def InRefinery():
         # 开始识别可以快闪的矿
         fast,ok = refinery.fastBattle()
         if ok:
-            click((0,0))
-            time.sleep(1)
-            times = 0
-            continue
-
-        # 处理快闪
-        resp,ok = fastBattle.isInBattleResultWindow()
-        if ok:
-            click(resp['pot'])
-            times = 0
-            continue
-        resp,ok = fastBattle.isInFailedFlashBattleWindow()
-        if ok:
-            click(resp['pot'])
-            times = 0
-            continue
-        resp,ok = fastBattle.isInSuccessFlashBattleWindow()
-        if ok:
-            click(resp['pot'])
-            times = 0
-            continue
-        resp,ok = fastBattle.inFastBattleWindow()
-        if ok:
+            click(fast['pot'])
             time.sleep(1)
             times = 0
             continue
@@ -149,10 +138,48 @@ def InRefinery():
 
     return matchResult
 
+def down():
+    refineryDetect = RefineryDetect()
+    fastBattle = FlashBattleDetect()
+
+    isOkCountZeroOk = False
+
+    while not isOkCountZeroOk:
+        UpdateSnapShot()
+        _, inRinery = refineryDetect.isInRefinery()
+        if not inRinery:
+            logx.info("不在矿场内")
+            break
+        _, isOkCountZeroOk = refineryDetect.isZeroCountForToday()
+        if isOkCountZeroOk:
+            logx.info("次数用光")
+            break
+        fastBattleRoi,ok = refineryDetect.fastBattle()
+        if ok:
+            click(fastBattleRoi['pot'])
+            continue
+        # 处理快闪
+        resp,ok = fastBattle.isInBattleResultWindow()
+        if ok:
+            click(resp['pot'])
+            continue
+        resp,ok = fastBattle.isInFailedFlashBattleWindow()
+        if ok:
+            click(resp['pot'])
+            continue
+        resp,ok = fastBattle.isInSuccessFlashBattleWindow()
+        if ok:
+            click(resp['pot'])
+            continue
+        resp,ok = fastBattle.inFastBattleWindow()
+        if ok:
+            time.sleep(1)
+            continue
+
 
 
 if __name__ == '__main__':
     ConnectEmulator()
     Login()
     BeforeRefinery()
-    # InRefinery()
+    InRefinery()

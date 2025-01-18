@@ -17,6 +17,7 @@ def BeforeInWorldTree():
     :return:
     """
     worldTree = WorldTreeDetect()
+    fastBattle = FlashBattleDetect()
 
     matchResult = True
     times = 0
@@ -28,7 +29,7 @@ def BeforeInWorldTree():
         # 更新截图
         UpdateSnapShot()
         # 加载
-        loading,ok = worldTree.isLoading()
+        loading,ok = fastBattle.isLoading()
         if ok:
             time.sleep(1)
             continue
@@ -67,7 +68,7 @@ def BeforeInWorldTree():
             click(leverSelect['pot'])
             logx.info(f"选择难度")
             continue
-        isLoading, ok = worldTree.isLoading()
+        isLoading, ok = fastBattle.isLoading()
         if ok:
             time.sleep(1)
             continue

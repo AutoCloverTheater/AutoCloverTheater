@@ -130,14 +130,32 @@ class RefineryDetect:
         识别可快闪的矿场
         :return:
         """
-        path = IMG_PATH.joinpath("Main/refinery/fastBattle__1139_506_61_83__1089_456_161_183.png")
-        img = MyImread(path)
-        # 这里的roi填的是包含了三个按钮的
-        pots, ok  = imgSearchArea(GetSnapShot().img, img, [1124,130,88,465], 0.8)
-        num = len(pots)
-        if not ok:
-            pots = [(0,0)]
-        return {"name":f"识别可快闪的矿场数量{num}","pot":pots.pop()},ok
+        ""
+        imgs = [
+            "f3__1138_507_56_78__1088_457_156_178.png",
+            "f2__1137_332_56_77__1087_282_156_177.png",
+            "f1__1138_155_56_78__1088_105_156_178.png",
+        ]
+        roi = [
+            [1135, 495, 63, 94],
+            [1136, 317, 65, 97],
+            [1136, 146, 66, 91],
+        ]
+
+        key = 0
+        pot = (0,0)
+        ok = False
+        for k,v in enumerate(imgs):
+            path = IMG_PATH.joinpath(f"Main/refinery/{imgs[k]}")
+            img = MyImread(path)
+            pots, ok  = imgSearchArea(GetSnapShot().img, img, roi[k], 0.9)
+            if ok:
+                pot = pots[0]
+                key = k
+                ok = True
+                break
+
+        return {"name":f"识别可快闪的矿场阶段{len(imgs) - key}","pot":pot},ok
 
     @matchResult
     def isZeroCountForToday(self):
@@ -145,9 +163,9 @@ class RefineryDetect:
         今日次数是否用光
         :return:
         """
-        path = IMG_PATH.joinpath("Main/refinery/zeroCountForToday__1065_18_151_19__1015_0_251_87.png")
+        path = IMG_PATH.joinpath("Main/refinery/zeroCountForToday__1065_17_154_19__1015_0_254_86.png")
         img = MyImread(path)
-        pots, ok  = imgSearchArea(GetSnapShot().img, img, [1065, 18, 151, 19], 0.96)
+        pots, ok  = imgSearchArea(GetSnapShot().img, img, [1065, 17, 154, 19], 0.96)
         if not ok:
             pots = [(0,0)]
         return {"name":"今日次数已用光","pot":pots.pop()},ok

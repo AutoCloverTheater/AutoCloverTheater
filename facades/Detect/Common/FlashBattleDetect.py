@@ -71,3 +71,14 @@ class FlashBattleDetect:
         mainWindow = MyImread(path)
         pot, ok  = imgSearch(GetSnapShot().img, mainWindow)
         return {"name":"演出结算","pot":pot},ok
+
+    @matchResult
+    def isLoading(self) :
+        """
+        是否在加载中
+        :return:
+        """
+        path = IMG_PATH.joinpath("Main").joinpath("worldTree").joinpath("loading__867_579_343_97__817_529_443_191.png")
+        loading = MyImread(path)
+        pot, ok  = imgSearch(GetSnapShot().img, loading)
+        return {"name":"正在加载...","pot":pot},ok

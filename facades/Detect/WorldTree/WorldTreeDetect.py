@@ -285,16 +285,6 @@ class WorldTreeDetect:
         return {"name":"世界树探索中","pot":pot},ok
 
     @matchResult
-    def isLoading(self):
-        """
-        正在加载
-        :return:
-        """
-        path = IMG_PATH.joinpath("Main").joinpath("worldTree").joinpath("loading__867_579_343_97__817_529_443_191.png")
-        inGame = MyImread(path)
-        pot, ok  = imgSearch(GetSnapShot().img, inGame)
-        return {"name":"正在加载...","pot":pot},ok
-    @matchResult
     def selectConfirm2(self):
         """
         确认选择
