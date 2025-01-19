@@ -18,7 +18,7 @@ def Login():
 
     times = 0
     while 1 :
-        if times >= 3:
+        if times >= 5:
             matchResult = False
             logx.warning("跳过登录")
             break

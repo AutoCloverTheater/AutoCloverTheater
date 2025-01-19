@@ -88,7 +88,7 @@ def InRefinery():
     matchResult = True
     times = 0
     while 1:
-        if times >= 3:
+        if times >= 5:
             matchResult = False
             logx.warning("跳过矿厂冒险")
             break
@@ -111,6 +111,11 @@ def InRefinery():
             times = 0
             continue
         resp, ok = fastBattle.inFastBattleWindow()
+        if ok:
+            time.sleep(1)
+            times = 0
+            continue
+        resp, ok = fastBattle.isLoading()
         if ok:
             time.sleep(1)
             times = 0

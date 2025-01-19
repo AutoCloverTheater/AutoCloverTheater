@@ -165,7 +165,7 @@ class RefineryDetect:
         """
         path = IMG_PATH.joinpath("Main/refinery/zeroCountForToday__1065_17_154_19__1015_0_254_86.png")
         img = MyImread(path)
-        pots, ok  = imgSearchArea(GetSnapShot().img, img, [1065, 17, 154, 19], 0.96)
+        pots, ok  = imgSearchArea(GetSnapShot().img, img, [1065, 17, 154, 19], 0.99)
         if not ok:
             pots = [(0,0)]
         return {"name":"今日次数已用光","pot":pots.pop()},ok
