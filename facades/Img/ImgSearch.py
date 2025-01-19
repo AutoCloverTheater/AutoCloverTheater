@@ -13,13 +13,14 @@ from facades.Emulator.Emulator import ConnectEmulator, GetSnapShot, UpdateSnapSh
 from facades.Logx.Logx import logx
 
 
-def imgSearch(img :numpy.array, template :numpy.array) -> (tuple, bool):
+def imgSearch(img :numpy.array, template :numpy.array, threshold=0.90) -> (tuple, bool):
     """
     在图像中搜索模板，并返回模板匹配的中心点坐标及是否匹配成功。
 
     Args:
         img (np.ndarray): 输入图像，作为 NumPy 数组。
         template (np.ndarray): 模板图像，作为 NumPy 数组。
+        threshold: 可信度
 
     Returns:
         Tuple[Tuple[int, int], bool]:
@@ -55,7 +56,7 @@ def imgSearch(img :numpy.array, template :numpy.array) -> (tuple, bool):
     result = cv2.matchTemplate(img, template, cv2.TM_CCOEFF_NORMED)
     min_val, __max_val, min_loc, max_loc = cv2.minMaxLoc(result)
 
-    if __max_val > 0.90:
+    if __max_val > threshold:
         __center = (max_loc[0] + image_y / 2, max_loc[1] + image_x / 2)
         return __center, True
     else:
