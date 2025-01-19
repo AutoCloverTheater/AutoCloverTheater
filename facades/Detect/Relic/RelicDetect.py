@@ -6,7 +6,7 @@ from facades.Img.ImgRead import MyImread
 from facades.Img.ImgSearch import imgSearchArea, imgSearch
 
 
-class BaseDetect:
+class RelicDetect:
 
     def __init__(self):
         """
@@ -156,6 +156,22 @@ class BaseDetect:
                 break
 
         return {"name": name, "pot": pot}, ok
+
+    def isInRelicGame(self):
+        """
+        是否在遗迹探索游戏内
+        Returns:
+        """
+        path = IMG_PATH.joinpath("main/relic/location__40_231_41_62__0_181_131_162.png")
+        img = MyImread(path)
+        rois,ok = imgSearchArea(GetSnapShot().img, img, [40, 231, 41, 62])
+        if len(rois) > 0:
+            pot = rois[0]
+        else:
+            pot = (0,0)
+
+        return {"name": "遗迹探索中", "pot": pot}, ok
+
 
     def location(self):
         """

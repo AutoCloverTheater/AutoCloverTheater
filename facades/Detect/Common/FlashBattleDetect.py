@@ -111,3 +111,47 @@ class FlashBattleDetect:
         loading = MyImread(path)
         pot, ok  = imgSearchArea(GetSnapShot().img, loading, [867, 579, 343, 97])
         return {"name":"开始表演...","pot":pot},ok
+
+    def exeFlasBattle(self):
+        """
+        通用快闪战斗处理
+        Returns:
+
+        """
+        imgs = [
+            'flashBattleClosed_1128_532_105_21__1078_482_202_121.png',
+            'skipFormationClosed_1129_588_103_22__1079_538_201_122.png',
+            'battleSuccess__509_416_265_71__459_366_365_171.png',
+            'inFastBattle__1099_172_20_92__1049_122_120_192.png',
+            'battleFailed_509_410_268_79_459_360_368_179.png',
+            'settlementBattle__502_40_280_63__452_0_380_153.png',
+        ]
+        roi = [
+            [1128, 532, 105, 21],
+            [1129, 588, 103, 22],
+            [509, 410, 268, 79],
+            [1099, 172, 20, 92],
+            [509, 410, 268, 79],
+            [502, 40, 280, 63],
+        ]
+        names = [
+            "快闪表演-关闭",
+            "跳过编队-关闭",
+            "快闪战斗胜利",
+            "快闪战斗中。。。。",
+            "快闪战斗失败",
+            "演出结算",
+        ]
+        name = "未知"
+        ok = False
+        pot = (0, 0)
+
+        for k, i in enumerate(imgs):
+            loading = MyImread(IMG_PATH.joinpath("lag").joinpath(i))
+            resp, ok  = imgSearchArea(GetSnapShot().img, loading, roi[k])
+            if ok:
+                pot = resp[0]
+                name = names[k]
+                break
+
+        return {"name":name,"pot":pot},ok
