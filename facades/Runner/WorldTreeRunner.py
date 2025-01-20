@@ -8,7 +8,7 @@ from facades.Detect.WorldTree.WorldTreeDetect import WorldTreeDetect
 from facades.Emulator.Emulator import ConnectEmulator, UpdateSnapShot
 from facades.Logx.Logx import logx
 from facades.Runner.Limit import error_function
-from facades.Runner.layout.AdventureRunner import findAdventure
+from facades.Runner.layout.AdventureRunner import FindAdventure
 from facades.Runner.layout.LoginRunner import Login
 
 @error_function
@@ -248,6 +248,6 @@ def InWorldTree():
 if __name__ == '__main__':
     ConnectEmulator()
     Login()
-    findAdventure("hasWorldTreeButton")
+    FindAdventure("hasWorldTreeButton")
     BeforeInWorldTree()
     InWorldTree()

@@ -154,17 +154,17 @@ class FlashBattleDetect:
         pots = [
             (1128, 532),# flashBattleClosed
             (1129, 588),# skipFormationClosed
-            (0.5, 0),# battleSuccess
-            (0.5, 0),# inFastBattle
-            (0.5, 0),# battleFailed
-            (0.5, 0),# settlementBattle
+            (0.5, 0.0),# battleSuccess
+            (0.5, 0.0),# inFastBattle
+            (0.5, 0.0),# battleFailed
+            (0.5, 0.0),# settlementBattle
         ]
         name = "未知"
         ok = False
-        pot = (0, 0)
+        pot = []
 
         for k, i in enumerate(imgs):
-            loading = MyImread(IMG_PATH.joinpath("lag").joinpath(i))
+            loading = MyImread(IMG_PATH.joinpath(f"Main/fastBattle/{i}"))
             resp, ok  = imgSearchArea(GetSnapShot().img, loading, roi[k])
             if ok:
                 pot = pots[k]

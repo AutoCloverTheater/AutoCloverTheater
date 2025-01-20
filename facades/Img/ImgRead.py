@@ -3,6 +3,7 @@ import pathlib
 import cv2
 
 from facades.Constant.Constant import IMG_PATH
+from facades.Logx.Logx import logx
 
 IMG_POOL = {}
 
@@ -13,6 +14,8 @@ def MyImread(path):
         return IMG_POOL[p]
     else:
         IMG_POOL[p] = cv2.imread(p)
+        if IMG_POOL[p] is None:
+            logx.exception(f"{p} not found")
         return  IMG_POOL[p]
 
 

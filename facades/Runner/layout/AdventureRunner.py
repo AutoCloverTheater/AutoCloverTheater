@@ -6,7 +6,15 @@ from facades.Detect.Common.AdventureDetect import AdventureDetect
 from facades.Emulator.Emulator import UpdateSnapShot, ConnectEmulator
 from facades.Logx.Logx import logx
 
-def findAdventure(callAdv:str):
+def FindAdventure(callAdv:str):
+    """
+    从游戏主页面到冒险列表中寻找相应的副本
+    hasRelicButton:遗迹
+    hasItemsCollectionButton:素材
+    hasWorldTreeButton:世界树
+    :param callAdv:
+    :return:
+    """
     adv = AdventureDetect()
 
     # 检查是否有方法
@@ -66,6 +74,6 @@ def findAdventure(callAdv:str):
 
 if __name__ == "__main__":
     ConnectEmulator()
-    findAdventure("hasRelicButton")
-    # findAdventure("hasItemsCollectionButton")
-    # findAdventure("hasWorldTreeButton")
+    FindAdventure("hasRelicButton")
+    # FindAdventure("hasItemsCollectionButton")
+    # FindAdventure("hasWorldTreeButton")

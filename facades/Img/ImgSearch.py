@@ -188,14 +188,14 @@ def imgSearchArea(image :numpy.array, template :numpy.array,roi, threshold=0.9):
         center_x = top[0] + template_width // 2
         center_y = top[1] + template_height // 2
 
-        # results.append((int(center_x), int(center_y)))
+        results.append((int(center_x), int(center_y)))
 
         # 找到最佳匹配位置
         # 将局部区域的坐标转换为全局坐标
         top_left = (int(top[0] + x1), int(top[1] + y1))
 
         bottom_right = (top_left[0] + template_width, top_left[1] + template_height)
-        results.append(top_left)
+        # results.append(bottom_right)
 
         # 在原始图像上绘制矩形框
         # cv2.rectangle(image, top_left, bottom_right, (0, 255, 0), 2)
