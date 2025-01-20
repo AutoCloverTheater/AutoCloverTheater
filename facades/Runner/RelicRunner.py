@@ -12,12 +12,23 @@ from facades.Runner.layout.LoginRunner import Login
 
 def beforeRelic():
     relic = RelicDetect()
+    fastBattle = FlashBattleDetect()
     times = 0
     while True:
         if times >= 5:
             logx.warning("跳过遗迹准备阶段")
             break
         UpdateSnapShot()
+        go,ok = fastBattle.startPerform()
+        if ok:
+            click(go['pot'])
+            times = 0
+            time.sleep(0.1)
+            continue
+        _, ok = relic.isInRelicGame()
+        if ok:
+            time.sleep(0.3)
+            break
         settingMap, ok = relic.hasSettingMap()
         if ok:
             click(settingMap['pot'])
@@ -32,7 +43,13 @@ def beforeRelic():
         if ok:
             click(start['pot'])
             time.sleep(0.3)
-            break
+            continue
+        # 加载
+        _,ok = fastBattle.isLoading()
+        if ok:
+            time.sleep(0.1)
+            times = 0
+            continue
         times += 1
 
 
@@ -55,8 +72,10 @@ def inRelic():
         # 战斗
         resp, ok = fastBattle.exeFlashBattle()
         if ok:
+            logx.info(f"点位 {resp}")
             click(resp['pot'])
             times = 0
+            time.sleep(0.2)
             continue
         getItems, ok = relic.getItems()
         if ok:
@@ -69,6 +88,7 @@ def inRelic():
         confirmButton,ok = relic.hasConfirmButton()
         if ok and inGame:
             click(confirmButton['pot'])
+            time.sleep(0.2)
             times = 0
             continue
         hasSelectButton,ok =  relic.hasSelectButton()
@@ -93,7 +113,12 @@ def inRelic():
 
 if __name__ == '__main__':
     ConnectEmulator()
-    Login()
-    FindAdventure("hasRelicButton")
-    beforeRelic()
+    # UpdateSnapShot()
+    # fast = FlashBattleDetect()
+    # res = fast.isOpenFlashBattleClosed()
+    # logx.info(res)
+    # Login()
+
+    # FindAdventure("hasRelicButton")
+    # beforeRelic()
     inRelic()

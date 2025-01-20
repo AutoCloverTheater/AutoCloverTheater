@@ -40,6 +40,7 @@ def FindAdventure(callAdv:str):
         # 游戏主界main
         resp,ok = adv.isInMainUi()
         if ok:
+            logx.info(f"坐标 {resp}")
             click(resp['pot'])
             time.sleep(0.3)
             times = 0
@@ -75,5 +76,5 @@ def FindAdventure(callAdv:str):
 if __name__ == "__main__":
     ConnectEmulator()
     FindAdventure("hasRelicButton")
-    # FindAdventure("hasItemsCollectionButton")
-    # FindAdventure("hasWorldTreeButton")
+    FindAdventure("hasItemsCollectionButton")
+    FindAdventure("hasWorldTreeButton")

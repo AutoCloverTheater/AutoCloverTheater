@@ -1,4 +1,6 @@
-import numpy
+import cv2
+import numpy as np
+from PIL import ImageEnhance, Image
 
 from facades.Constant.Constant import IMG_PATH
 from facades.Detect.DetectLog import matchResult
@@ -141,7 +143,7 @@ class RelicDetect:
                 break
 
         return {"name": "点击弹窗其他区域关闭", "pot": pot}, ok
-
+    @matchResult
     def  eventPoint(self):
         """
         节点
@@ -165,12 +167,29 @@ class RelicDetect:
             "离开"
         ]
 
+        # 降低亮度
+        image = GetSnapShot().img
+
+        # 将图片转换为灰度图（计算亮度）
+        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+        # 定义亮度阈值（0-255，值越小，变黑的部分越多）
+        brightness_threshold = 100
+
+        # 创建一个黑色掩码（亮度低于阈值的部分）
+        mask = gray < brightness_threshold
+
+        # 将亮度低的部分设置为黑色
+        image[mask] = [0, 0, 0]
+        darkened_image = image
+        cv2.imwrite("d.png", darkened_image)
+
         ok = False
         pot = ()
         name = "未知图标"
         for k,v in enumerate(imgs):
             loading = MyImread(IMG_PATH.joinpath(f"Main/relic/{v}"))
-            resp, ok  = imgSearch(GetSnapShot().img, loading, 0.98)
+            resp, ok  = imgSearch(darkened_image, loading, 0.9)
             if ok:
                 name = names[k]
                 pot = resp
@@ -178,6 +197,7 @@ class RelicDetect:
 
         return {"name": name, "pot": pot}, ok
 
+    @matchResult
     def isInRelicGame(self):
         """
         是否在遗迹探索游戏内
