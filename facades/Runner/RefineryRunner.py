@@ -2,7 +2,6 @@ import time
 
 from airtest.core.api import click, swipe
 
-from facades.Detect.Common.BattleDetect import BattleDetect
 from facades.Detect.Common.FlashBattleDetect import FlashBattleDetect
 from facades.Detect.Refinery.RefineryDetect import RefineryDetect
 from facades.Emulator.Emulator import ConnectEmulator, UpdateSnapShot
@@ -151,8 +150,8 @@ def down():
 
     while not isOkCountZeroOk:
         UpdateSnapShot()
-        _, inRinery = refineryDetect.isInRefinery()
-        if not inRinery:
+        _, inRefinery = refineryDetect.isInRefinery()
+        if not inRefinery:
             logx.info("不在矿场内")
             break
         _, isOkCountZeroOk = refineryDetect.isZeroCountForToday()

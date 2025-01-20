@@ -174,30 +174,6 @@ class WorldTreeDetect:
         return {"name":"探索结束","pot":pot},ok
 
     @matchResult
-    def isInAdventureListWindow(self):
-        """
-        冒险之旅窗口
-        :return:
-        """
-        path = IMG_PATH.joinpath("Main").joinpath("adventure").joinpath("adventureList__96_23_93_22__46_0_193_95.png")
-        mainWindow = MyImread(path)
-        pots, ok  = imgSearchArea(GetSnapShot().img, mainWindow, [96, 23, 93, 22])
-        if ok:
-            pot = pots[0]
-        else:
-            pot = (0,0)
-        return {"name":"冒险之旅","pot":pot},ok
-    @matchResult
-    def hasWorldTreeButton(self):
-        """
-        是否有世界树按钮
-        :return:
-        """
-        path = IMG_PATH.joinpath("Main").joinpath("adventure").joinpath("worldTree.png")
-        mainWindow = MyImread(path)
-        pot, ok  = imgSearch(GetSnapShot().img, mainWindow)
-        return {"name":"世界树","pot":pot},ok
-    @matchResult
     def searchStartWorldTreeAdvButton(self):
         """
         搜索是世界树开始冒险按钮
@@ -207,17 +183,6 @@ class WorldTreeDetect:
         startWorldTree = MyImread(f"{startWorldTree}")
         pot, ok  = imgSearch(GetSnapShot().img, startWorldTree)
         return {"name":"世界树「开始冒险」","pot":pot},ok
-
-    @matchResult
-    def isInMainWindow(self):
-        """
-        游戏主页面
-        :return:
-        """
-        path = IMG_PATH.joinpath("Main").joinpath("adventure").joinpath("adventure.png")
-        mainWindow = MyImread(path)
-        pot, ok  = imgSearch(GetSnapShot().img, mainWindow)
-        return {"name":"游戏主界面ui","pot":pot},ok
 
     @matchResult
     def isInSelectYourBlessing(self):

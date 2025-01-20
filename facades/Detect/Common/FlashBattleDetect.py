@@ -93,7 +93,7 @@ class FlashBattleDetect:
         pot = (0, 0)
 
         for k, i in enumerate(imgs):
-            loading = MyImread(IMG_PATH.joinpath("lag").joinpath(i))
+            loading = MyImread(IMG_PATH.joinpath(i))
             resp, ok  = imgSearchArea(GetSnapShot().img, loading, roi[k])
             if ok:
                 pot = resp[0]
@@ -101,7 +101,7 @@ class FlashBattleDetect:
 
         return {"name":"正在加载...","pot":pot},ok
 
-
+    @matchResult
     def startPerform(self):
         """
         开始表演
@@ -112,7 +112,8 @@ class FlashBattleDetect:
         pot, ok  = imgSearchArea(GetSnapShot().img, loading, [867, 579, 343, 97])
         return {"name":"开始表演...","pot":pot},ok
 
-    def exeFlasBattle(self):
+    @matchResult
+    def exeFlashBattle(self):
         """
         通用快闪战斗处理
         Returns:
@@ -142,6 +143,14 @@ class FlashBattleDetect:
             "快闪战斗失败",
             "演出结算",
         ]
+        pots = [
+            (1128, 532),# flashBattleClosed
+            (1129, 588),# skipFormationClosed
+            (720, 0),# battleSuccess
+            (720, 0),# inFastBattle
+            (720, 0),# battleFailed
+            (720, 0),# settlementBattle
+        ]
         name = "未知"
         ok = False
         pot = (0, 0)
@@ -150,7 +159,7 @@ class FlashBattleDetect:
             loading = MyImread(IMG_PATH.joinpath("lag").joinpath(i))
             resp, ok  = imgSearchArea(GetSnapShot().img, loading, roi[k])
             if ok:
-                pot = resp[0]
+                pot = pots[k]
                 name = names[k]
                 break
 

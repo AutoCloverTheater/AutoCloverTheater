@@ -91,7 +91,7 @@ class RefineryDetect:
 
     @matchResult
     def isSwipToEnd(self):
-        path = IMG_PATH.joinpath("Main/adventure/sweetDate__918_438_307_128__868_388_407_228.png")
+        path = IMG_PATH.joinpath("Main/adventure/sweetDate.png")
         mainWindow = MyImread(path)
         pots, ok  = imgSearchArea(GetSnapShot().img, mainWindow, [918, 438, 307, 128])
         if not ok:

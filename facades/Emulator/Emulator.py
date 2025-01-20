@@ -54,7 +54,7 @@ class Emulator:
         """
         serial = self.instance.searchAndOpenDevice()
         logx.info(f"准备连接设备「Android:///127.0.0.1:{serial}」")
-        self.device = connect_device(f"Android:///127.0.0.1:{serial}?cap_method=minicap&touch_method=adb")
+        self.device = connect_device(f"Android:///127.0.0.1:{serial}?cap_method=javacap_&touch_method=adb")
         logx.info(f"连接设备成功「Android:///127.0.0.1:{serial}」")
         EmulatorFacades.ActivityEmulator = self
         return self
@@ -88,8 +88,10 @@ def ConnectEmulator() :
     """
     连接模拟器
     """
-    ActivityEmulator = Emulator()
-    EmulatorFacades.ActivityEmulator = ActivityEmulator.ConnectDevice()
+    if EmulatorFacades.ActivityEmulator is None:
+        ActivityEmulator = Emulator()
+        EmulatorFacades.ActivityEmulator = ActivityEmulator.ConnectDevice()
+
 
 # 公共方法全局使用
 def UpdateSnapShot():
@@ -98,3 +100,9 @@ def UpdateSnapShot():
     EmulatorFacades.ActivityEmulator.selfSnapshot()
 def GetSnapShot()->numpy.array:
     return EmulatorFacades.ActivityEmulator.selfGetCachedSnapShot()
+
+
+if __name__ == "__main__":
+    ConnectEmulator()
+    UpdateSnapShot()
+    print(GetSnapShot())

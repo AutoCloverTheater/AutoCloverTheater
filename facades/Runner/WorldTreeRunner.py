@@ -8,6 +8,7 @@ from facades.Detect.WorldTree.WorldTreeDetect import WorldTreeDetect
 from facades.Emulator.Emulator import ConnectEmulator, UpdateSnapShot
 from facades.Logx.Logx import logx
 from facades.Runner.Limit import error_function
+from facades.Runner.layout.AdventureRunner import findAdventure
 from facades.Runner.layout.LoginRunner import Login
 
 @error_function
@@ -16,6 +17,7 @@ def BeforeInWorldTree():
     世界树冒险开始前
     :return:
     """
+
     worldTree = WorldTreeDetect()
     fastBattle = FlashBattleDetect()
 
@@ -33,49 +35,35 @@ def BeforeInWorldTree():
         if ok:
             time.sleep(1)
             continue
-        mainResp,ok = worldTree.isInMainWindow()
-        if ok:
-            click(mainResp['pot'])
-            logx.info("等待进入冒险")
-            continue
-        worldTreeButton,ok = worldTree.hasWorldTreeButton()
-        if ok:
-            click(worldTreeButton['pot'])
-            logx.info(f"点击世界树按钮，等待选择世界树主页面")
-            continue
-        adventureListResp,ok = worldTree.isInAdventureListWindow()
-        if ok:
-            logx.info(f"开始滑动搜索世界树入口按钮")
-            # 从右向左滑动
-            swipe((400, 100), (200, 100), duration=0.2,steps=2)
-            time.sleep(1)
-            continue
         # 识别等级
         _,ok = worldTree.isLeverMax()
         if ok:
             logx.info(f"已到达最大等级，退出世界树")
-            times = 3
             break
         # 出发冒险按钮
         searchStartWorldTreeAdvButton, ok = worldTree.searchStartWorldTreeAdvButton()
         if ok and worldTree.lv < Config("app.worldTree.lever"):
             click(searchStartWorldTreeAdvButton['pot'])
             logx.info(f"点击出发冒险按钮，等待选择难度")
+            times = 0
             continue
         # 选择难度
         leverSelect,ok = worldTree.hasTopLeverButton()
         if ok:
             click(leverSelect['pot'])
             logx.info(f"选择难度")
+            times = 0
             continue
         isLoading, ok = fastBattle.isLoading()
         if ok:
             time.sleep(1)
+            times = 0
             continue
         startPerform, ok = worldTree.isInStartPerform()
         if ok:
             click(startPerform['pot'])
             logx.info("开始表演")
+            times = 0
             continue
         inGame, ok = worldTree.isInworldTreeCardWindow()
         if ok:
@@ -260,5 +248,6 @@ def InWorldTree():
 if __name__ == '__main__':
     ConnectEmulator()
     Login()
+    findAdventure("hasWorldTreeButton")
     BeforeInWorldTree()
     InWorldTree()
