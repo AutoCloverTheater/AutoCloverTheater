@@ -38,6 +38,8 @@ class FlashBattleDetect:
         path = IMG_PATH.joinpath("Main").joinpath('fastBattle').joinpath("battleSuccess__509_416_265_71__459_366_365_171.png")
         mainWindow = MyImread(path)
         pot, ok  = imgSearchArea(GetSnapShot().img, mainWindow, [509, 410, 268, 79])
+        if ok:
+            pot = (0.5, 0)
         return {"name":"快闪战斗胜利","pot":pot},ok
 
     @matchResult
@@ -49,6 +51,8 @@ class FlashBattleDetect:
         path = IMG_PATH.joinpath("Main").joinpath('fastBattle').joinpath("inFastBattle__1099_172_20_92__1049_122_120_192.png")
         mainWindow = MyImread(path)
         pot, ok  = imgSearchArea(GetSnapShot().img, mainWindow, [1099, 172, 20, 92])
+        if ok:
+            pot = (0.5, 0)
         return {"name":"快闪战斗中。。。。","pot":pot},ok
 
     @matchResult
@@ -60,6 +64,8 @@ class FlashBattleDetect:
         path = IMG_PATH.joinpath("Main").joinpath('fastBattle').joinpath("battleFailed_509_410_268_79_459_360_368_179.png")
         mainWindow = MyImread(path)
         pot, ok  = imgSearchArea(GetSnapShot().img, mainWindow, [509, 410, 268, 79])
+        if ok:
+            pot = (0.5, 0)
         return {"name":"快闪战斗失败","pot":pot},ok
     @matchResult
     def isInBattleResultWindow(self) :
@@ -70,6 +76,8 @@ class FlashBattleDetect:
         path = IMG_PATH.joinpath("Main").joinpath('fastBattle').joinpath("settlementBattle__502_40_280_63__452_0_380_153.png")
         mainWindow = MyImread(path)
         pot, ok  = imgSearchArea(GetSnapShot().img, mainWindow, [452, 0, 380, 153])
+        if ok:
+            pot = (0.5, 0)
         return {"name":"演出结算","pot":pot},ok
 
     @matchResult
@@ -146,10 +154,10 @@ class FlashBattleDetect:
         pots = [
             (1128, 532),# flashBattleClosed
             (1129, 588),# skipFormationClosed
-            (720, 0),# battleSuccess
-            (720, 0),# inFastBattle
-            (720, 0),# battleFailed
-            (720, 0),# settlementBattle
+            (0.5, 0),# battleSuccess
+            (0.5, 0),# inFastBattle
+            (0.5, 0),# battleFailed
+            (0.5, 0),# settlementBattle
         ]
         name = "未知"
         ok = False
