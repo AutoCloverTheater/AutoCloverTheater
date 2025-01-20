@@ -41,7 +41,23 @@ def saveCard():
     res3 = cv2.imwrite(f"{rp}", r)
     logx.info(f"保存结果 {res1},{res2},{res3}\n")
 
+# 遗迹出口
+def saveExit():
+    img = GetSnapShot().img
+    y, x, _ = img.shape
+    # [586,132,364,243]
+    cardxy = img[200:375, 600:900]
+    res3 = cv2.imwrite("c.png", cardxy)
+    # 将掩码外的像素设置为黑色
+    # 4128A3 684642
+    result = imgGetColor(img=cardxy, low="694642", top="A66C6A")
+
+    res3 = cv2.imwrite("relicExit.png", result)
+    logx.info(f"保存结果 {res3}\n")
+
+
 if __name__ == '__main__':
     ConnectEmulator()
     UpdateSnapShot()
-    saveCard()
+    # saveCard()
+    saveExit()

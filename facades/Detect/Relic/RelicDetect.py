@@ -154,6 +154,7 @@ class RelicDetect:
             'green.png',
             'boss.png',
             'exit.png',
+            "relicExit.png"
         ]
         names = [
             "跳楼减价",
@@ -161,6 +162,7 @@ class RelicDetect:
             "奇遇事件",
             "首领怪物",
             "传送门",
+            "离开"
         ]
 
         ok = False
