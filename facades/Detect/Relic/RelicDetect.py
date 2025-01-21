@@ -249,13 +249,14 @@ class RelicDetect:
         imgs = [
             "killBoss02__163_45_16_17__113_0_116_112.png",
             "killedBoss__163_45_15_16__113_0_115_111.png",
+            "killedBoss03__92_53_47_34__42_3_147_134.png",
         ]
         pot = ()
         ok = False
         for i in imgs:
             path = IMG_PATH.joinpath(f"Main/relic/{i}")
             img = MyImread(path)
-            rois,ok = imgSearchArea(GetSnapShot().img, img, [159,42,22,25])
+            rois,ok = imgSearchArea(GetSnapShot().img, img, [91,40,91,48])
             if ok:
                 pot = (703,210)
                 break

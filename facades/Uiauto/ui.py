@@ -6,7 +6,7 @@ from facades.Configs.Config import Config
 
 
 def connect():
-    d = u2.connect(f"127.0.0.1:16416")
+    d = u2.connect(f"127.0.0.1:16384")
     return d
 
 u2Device = connect()
@@ -20,8 +20,8 @@ def appStart():
 
 
 if __name__ == '__main__':
-    appStart()
-    # while 1:
-    #     appStart()
-    #     r = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    #     print(r)
+    connect()
+    while 1:
+        screenshot()
+        r = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        print(r)

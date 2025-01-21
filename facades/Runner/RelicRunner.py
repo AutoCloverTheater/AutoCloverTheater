@@ -86,6 +86,11 @@ def _findNextNode():
             break
         name = item['name']
         point = item['point']
+        # 在遗迹探索中
+        _, ok = relic.isInRelicGame()
+        if not ok:
+            break
+
         # 视角复位
         UpdateSnapShot()
         resp, ok = relic.location()
@@ -96,17 +101,32 @@ def _findNextNode():
             logx.warning("没有找到复位按钮")
             return resp
 
+        _, inBoss = relic.killedBoss()
+        if inBoss:
+            break
+
         for i in range(6):
             swipe(point[0], point[1])
             UpdateSnapShot()
-            logx.info(f"{name}寻找第 {i + 1} 次")
             # 在遗迹内
             _, inGame = relic.isInRelicGame()
+            if not inGame:
+                break
+            logx.info(f"{name}寻找第 {i + 1} 次")
+
             # 探索点
             resp, ok = relic.eventPoint()
-            if ok and inGame:
+            if ok:
                 click(resp['pot'])
                 UpdateSnapShot()
+                # 在遗迹内
+                _, inGame = relic.isInRelicGame()
+                if not inGame:
+                    break
+                # 已经在boss点位
+                _, inBoss = relic.killedBoss()
+                if inBoss:
+                    break
                 _,ok = relic.reLocation()
                 if ok :
                     stop = False
@@ -121,7 +141,7 @@ def _findNextNode():
     resp, ok = relic.location()
     if ok:
         click(resp['pot'])
-        time.sleep(0.1)
+        time.sleep(0.5)
     else:
         logx.warning("没有找到复位按钮")
         return resp
@@ -135,7 +155,7 @@ def ErikaMoving():
     :return:
     """
     # [41,6,159,146]
-    fpsLimit = 3
+    fpsLimit = 2
 
     fps = []
     while True:
@@ -146,7 +166,7 @@ def ErikaMoving():
         hk = imagehash.average_hash(Image.fromarray(Erika))
         hk = f"{hk}"
         fps.append(hk)
-        logx.info(f"{fps}")
+
         if len(fps) > fpsLimit:
             fps.pop(0)
 
@@ -213,8 +233,8 @@ def inRelic():
         explorationEnds,ok = relic.explorationEnds()
         if ok:
             click(explorationEnds['pot'])
-            time.sleep(0.2)
-            continue
+            time.sleep(1)
+            break
         # 探索点
         resp, ok = relic.eventPoint()
         if ok and inGame:
@@ -231,8 +251,9 @@ def inRelic():
         times+= 1
 
 if __name__ == '__main__':
-    ConnectEmulator()
-    Login()
-    FindAdventure("hasRelicButton")
-    beforeRelic()
-    inRelic()
+    for i in range(10):
+        ConnectEmulator()
+        Login()
+        FindAdventure("hasRelicButton")
+        beforeRelic()
+        inRelic()
