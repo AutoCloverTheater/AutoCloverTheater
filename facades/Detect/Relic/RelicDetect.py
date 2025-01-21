@@ -93,9 +93,9 @@ class RelicDetect:
         """
         path = IMG_PATH.joinpath("main/relic/confirm01__618_558_67_30__568_508_167_130.png")
         img = MyImread(path)
-        pot,ok = imgSearchArea(GetSnapShot().img, img, [618, 558, 67, 30])
+        pot,ok = imgSearchArea(GetSnapShot().img, img, [618,558,67,30])
         if ok :
-            pot = pot[0]
+            pot = pot.pop()
 
         return {"name": "确认", "pot": pot}, ok
 
@@ -105,12 +105,21 @@ class RelicDetect:
         选择按钮
         :return:
         """
-        path = IMG_PATH.joinpath("main/relic/select.png")
-        img = MyImread(path)
-        pot,ok = imgSearchArea(GetSnapShot().img, img, [926,194,138,270])
-        if ok :
-            logx.info(f"匹配结果 {pot}")
-            pot = pot.pop()
+        rois = [
+            [969,322,51,27],# 第二个选择
+            [969,219,50,24],# 第一个选择
+        ]
+
+        pot = ()
+        ok = False
+        for k, roi in enumerate(rois):
+            path = IMG_PATH.joinpath("main/relic/select.png")
+            img = MyImread(path)
+            pot,ok = imgSearchArea(GetSnapShot().img, img, roi)
+            if ok :
+                logx.info(f"选择按钮{k}")
+                pot = (roi[0] + roi[2] / 2,roi[1]+ roi[3] / 2)
+                break
 
         return {"name": "选择", "pot": pot}, ok
 
@@ -182,7 +191,7 @@ class RelicDetect:
         # 将亮度低的部分设置为黑色
         image[mask] = [0, 0, 0]
         darkened_image = image
-        cv2.imwrite("d.png", darkened_image)
+        # cv2.imwrite("d.png", darkened_image)
 
         ok = False
         pot = ()
@@ -203,7 +212,7 @@ class RelicDetect:
         是否在遗迹探索游戏内
         Returns:
         """
-        path = "main/relic/location__40_231_41_62__0_181_131_162.png"
+        path = "Main/relic/location__40_231_41_62__0_181_131_162.png"
         path = IMG_PATH.joinpath(path)
         img = MyImread(path)
         rois,ok = imgSearchArea(GetSnapShot().img, img, [40, 231, 41, 62])
@@ -221,7 +230,7 @@ class RelicDetect:
         Returns:
 
         """
-        path = IMG_PATH.joinpath("main/relic/location__40_231_41_62__0_181_131_162.png")
+        path = IMG_PATH.joinpath("Main/relic/location__40_231_41_62__0_181_131_162.png")
         img = MyImread(path)
         rois,ok = imgSearchArea(GetSnapShot().img, img, [40, 231, 41, 62])
         if len(rois) > 0:
@@ -230,6 +239,56 @@ class RelicDetect:
             pot = (0,0)
 
         return {"name": "重制视角", "pot": pot}, ok
+
+    @matchResult
+    def killedBoss(self):
+        """
+        击杀过boss了
+        Returns:
+        """
+        imgs = [
+            "killBoss02__163_45_16_17__113_0_116_112.png",
+            "killedBoss__163_45_15_16__113_0_115_111.png",
+        ]
+        pot = ()
+        ok = False
+        for i in imgs:
+            path = IMG_PATH.joinpath(f"Main/relic/{i}")
+            img = MyImread(path)
+            rois,ok = imgSearchArea(GetSnapShot().img, img, [159,42,22,25])
+            if ok:
+                pot = (703,210)
+                break
+
+        return {"name": "击杀过boss了", "pot": pot}, ok
+
+    @matchResult
+    def reLocation(self):
+        path = IMG_PATH.joinpath("Main/relic/reLocation__701_266_120_26__651_216_220_126.png")
+        img = MyImread(path)
+        rois,ok = imgSearchArea(GetSnapShot().img, img, [690,251,150,126])
+
+        pot = ()
+        if ok > 0:
+            pot = rois.pop()
+
+        return {"name": "当前路径不能直接跳转请重新选择", "pot": pot}, ok
+
+    @matchResult
+    def explorationEnds(self):
+        """
+        探索结束
+        :return:
+        """
+        path = IMG_PATH.joinpath("Main/relic/explorationEnds__451_122_376_53__401_72_476_153.png")
+        img = MyImread(path)
+        rois,ok = imgSearchArea(GetSnapShot().img, img, [451, 122, 376, 53])
+        if len(rois) > 0:
+            pot = (0.5, 0)
+        else:
+            pot = (0,0)
+
+        return {"name": "探索结束", "pot": pot}, ok
 
     @matchResult
     def hasSettingMap(self):

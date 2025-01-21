@@ -6,10 +6,10 @@ certifi==2024.12.14
 charset-normalizer==3.4.1
 executing
 idna==3.10
-loguru~=0.7.2
+loguru
 numpy
 opencv-python
-pillow==11.0.0
+pillow
 requests==2.32.3
 setuptools==75.1.0
 urllib3==2.3.0
@@ -17,3 +17,5 @@ varname
 wheel==0.44.0
 pyyaml
 pyscrcpy
+imagehash
+uiautomator2

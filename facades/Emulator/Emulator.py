@@ -54,7 +54,7 @@ class Emulator:
         """
         serial = self.instance.searchAndOpenDevice()
         logx.info(f"准备连接设备「Android:///127.0.0.1:{serial}」")
-        self.device = connect_device(f"Android:///127.0.0.1:{serial}?cap_method=javacap_&touch_method=adb")
+        self.device = connect_device(f"Android:///127.0.0.1:{serial}?cap_method=JAVACAP&touch_method=adb")
         logx.info(f"连接设备成功「Android:///127.0.0.1:{serial}」")
         EmulatorFacades.ActivityEmulator = self
         return self

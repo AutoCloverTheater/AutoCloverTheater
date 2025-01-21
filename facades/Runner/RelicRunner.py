@@ -1,11 +1,13 @@
 import time
 
-from airtest.core.api import click
+import imagehash
+from PIL import Image
+from airtest.core.api import click, swipe
+from collections import Counter
 
-from facades.Detect.Common.AdventureDetect import AdventureDetect
 from facades.Detect.Common.FlashBattleDetect import FlashBattleDetect
 from facades.Detect.Relic.RelicDetect import RelicDetect
-from facades.Emulator.Emulator import UpdateSnapShot, ConnectEmulator
+from facades.Emulator.Emulator import UpdateSnapShot, ConnectEmulator, GetSnapShot
 from facades.Logx.Logx import logx
 from facades.Runner.layout.AdventureRunner import FindAdventure
 from facades.Runner.layout.LoginRunner import Login
@@ -52,6 +54,110 @@ def beforeRelic():
             continue
         times += 1
 
+def _findNextNode():
+    relic  = RelicDetect()
+    UpdateSnapShot()
+    # 在遗迹内
+    _, inGame = relic.isInRelicGame()
+    # 探索点
+    resp, ok = relic.eventPoint()
+    if ok and inGame:
+        click(resp['pot'])
+        time.sleep(5)
+        return resp
+    maps = [
+        {
+            "name":"右上角",
+            "point":[(0.5,0.5),(0.1,0.9)],
+        },{
+            "name": "左上角",
+            "point": [(0.5,0.5),(0.9,0.9)],
+        },{
+            "name": "右下角",
+            "point": [(0.5,0.5),(0.1,0.1)],
+        },{
+            "name": "左下角",
+            "point": [(0.5,0.5),(0.9,0.1)],
+        }
+    ]
+    stop = False
+    for item in maps:
+        if stop:
+            break
+        name = item['name']
+        point = item['point']
+        # 视角复位
+        UpdateSnapShot()
+        resp, ok = relic.location()
+        if ok:
+            click(resp['pot'])
+            time.sleep(0.2)
+        else:
+            logx.warning("没有找到复位按钮")
+            return resp
+
+        for i in range(6):
+            swipe(point[0], point[1])
+            UpdateSnapShot()
+            logx.info(f"{name}寻找第 {i + 1} 次")
+            # 在遗迹内
+            _, inGame = relic.isInRelicGame()
+            # 探索点
+            resp, ok = relic.eventPoint()
+            if ok and inGame:
+                click(resp['pot'])
+                UpdateSnapShot()
+                _,ok = relic.reLocation()
+                if ok :
+                    stop = False
+                    break
+                else:
+                    time.sleep(5)
+                    stop = True
+                    break
+
+    # 视角复位
+    UpdateSnapShot()
+    resp, ok = relic.location()
+    if ok:
+        click(resp['pot'])
+        time.sleep(0.1)
+    else:
+        logx.warning("没有找到复位按钮")
+        return resp
+
+    return resp
+
+def ErikaMoving():
+    """
+    艾丽卡移动中
+    连续三帧相同，则艾丽卡移动结束
+    :return:
+    """
+    # [41,6,159,146]
+    fpsLimit = 3
+
+    fps = []
+    while True:
+        UpdateSnapShot()
+        img = GetSnapShot().img
+        Erika = img[6:6+146,41:41+159]
+
+        hk = imagehash.average_hash(Image.fromarray(Erika))
+        hk = f"{hk}"
+        fps.append(hk)
+        logx.info(f"{fps}")
+        if len(fps) > fpsLimit:
+            fps.pop(0)
+
+        counts  = Counter(fps)
+        if len(fps) == fpsLimit and len(counts) <= 1:
+            logx.info("艾丽卡停止移动")
+            break
+        logx.info("艾丽卡移动中")
+
+
+    return
 
 def inRelic():
     relic = RelicDetect()
@@ -97,28 +203,36 @@ def inRelic():
             time.sleep(0.2)
             times = 0
             continue
+        # 击杀boss了
+        killedBoss, ok = relic.killedBoss()
+        if ok:
+            click(killedBoss['pot'])
+            time.sleep(0.2)
+            times = 0
+            continue
+        explorationEnds,ok = relic.explorationEnds()
+        if ok:
+            click(explorationEnds['pot'])
+            time.sleep(0.2)
+            continue
         # 探索点
         resp, ok = relic.eventPoint()
         if ok and inGame:
             click(resp['pot'])
+            ErikaMoving()
             times = 0
-            time.sleep(2)
             continue
         # 没有找到探索点，开始寻找下一个探索点
         if not ok and inGame:
-            logx.info("没有找到探索点，开始寻找下一个探索点")
-            time.sleep(1)
+            _findNextNode()
+            ErikaMoving()
+            times = 0
             continue
         times+= 1
 
 if __name__ == '__main__':
     ConnectEmulator()
-    # UpdateSnapShot()
-    # fast = FlashBattleDetect()
-    # res = fast.isOpenFlashBattleClosed()
-    # logx.info(res)
-    # Login()
-
-    # FindAdventure("hasRelicButton")
-    # beforeRelic()
+    Login()
+    FindAdventure("hasRelicButton")
+    beforeRelic()
     inRelic()
