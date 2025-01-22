@@ -6,9 +6,6 @@ import time
 from loguru import logger
 from facades.Constant.Constant import RUNTIME_PATH
 
-# 这是设置airtest日志等级
-logging.getLogger('airtest').setLevel(logging.ERROR)
-
 # 自定义日志格式和颜色
 def custom_format(record):
     color_map = {
@@ -25,8 +22,8 @@ def setup_logger():
 
     now = datetime.datetime.now().strftime("%Y-%m-%d-%H")
 
-    logger.add(f"{RUNTIME_PATH.joinpath('logs')}/{now}/info.log",format="<green>{time:YYYY-MM-DD HH:mm:ss} - {message}</green>",
-               rotation="1 week", enqueue=True,backtrace=True, diagnose=True,level=logging.INFO)
+    # logger.add(f"{RUNTIME_PATH.joinpath('logs')}/{now}/info.log",format="<green>{time:YYYY-MM-DD HH:mm:ss} - {message}</green>",
+    #            rotation="1 week", enqueue=True,backtrace=True, diagnose=True,level=logging.INFO)
 
     logger.add(f"{RUNTIME_PATH.joinpath('logs')}/{now}/error.log",format="<red>{time:YYYY-MM-DD HH:mm:ss} - {message} File:{file.path}, Line {line}, function {function}</red>",
                rotation="1 week", enqueue=True,backtrace=True, diagnose=True,level=logging.ERROR)

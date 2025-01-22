@@ -1,8 +1,7 @@
-import cv2
-from airtest.core.api import click
+
 
 from facades.Constant.Constant import IMG_PATH
-from facades.Emulator.Emulator import GetSnapShot
+from facades.Emulator.Emulator import GetSnapShot, Click
 from facades.Img.ImgRead import MyImread
 from facades.Img.ImgSearch import imgSearch
 from facades.Logx.Logx import logx
@@ -61,7 +60,7 @@ def error_function(method):
             """
             path = IMG_PATH.joinpath("error").joinpath("error__614_483_55_26__564_433_155_126.png")
             mainWindow = MyImread(path)
-            pot, ok = imgSearch(GetSnapShot().img, mainWindow)
+            pot, ok = imgSearch(GetSnapShot(), mainWindow)
             return {"name": "未知错误", "pot": pot}, ok
 
         times = 0
@@ -71,7 +70,7 @@ def error_function(method):
                 break
             hasErrorWindowResp,ok = hasErrorWindow()
             if ok:
-                click(hasErrorWindowResp['pot'])
+                Click(hasErrorWindowResp['pot'])
                 # 恢复函数
                 result = method(*args, **kwargs)
                 continue

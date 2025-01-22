@@ -1,11 +1,13 @@
 import sys
+import threading
 import time
+from typing import Optional
 
 import numpy
-from airtest.core.android import Android
-from airtest.core.api import connect_device
+import uiautomator2
+
 from facades.Configs.Config import Config
-from facades.Emulator import EmulatorFacades
+import uiautomator2 as u2
 from facades.Logx.Logx import logx
 from mac.emulator.bluestacks import Bluestacks
 from mac.emulator.mumu import Mumu as MumuMac
@@ -24,7 +26,7 @@ UsefulEmulator = {
 
 class Emulator:
     instance = MumuMac| MumuWin | Bluestacks
-    device = Android
+    device = uiautomator2.Device
     snapshotCache = None
 
     def __init__(self) -> None:
@@ -45,6 +47,8 @@ class Emulator:
         instance = UsefulEmulator[sys.platform][Config('app').get('emulatorType')]()
         self.instance = instance
 
+        self.lock = threading.Lock()
+
     def ConnectDevice(self):
         """
         连接设备并返回设备序列号。
@@ -53,56 +57,86 @@ class Emulator:
             device instance
         """
         serial = self.instance.searchAndOpenDevice()
-        logx.info(f"准备连接设备「Android:///127.0.0.1:{serial}」")
-        self.device = connect_device(f"Android:///127.0.0.1:{serial}?cap_method=JAVACAP&touch_method=adb")
-        logx.info(f"连接设备成功「Android:///127.0.0.1:{serial}」")
-        EmulatorFacades.ActivityEmulator = self
+        logx.info(f"准备连接设备「Android:///{serial}")
+        self.device = u2.connect(serial)
+        logx.info(f"连接设备成功「Android:///{serial}")
         return self
 
+    def updateSnapShop(self):
+        with self.lock:
+            self.snapshotCache = self.device.screenshot(format='opencv')
+            return self.snapshotCache
+
+
+
     def selfGetCachedSnapShot(self):
-        return Snapshot(self.snapshotCache)
+        with self.lock:
+            return self.snapshotCache
 
-    def selfSnapshot(self):
-        self.snapshotCache = self.device.snapshot(quality=99)
-
-        count = 0
-        while self.snapshotCache is None:
-            self.snapshotCache = self.device.snapshot(quality=99)
-            count += 1
-            if count > 10:
-                raise Exception("获取截图失败")
-            time.sleep(0.1)
-
-        return Snapshot(self.snapshotCache)
-
-class Snapshot:
-    img = None
-
-    def __init__(self, img):
-        self.img = img
-
-    def toNpArray(self) -> numpy.array:
-        return numpy.array(self.img)
+# 已经激活的模拟器
+ActivityEmulator = Emulator()
 
 def ConnectEmulator() :
     """
     连接模拟器
     """
-    if EmulatorFacades.ActivityEmulator is None:
-        ActivityEmulator = Emulator()
-        EmulatorFacades.ActivityEmulator = ActivityEmulator.ConnectDevice()
+    return ActivityEmulator.ConnectDevice()
 
 
 # 公共方法全局使用
 def UpdateSnapShot():
-    if EmulatorFacades.ActivityEmulator is None:
-        ConnectEmulator()
-    EmulatorFacades.ActivityEmulator.selfSnapshot()
+    return ActivityEmulator.updateSnapShop()
 def GetSnapShot()->numpy.array:
-    return EmulatorFacades.ActivityEmulator.selfGetCachedSnapShot()
+    return ActivityEmulator.selfGetCachedSnapShot()
+
+def Click(point:tuple[float|int,float|int], sleep=0.1):
+    x,y = point
+    if type(x) == float:
+        x = int(x * ActivityEmulator.device.info["displayWidth"])
+        y = int(y * ActivityEmulator.device.info["displayHeight"])
+
+    ActivityEmulator.device.click(x, y)
+    time.sleep(sleep)
+
+def Text(text:str):
+    return ActivityEmulator.device.send_keys(text,clear=True)
+
+def Swipe(start:tuple[float|int,float|int], end:tuple[float|int,float|int], steps: Optional[int] = None, sleep=0.1):
+    x,y = start
+    x1, y1 = end
+    if type(x) == float:
+        x = int(x * ActivityEmulator.device.info["displayWidth"])
+        y = int(y * ActivityEmulator.device.info["displayHeight"])
+        x1 = int(x1 * ActivityEmulator.device.info["displayWidth"])
+        y1 = int(y1 * ActivityEmulator.device.info["displayHeight"])
+
+    ActivityEmulator.device.swipe(x,y,x1,y1,steps)
+    time.sleep(sleep)
+
+def AppCurrent():
+    """
+    检测四叶草是否已经启动
+    """
+    resp = ActivityEmulator.device.app_current()
+    if resp is not None and resp.get("package") != Config('app.appName'):
+        logx.warning(f"应用「{Config('app.appName')}」,未启动")
+
+    return resp.get("package") == Config('app.appName')
+
+
+def AppStart():
+    ActivityEmulator.device.app_start(Config('app.appName'), wait=True)
 
 
 if __name__ == "__main__":
     ConnectEmulator()
-    UpdateSnapShot()
-    print(GetSnapShot())
+    resp = ActivityEmulator.device.app_current()
+    logx.info(f"app_current:{resp}")
+    resp = ActivityEmulator.device.app_info(Config("app.appName"))
+    logx.info(f"app_info:{resp}")
+    resp = ActivityEmulator.device.app_list_running()
+    logx.info(f"app_list_running:{resp}")
+    resp = ActivityEmulator.device.app_list()
+    logx.info(f"app_list:{resp}")
+
+    StartApp()

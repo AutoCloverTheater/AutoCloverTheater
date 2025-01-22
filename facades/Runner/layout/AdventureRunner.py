@@ -1,9 +1,7 @@
 import time
 
-from airtest.core.api import click, swipe
-
 from facades.Detect.Common.AdventureDetect import AdventureDetect
-from facades.Emulator.Emulator import UpdateSnapShot, ConnectEmulator
+from facades.Emulator.Emulator import UpdateSnapShot, ConnectEmulator, Click
 from facades.Logx.Logx import logx
 
 def FindAdventure(callAdv:str):
@@ -41,7 +39,7 @@ def FindAdventure(callAdv:str):
         resp,ok = adv.isInMainUi()
         if ok:
             logx.info(f"坐标 {resp}")
-            click(resp['pot'])
+            Click(resp['pot'])
             time.sleep(0.3)
             times = 0
             continue
@@ -53,7 +51,7 @@ def FindAdventure(callAdv:str):
 
         button,buttonOk = method()
         if inOk and buttonOk:
-            click(button['pot'])
+            Click(button['pot'])
             time.sleep(0.3)
             times = 0
             break

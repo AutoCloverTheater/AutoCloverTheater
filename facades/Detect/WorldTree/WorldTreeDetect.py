@@ -3,12 +3,9 @@ import os
 import time
 from collections import Counter
 
-import cv2
-from airtest.core.api import click
 
 from facades.Constant.Constant import IMG_PATH
 from facades.Detect.DetectLog import matchResult
-
 from facades.Emulator.Emulator import GetSnapShot
 from facades.Img.ImgRead import MyImread
 from facades.Img.ImgSearch import imgSearch, imgMultipleResultSearch, imgSearchArea
@@ -35,7 +32,7 @@ class WorldTreeDetect:
         """
         path = IMG_PATH.joinpath("Main").joinpath("worldTree").joinpath("worldTreeBata.png")
         mainWindow = MyImread(path)
-        pot, ok  = imgSearch(GetSnapShot().img, mainWindow)
+        pot, ok  = imgSearch(GetSnapShot(), mainWindow)
         return {"name":"世界树bata2.0","pot":pot},ok
 
     @matchResult
@@ -46,7 +43,7 @@ class WorldTreeDetect:
         """
         path = IMG_PATH.joinpath("Main").joinpath("difficulty.png")
         mainWindow = MyImread(path)
-        pot, ok  = imgSearch(GetSnapShot().img, mainWindow)
+        pot, ok  = imgSearch(GetSnapShot(), mainWindow)
         return {"name":"选择难度","pot":pot},ok
 
     def getLever(self):
@@ -55,7 +52,7 @@ class WorldTreeDetect:
         :return:
         """
         # 截取指定位置
-        dewXY = GetSnapShot().img
+        dewXY = GetSnapShot()
         dewXY = dewXY[490:545, 824:1195]
         res = MyCnocr.ocrNum(img=dewXY)
         lv = 0
@@ -73,7 +70,7 @@ class WorldTreeDetect:
         更新露水数量
         :return:
         """
-        dewXY = GetSnapShot().img
+        dewXY = GetSnapShot()
         # 截取指定位置
         dewXY = dewXY[43:80, 960:1150]
         res = MyCnocr.ocrNum(img=dewXY)
@@ -106,7 +103,7 @@ class WorldTreeDetect:
                 for file in png_files:
                     tempImg = MyImread(file)
 
-                    pots, ok = imgSearchArea(GetSnapShot().img, tempImg, roi, 0.8)
+                    pots, ok = imgSearchArea(GetSnapShot(), tempImg, roi, 0.8)
                     if ok:
                         fName = file.split('/')[-1].split('.')[0]
                         result.append({"pot": (roi[0], roi[1]), "name": fName})
@@ -170,7 +167,7 @@ class WorldTreeDetect:
         """
         path = IMG_PATH.joinpath("Main").joinpath("worldTree").joinpath("worldTreeEnd__556_55_164_40__506_5_264_140.png")
         mainWindow = MyImread(path)
-        pot, ok  = imgSearch(GetSnapShot().img, mainWindow)
+        pot, ok  = imgSearch(GetSnapShot(), mainWindow)
         return {"name":"探索结束","pot":pot},ok
 
     @matchResult
@@ -181,7 +178,7 @@ class WorldTreeDetect:
         """
         startWorldTree = IMG_PATH.joinpath("Main").joinpath("worldTree").joinpath("startWorldTreeAdventure.png")
         startWorldTree = MyImread(f"{startWorldTree}")
-        pot, ok  = imgSearch(GetSnapShot().img, startWorldTree)
+        pot, ok  = imgSearch(GetSnapShot(), startWorldTree)
         return {"name":"世界树「开始冒险」","pot":pot},ok
 
     @matchResult
@@ -196,7 +193,7 @@ class WorldTreeDetect:
         """
         path = IMG_PATH.joinpath("Main").joinpath("WorldTree").joinpath("blessing__1036_239_45_89__986_189_145_189.png")
         mainWindow = MyImread(path)
-        pot, ok  = imgSearch(GetSnapShot().img, mainWindow)
+        pot, ok  = imgSearch(GetSnapShot(), mainWindow)
         return {"name":"选择你的祝福","pot":pot},ok
 
     @matchResult
@@ -207,7 +204,7 @@ class WorldTreeDetect:
         """
         path = IMG_PATH.joinpath("Main").joinpath("worldTree").joinpath("dewNum_939_49_16_20_889_0_116_119.png")
         mainWindow = MyImread(path)
-        pot, ok  = imgSearch(GetSnapShot().img, mainWindow)
+        pot, ok  = imgSearch(GetSnapShot(), mainWindow)
         return {"name":"露水数量","pot":pot},ok
     @matchResult
     def hasTopLeverButton(self):
@@ -219,14 +216,14 @@ class WorldTreeDetect:
         path = f"{path}"
         path = path.encode('utf-8').decode('utf-8')
         topLever = MyImread(path)
-        pots,ok = imgMultipleResultSearch(GetSnapShot().img, topLever)
+        pots,ok = imgMultipleResultSearch(GetSnapShot(), topLever)
         # 去除相差小于10的
 
         if ok :
             pot = pots[-1]
         else:
             pot = (0,0)
-        # pot, ok  = 1imgSearch(GetSnapShot().img, topLever)
+        # pot, ok  = 1imgSearch(GetSnapShot(), topLever)
         return {"name":"死境难度","pot":pot},ok
     @matchResult
     def isInStartPerform(self):
@@ -236,7 +233,7 @@ class WorldTreeDetect:
         """
         path = IMG_PATH.joinpath("Main").joinpath("worldTree").joinpath("startPerform__1047_647_119_29__997_597_219_123.png")
         topLever = MyImread(path)
-        pot, ok  = imgSearch(GetSnapShot().img, topLever)
+        pot, ok  = imgSearch(GetSnapShot(), topLever)
         return {"name":"开始表演","pot":pot},ok
     @matchResult
     def isInworldTreeCardWindow(self):
@@ -246,7 +243,7 @@ class WorldTreeDetect:
         """
         path = IMG_PATH.joinpath("Main").joinpath("worldTree").joinpath("inGame.png")
         inGame = MyImread(path)
-        pot, ok  = imgSearch(GetSnapShot().img, inGame)
+        pot, ok  = imgSearch(GetSnapShot(), inGame)
         return {"name":"世界树探索中","pot":pot},ok
 
     @matchResult
@@ -258,7 +255,7 @@ class WorldTreeDetect:
         """
         path = IMG_PATH.joinpath("Main").joinpath("worldTree").joinpath("selectConfirm2__606_650_69_31__556_600_169_120.png")
         selectBlessing = MyImread(path)
-        pot, ok  = imgSearch(GetSnapShot().img, selectBlessing)
+        pot, ok  = imgSearch(GetSnapShot(), selectBlessing)
         return {"name":"确认选择2","pot":pot},ok
     @matchResult
     def selectConfirm1(self):
@@ -269,14 +266,14 @@ class WorldTreeDetect:
         """
         path = IMG_PATH.joinpath("Main").joinpath("worldTree").joinpath("selectConfirm1__606_651_68_29__556_601_168_119.png")
         selectBlessing = MyImread(path)
-        pot, ok  = imgSearch(GetSnapShot().img, selectBlessing)
+        pot, ok  = imgSearch(GetSnapShot(), selectBlessing)
         return {"name":"确认选择1","pot":pot},ok
 
     @matchResult
     def hasEventConfirmButton(self):
         path = IMG_PATH.joinpath("Main").joinpath("worldTree").joinpath("selectEvent__968_218_47_24__918_168_147_124.png")
         selectBlessing = MyImread(path)
-        pot, ok  = imgMultipleResultSearch(GetSnapShot().img, selectBlessing)
+        pot, ok  = imgMultipleResultSearch(GetSnapShot(), selectBlessing)
         return {"name":f"遭遇事件选项：{len(pot)} 个","pot":pot},ok
 
     @matchResult
@@ -288,7 +285,7 @@ class WorldTreeDetect:
         """
         path = IMG_PATH.joinpath("Main").joinpath("worldTree").joinpath("endBuy__905_603_105_24__855_553_205_124.png")
         endBuy = MyImread(path)
-        pot, ok  = imgSearch(GetSnapShot().img, endBuy)
+        pot, ok  = imgSearch(GetSnapShot(), endBuy)
         return {"name":"结束购买","pot":pot},ok
 
     @matchResult
@@ -299,7 +296,7 @@ class WorldTreeDetect:
         """
         path = IMG_PATH.joinpath("Main").joinpath("worldTree").joinpath("getItems__497_78_284_69__447_28_384_169.png")
         items = MyImread(path)
-        pots,ok = imgSearch(GetSnapShot().img, items)
+        pots,ok = imgSearch(GetSnapShot(), items)
         return {"name":"获得道具","pot":pots},ok
 
     @matchResult
@@ -310,7 +307,7 @@ class WorldTreeDetect:
         """
         path = IMG_PATH.joinpath("Main").joinpath("worldTree").joinpath("giveUpItem__586_580_109_27__536_530_209_127.png")
         items = MyImread(path)
-        pots,ok = imgSearch(GetSnapShot().img, items)
+        pots,ok = imgSearch(GetSnapShot(), items)
         return {"name":"放弃奖励","pot":pots},ok
 
     @matchResult
@@ -321,7 +318,7 @@ class WorldTreeDetect:
         """
         path = IMG_PATH.joinpath("Main").joinpath("worldTree").joinpath("wealth__613_194_55_27__563_144_155_127.png")
         items = MyImread(path)
-        pots,ok = imgSearch(GetSnapShot().img, items)
+        pots,ok = imgSearch(GetSnapShot(), items)
         return {"name":"选择赠礼-财富","pot":pots},ok
 
     @matchResult
@@ -333,7 +330,7 @@ class WorldTreeDetect:
         """
         path = IMG_PATH.joinpath("Main").joinpath("worldTree").joinpath("survival__1034_195_56_25__984_145_156_125.png")
         items = MyImread(path)
-        pots,ok = imgSearch(GetSnapShot().img, items)
+        pots,ok = imgSearch(GetSnapShot(), items)
         return {"name":"选择赠礼-生存","pot":pots},ok
     @matchResult
     def lvPlusCard(self):
@@ -345,7 +342,7 @@ class WorldTreeDetect:
 
         path = IMG_PATH.joinpath("Main").joinpath("worldTree").joinpath("lvplus__194_193_55_28__144_143_155_128.png")
         items = MyImread(path)
-        pots,ok = imgSearch(GetSnapShot().img, items)
+        pots,ok = imgSearch(GetSnapShot(), items)
         return {"name":"选择赠礼-远见","pot":pots},ok
 
     def hasExit(self):
@@ -355,7 +352,7 @@ class WorldTreeDetect:
         """
         path = IMG_PATH.joinpath("Main").joinpath("worldTree").joinpath("exit__530_652_234_23__480_602_334_118.png")
         items = MyImread(path)
-        pots,ok = imgSearchArea(GetSnapShot().img, items, [530,652,234,23])
+        pots,ok = imgSearchArea(GetSnapShot(), items, [530,652,234,23])
         if ok:
             pot = pots[-1]
         else:
@@ -370,7 +367,7 @@ class WorldTreeDetect:
         """
         path = IMG_PATH.joinpath("Main/worldTree/max__830_491_53_26__780_441_153_126.png")
         items = MyImread(path)
-        pots,ok = imgSearchArea(GetSnapShot().img, items, [830,491,53,26])
+        pots,ok = imgSearchArea(GetSnapShot(), items, [830,491,53,26])
         if ok:
             pot = pots[-1]
         else:

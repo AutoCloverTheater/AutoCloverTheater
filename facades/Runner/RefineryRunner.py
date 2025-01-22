@@ -1,10 +1,9 @@
 import time
 
-from airtest.core.api import click, swipe
 
 from facades.Detect.Common.FlashBattleDetect import FlashBattleDetect
 from facades.Detect.Refinery.RefineryDetect import RefineryDetect
-from facades.Emulator.Emulator import ConnectEmulator, UpdateSnapShot
+from facades.Emulator.Emulator import ConnectEmulator, UpdateSnapShot, Click
 from facades.Logx.Logx import logx
 from facades.Runner.layout.LoginRunner import Login
 
@@ -16,7 +15,7 @@ def find():
 
     Entrance, hasEntrance = Refinery.hasRefineryEntrance()
     if hasEntrance:
-        click(Entrance['pot'])
+        Click(Entrance['pot'])
         return
 
     while inAdvList and not hasEntrance:
@@ -26,7 +25,7 @@ def find():
         UpdateSnapShot()
         Entrance, hasEntrance = Refinery.hasRefineryEntrance()
         if hasEntrance:
-            click(Entrance['pot'])
+            Click(Entrance['pot'])
             continue
         # 滑倒底了
         endOfLisRoi, ok = Refinery.isSwipToEnd()
@@ -40,7 +39,7 @@ def find():
         UpdateSnapShot()
         Entrance, hasEntrance = Refinery.hasRefineryEntrance()
         if hasEntrance:
-            click(Entrance['pot'])
+            Click(Entrance['pot'])
             continue
         _,inAdvList = Refinery.isInAdventureListWindow()
 
@@ -69,7 +68,7 @@ def BeforeRefinery():
         # 查找冒险按钮
         adv,ok = Refinery.hasAdventureButton()
         if ok:
-            click(adv['pot'])
+            Click(adv['pot'])
             times = 0
             continue
 
@@ -96,7 +95,7 @@ def InRefinery():
         # 处理快闪
         resp, ok = fastBattle.exeFlashBattle
         if ok:
-            click(resp['pot'])
+            Click(resp['pot'])
             times = 0
             continue
         # 尝试识别今天的次数是否用光，用光了则跳过
@@ -106,14 +105,14 @@ def InRefinery():
         # 跳过编队
         FastFormation,ok = refinery.isCloseFastFormation()
         if ok:
-            click(FastFormation['pot'])
+            Click(FastFormation['pot'])
             times = 0
             continue
 
         # 开始识别可以快闪的矿
         fast,ok = refinery.fastBattle()
         if ok:
-            click(fast['pot'])
+            Click(fast['pot'])
             time.sleep(1)
             times = 0
             continue

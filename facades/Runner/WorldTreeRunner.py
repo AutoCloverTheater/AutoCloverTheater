@@ -1,11 +1,9 @@
 import time
 
-from airtest.core.api import click, swipe
-
 from facades.Configs.Config import Config
 from facades.Detect.Common.FlashBattleDetect import FlashBattleDetect
 from facades.Detect.WorldTree.WorldTreeDetect import WorldTreeDetect
-from facades.Emulator.Emulator import ConnectEmulator, UpdateSnapShot
+from facades.Emulator.Emulator import ConnectEmulator, UpdateSnapShot, Click
 from facades.Logx.Logx import logx
 from facades.Runner.Limit import error_function
 from facades.Runner.layout.AdventureRunner import FindAdventure
@@ -43,14 +41,14 @@ def BeforeInWorldTree():
         # 出发冒险按钮
         searchStartWorldTreeAdvButton, ok = worldTree.searchStartWorldTreeAdvButton()
         if ok and worldTree.lv < Config("app.worldTree.lever"):
-            click(searchStartWorldTreeAdvButton['pot'])
+            Click(searchStartWorldTreeAdvButton['pot'])
             logx.info(f"点击出发冒险按钮，等待选择难度")
             times = 0
             continue
         # 选择难度
         leverSelect,ok = worldTree.hasTopLeverButton()
         if ok:
-            click(leverSelect['pot'])
+            Click(leverSelect['pot'])
             logx.info(f"选择难度")
             times = 0
             continue
@@ -61,7 +59,7 @@ def BeforeInWorldTree():
             continue
         startPerform, ok = worldTree.isInStartPerform()
         if ok:
-            click(startPerform['pot'])
+            Click(startPerform['pot'])
             logx.info("开始表演")
             times = 0
             continue
@@ -103,13 +101,13 @@ def InWorldTree():
         # 开启快闪，跳过编队
         FlashBattleResp, ok = FlashBattle.isOpenFlashBattleClosed()
         if ok :
-            click(FlashBattleResp['pot'])
+            Click(FlashBattleResp['pot'])
             time.sleep(0.1)
             logx.info(f"已跳过快闪")
 
         SkipFormationResp,ok = FlashBattle.isOpenSkipFormationClosed()
         if ok :
-            click(SkipFormationResp['pot'])
+            Click(SkipFormationResp['pot'])
             time.sleep(0.1)
             logx.info(f"已跳过编队")
         # 战斗中
@@ -123,7 +121,7 @@ def InWorldTree():
         if ok :
             logx.info(f"战斗失败返回世界树主页")
             pot = (0,0)
-            click(pot)
+            Click(pot)
 
             times = 0
             continue
@@ -132,7 +130,7 @@ def InWorldTree():
         if ok :
             logx.info(f"战斗胜利-点击下一步")
             pot = (0, 0)
-            click(pot)
+            Click(pot)
 
             times = 0
             continue
@@ -141,30 +139,30 @@ def InWorldTree():
         if ok :
             logx.info(f"战斗结算-点击下一步")
             pot = (0, 0)
-            click(pot)
+            Click(pot)
 
             times = 0
             continue
         # 赠礼
         wealthCard, ok = worldTree.wealthCard()
         if ok:
-            click(wealthCard['pot'])
+            Click(wealthCard['pot'])
         # 赠礼
         se,ok = worldTree.survivalCard()
         if ok:
-            click(se['pot'])
+            Click(se['pot'])
         # 赠礼
         lvPlus,ok = worldTree.lvPlusCard()
         if ok:
-            click(lvPlus['pot'])
+            Click(lvPlus['pot'])
         # 祝福
         isInSelectYourBlessing, ok = worldTree.isInSelectYourBlessing()
         if ok:
-            click(isInSelectYourBlessing['pot'])
+            Click(isInSelectYourBlessing['pot'])
         # 选择
         Confirm,ok = worldTree.selectConfirm2()
         if ok:
-            click(Confirm['pot'],duration=0.3)
+            Click(Confirm['pot'])
 
             times = 0
             time.sleep(0.2)
@@ -172,7 +170,7 @@ def InWorldTree():
         # 选择
         Confirm, ok = worldTree.selectConfirm1()
         if ok:
-            click(Confirm['pot'],duration=0.3)
+            Click(Confirm['pot'])
 
             times = 0
             time.sleep(0.2)
@@ -180,14 +178,14 @@ def InWorldTree():
         # 结束购买
         endBuy,ok = worldTree.hasEndBuyButton()
         if ok:
-            click(endBuy['pot'],duration=0.3)
+            Click(endBuy['pot'])
 
             times = 0
             continue
         # 放弃奖励
         givUpItem,ok = worldTree.giveUpItem()
         if ok:
-            click(givUpItem['pot'])
+            Click(givUpItem['pot'])
 
             times = 0
             continue
@@ -195,21 +193,21 @@ def InWorldTree():
         event,ok = worldTree.hasEventConfirmButton()
         if ok:
             pot = event['pot'].pop(-1)
-            click(pot)
+            Click(pot)
 
             times = 0
             continue
         # 获取奖励
         getItems,ok = worldTree.getItems()
         if ok:
-            click(getItems['pot'])
+            Click(getItems['pot'])
 
             times = 0
             continue
         # 探索结束
         isInWorldTreeEndWindow,ok = worldTree.isInWorldTreeEndWindow()
         if ok:
-            click((0,0))
+            Click((0,0))
 
             times = 0
             continue
@@ -225,7 +223,7 @@ def InWorldTree():
             continue
         exits, ok = worldTree.hasExit()
         if ok:
-            click(exits['pot'])
+            Click(exits['pot'])
             times = 0
             continue
         # 探索中
@@ -236,7 +234,7 @@ def InWorldTree():
         # 奇遇卡-这里最好使用ocr，然后再根据排序选择需要的卡
         BizarreCard, ok = worldTree.hasBizarreCard()
         if ok:
-            click(BizarreCard['pot'])
+            Click(BizarreCard['pot'])
             times = 0
             continue
 

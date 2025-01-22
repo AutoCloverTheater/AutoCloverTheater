@@ -15,7 +15,7 @@ class ItemsDetect:
         """
         path = IMG_PATH.joinpath("Main").joinpath("adventure").joinpath("adventureList__96_23_93_22__46_0_193_95.png")
         mainWindow = MyImread(path)
-        pots, ok  = imgSearchArea(GetSnapShot().img, mainWindow, [96, 23, 93, 22])
+        pots, ok  = imgSearchArea(GetSnapShot(), mainWindow, [96, 23, 93, 22])
         if ok:
             pot = pots[0]
         else:

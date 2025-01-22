@@ -6,10 +6,9 @@ from typing import List
 import cv2
 import numpy
 import numpy as np
-from airtest.core.api import click
 
 from facades.Constant.Constant import IMG_PATH
-from facades.Emulator.Emulator import ConnectEmulator, GetSnapShot, UpdateSnapShot
+from facades.Emulator.Emulator import ConnectEmulator, GetSnapShot, UpdateSnapShot, Click
 from facades.Logx.Logx import logx
 
 
@@ -57,7 +56,7 @@ def imgSearch(img :numpy.array, template :numpy.array, threshold=0.90) -> (tuple
     min_val, __max_val, min_loc, max_loc = cv2.minMaxLoc(result)
 
     if __max_val > threshold:
-        __center = (max_loc[0] + image_y / 2, max_loc[1] + image_x / 2)
+        __center = (int(max_loc[0] + image_y / 2), int(max_loc[1] + image_x / 2))
         return __center, True
     else:
         __center = (0, 0)
@@ -129,7 +128,7 @@ def imgSearchClick(img :numpy.array, template :numpy.array):
     """
     t,ok = imgSearch(img, template)
     if ok:
-        click(t)
+        Click(t)
         return t
     else:
         return None
@@ -229,7 +228,7 @@ def mask():
         for file in png_files:
             tempImg = MyImread(file)
             # imgSearchArea(img, tempImg,[(293,428),(293+135,428+30)])
-            pots, ok = imgSearchArea(GetSnapShot().img, tempImg, roi, 0.87)
+            pots, ok = imgSearchArea(GetSnapShot(), tempImg, roi, 0.87)
             if ok:
                 pot = pots[0]
                 fName = file.split('/')[-1].split('.')[0]

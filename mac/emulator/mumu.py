@@ -120,7 +120,7 @@ class Mumu:
             else: print(f"设备：{device.get('name')} 状态：{device.get('state')}")
 
         if prot != "":
-            return prot
+            return f"{Config('app.addr')}:{prot}"
 
         raise Exception(f"没有找到设备 index of {openIndex}")
 

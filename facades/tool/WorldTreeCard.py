@@ -15,7 +15,7 @@ def saveCard():
     翻新世界树卡片资源用
     :return:
     """
-    img = GetSnapShot().img
+    img = GetSnapShot()
     y, x, _ = img.shape
     cardxy = img[565:595, :]
 
@@ -46,7 +46,7 @@ def saveCard():
 names = []
 # 遗迹出口
 def saveExit():
-    img = GetSnapShot().img
+    img = GetSnapShot()
     y, x, _ = img.shape
     # [703,211,128,58]
     cardxy = img[221:221+58, 703:703+128]

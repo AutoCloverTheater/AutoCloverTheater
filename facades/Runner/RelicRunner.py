@@ -2,17 +2,19 @@ import time
 
 import imagehash
 from PIL import Image
-from airtest.core.api import click, swipe
 from collections import Counter
 
 from facades.Detect.Common.ErrorDetect import ErrorDetect
 from facades.Detect.Common.FlashBattleDetect import FlashBattleDetect
 from facades.Detect.Relic.RelicDetect import RelicDetect
-from facades.Emulator.Emulator import UpdateSnapShot, ConnectEmulator, GetSnapShot
+from facades.Emulator.Emulator import UpdateSnapShot, ConnectEmulator, GetSnapShot, Click, Swipe
 from facades.Logx.Logx import logx
+from facades.Ocr.MyCnocr import MyCnocr
 from facades.Runner.layout.AdventureRunner import FindAdventure
 from facades.Runner.layout.LoginRunner import Login
 
+
+TearCrystal = 0
 def beforeRelic():
     relic = RelicDetect()
     fastBattle = FlashBattleDetect()
@@ -24,7 +26,7 @@ def beforeRelic():
         UpdateSnapShot()
         go,ok = fastBattle.startPerform()
         if ok:
-            click(go['pot'])
+            Click(go['pot'])
             times = 0
             time.sleep(0.1)
             continue
@@ -34,17 +36,17 @@ def beforeRelic():
             break
         settingMap, ok = relic.hasSettingMap()
         if ok:
-            click(settingMap['pot'])
+            Click(settingMap['pot'])
             times = 0
             time.sleep(0.1)
         settingRank, ok = relic.hasSettingRank()
         if ok:
-            click(settingRank['pot'])
+            Click(settingRank['pot'])
             times = 0
             time.sleep(0.1)
         start,ok = relic.hasGoExplore()
         if ok:
-            click(start['pot'])
+            Click(start['pot'])
             time.sleep(0.3)
             continue
         # 加载
@@ -63,7 +65,7 @@ def _findNextNode():
     # 探索点
     resp, ok = relic.eventPoint()
     if ok and inGame:
-        click(resp['pot'])
+        Click(resp['pot'])
         time.sleep(5)
         return resp
     maps = [
@@ -96,7 +98,7 @@ def _findNextNode():
         UpdateSnapShot()
         resp, ok = relic.location()
         if ok:
-            click(resp['pot'])
+            Click(resp['pot'])
             time.sleep(0.2)
         else:
             logx.warning("没有找到复位按钮")
@@ -107,7 +109,7 @@ def _findNextNode():
             break
 
         for i in range(6):
-            swipe(point[0], point[1])
+            Swipe(point[0], point[1])
             UpdateSnapShot()
             # 在遗迹内
             _, inGame = relic.isInRelicGame()
@@ -118,7 +120,7 @@ def _findNextNode():
             # 探索点
             resp, ok = relic.eventPoint()
             if ok:
-                click(resp['pot'])
+                Click(resp['pot'])
                 UpdateSnapShot()
                 # 在遗迹内
                 _, inGame = relic.isInRelicGame()
@@ -141,7 +143,7 @@ def _findNextNode():
     UpdateSnapShot()
     resp, ok = relic.location()
     if ok:
-        click(resp['pot'])
+        Click(resp['pot'])
         time.sleep(0.5)
     else:
         logx.warning("没有找到复位按钮")
@@ -161,7 +163,7 @@ def ErikaMoving():
     fps = []
     while True:
         UpdateSnapShot()
-        img = GetSnapShot().img
+        img = GetSnapShot()
         Erika = img[6:6+146,41:41+159]
 
         hk = imagehash.average_hash(Image.fromarray(Erika))
@@ -181,6 +183,7 @@ def ErikaMoving():
     return
 
 def inRelic():
+    global TearCrystal
     relic = RelicDetect()
     fastBattle = FlashBattleDetect()
 
@@ -199,13 +202,13 @@ def inRelic():
         # 战斗
         resp, ok = fastBattle.exeFlashBattle()
         if ok:
-            click(resp['pot'])
+            Click(resp['pot'])
             times = 0
             time.sleep(0.2)
             continue
         getItems, ok = relic.getItems()
         if ok:
-            click(getItems['pot'])
+            Click(getItems['pot'])
             times = 0
             continue
         # 在遗迹内
@@ -213,32 +216,37 @@ def inRelic():
         # 确认按钮
         confirmButton,ok = relic.hasConfirmButton()
         if ok and inGame:
-            click(confirmButton['pot'])
+            Click(confirmButton['pot'])
             time.sleep(0.2)
             times = 0
             continue
         hasSelectButton,ok =  relic.hasSelectButton()
         if ok:
-            click(hasSelectButton['pot'])
-            time.sleep(0.2)
+            need = beforeClickSelect()
+            logx.info(f"所需 {need}, 拥有 {TearCrystal}")
+            if need > TearCrystal:
+                Click((969 + 25, 322 + 12))
+            else:
+                Click(hasSelectButton['pot'])
             times = 0
             continue
         # 击杀boss了
         killedBoss, ok = relic.killedBoss()
         if ok:
-            click(killedBoss['pot'])
+            Click(killedBoss['pot'])
             time.sleep(0.2)
             times = 0
             continue
         explorationEnds,ok = relic.explorationEnds()
         if ok:
-            click(explorationEnds['pot'])
+            Click(explorationEnds['pot'])
             time.sleep(1)
             break
         # 探索点
         resp, ok = relic.eventPoint()
         if ok and inGame:
-            click(resp['pot'])
+            TearCrystal = beforeClickEventPoint()
+            Click(resp['pot'])
             ErikaMoving()
             times = 0
             continue
@@ -250,7 +258,57 @@ def inRelic():
             continue
         times+= 1
 
+def beforeClickEventPoint():
+    """
+    更新泪精数量
+    Returns:
+    [826,9,63,80]
+    """
+    roc = [825,28,61,44]
+
+    img = GetSnapShot()
+    img = img[roc[1]:roc[1]+roc[3],roc[0]:roc[0]+roc[2]]
+    ocr = MyCnocr.ocrNum(img)
+
+    num = 0
+    if len(ocr):
+        if ocr[0]['text'] != '':
+         num = int(ocr[0]['text'])
+    logx.info(f"更新泪精数量 {num}")
+    return num
+
+def beforeClickSelect():
+    """
+    识别所需泪精
+    Returns:
+    """
+    roc = [761,227,35,35]
+
+    img = GetSnapShot()
+    img = img[roc[1]:roc[1]+roc[3],roc[0]:roc[0]+roc[2]]
+    ocr = MyCnocr.ocrNum(img)
+
+    num = 0
+    if len(ocr):
+        if ocr[0]['text'] != '':
+         num = int(ocr[0]['text'])
+
+    logx.info(f"所需泪精数量 {num}")
+    return num
+
+
 if __name__ == '__main__':
+    ConnectEmulator()
+    # relic = RelicDetect()
+    # while True:
+    #     UpdateSnapShot()
+    #     res,r = relic.killedBoss()
+    #     logx.info(r)
+
+    #     TearCrystal = beforeClickEventPoint()
+    #     logx.info(TearCrystal)
+
+
     def run():
         ConnectEmulator()
         Login()
@@ -262,5 +320,5 @@ if __name__ == '__main__':
         run()
         resp,ok = ErrorDetect().error()
         if ok :
-            click(resp['pot'])
+            Click(resp['pot'])
             run()

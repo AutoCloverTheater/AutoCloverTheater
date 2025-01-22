@@ -1,4 +1,3 @@
-airtest
 cnocr
 flask
 flask-cors
