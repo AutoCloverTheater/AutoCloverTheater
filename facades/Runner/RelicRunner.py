@@ -10,9 +10,12 @@ from facades.Detect.Common.FlashBattleDetect import FlashBattleDetect
 from facades.Detect.Relic.RelicDetect import RelicDetect
 from facades.Emulator.Emulator import UpdateSnapShot, ConnectEmulator, GetSnapShot
 from facades.Logx.Logx import logx
+from facades.Ocr.MyCnocr import MyCnocr
 from facades.Runner.layout.AdventureRunner import FindAdventure
 from facades.Runner.layout.LoginRunner import Login
 
+
+TearCrystal = 0
 def beforeRelic():
     relic = RelicDetect()
     fastBattle = FlashBattleDetect()
@@ -181,6 +184,7 @@ def ErikaMoving():
     return
 
 def inRelic():
+    global TearCrystal
     relic = RelicDetect()
     fastBattle = FlashBattleDetect()
 
@@ -219,8 +223,12 @@ def inRelic():
             continue
         hasSelectButton,ok =  relic.hasSelectButton()
         if ok:
-            click(hasSelectButton['pot'])
-            time.sleep(0.2)
+            need = beforeClickSelect()
+            logx.info(f"所需 {need}, 拥有 {TearCrystal}")
+            if need > TearCrystal:
+                click((969 + 25, 322 + 12))
+            else:
+                click(hasSelectButton['pot'])
             times = 0
             continue
         # 击杀boss了
@@ -238,6 +246,7 @@ def inRelic():
         # 探索点
         resp, ok = relic.eventPoint()
         if ok and inGame:
+            TearCrystal = beforeClickEventPoint()
             click(resp['pot'])
             ErikaMoving()
             times = 0
@@ -250,7 +259,57 @@ def inRelic():
             continue
         times+= 1
 
+def beforeClickEventPoint():
+    """
+    更新泪精数量
+    Returns:
+    [826,9,63,80]
+    """
+    roc = [825,28,61,44]
+
+    img = GetSnapShot().img
+    img = img[roc[1]:roc[1]+roc[3],roc[0]:roc[0]+roc[2]]
+    ocr = MyCnocr.ocrNum(img)
+
+    num = 0
+    if len(ocr):
+        if ocr[0]['text'] != '':
+         num = int(ocr[0]['text'])
+    logx.info(f"更新泪精数量 {num}")
+    return num
+
+def beforeClickSelect():
+    """
+    识别所需泪精
+    Returns:
+    """
+    roc = [761,227,35,35]
+
+    img = GetSnapShot().img
+    img = img[roc[1]:roc[1]+roc[3],roc[0]:roc[0]+roc[2]]
+    ocr = MyCnocr.ocrNum(img)
+
+    num = 0
+    if len(ocr):
+        if ocr[0]['text'] != '':
+         num = int(ocr[0]['text'])
+
+    logx.info(f"所需泪精数量 {num}")
+    return num
+
+
 if __name__ == '__main__':
+    ConnectEmulator()
+    # relic = RelicDetect()
+    # while True:
+    #     UpdateSnapShot()
+    #     res,r = relic.killedBoss()
+    #     logx.info(r)
+
+    #     TearCrystal = beforeClickEventPoint()
+    #     logx.info(TearCrystal)
+
+
     def run():
         ConnectEmulator()
         Login()

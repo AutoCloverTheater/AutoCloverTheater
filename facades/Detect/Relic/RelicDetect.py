@@ -5,6 +5,7 @@ from PIL import ImageEnhance, Image
 from facades.Constant.Constant import IMG_PATH
 from facades.Detect.DetectLog import matchResult
 from facades.Emulator.Emulator import GetSnapShot
+from facades.Img.ImgColor import imgFindByColor
 from facades.Img.ImgRead import MyImread
 from facades.Img.ImgSearch import imgSearchArea, imgSearch
 from facades.Logx.Logx import logx
@@ -106,8 +107,8 @@ class RelicDetect:
         :return:
         """
         rois = [
+            [969, 219, 50, 24],  # 第一个选择
             [969,322,51,27],# 第二个选择
-            [969,219,50,24],# 第一个选择
         ]
 
         pot = ()
@@ -122,6 +123,22 @@ class RelicDetect:
                 break
 
         return {"name": "选择", "pot": pot}, ok
+
+    def pointNotEnough(self):
+        """
+        点数不足
+        Returns:
+        """
+
+        path = IMG_PATH.joinpath("main/relic/notEnough__520_281_239_25__470_231_339_125.png")
+        img = MyImread(path)
+        pot, ok = imgSearchArea(GetSnapShot().img, img, [516,180,249,177], 0.8)
+        if ok:
+            cv2.imwrite("im.png", GetSnapShot().img)
+            logx.info("点数不足")
+            pot = (969+25,322+12)
+
+        return {"name": "点数不足", "pot": pot}, ok
 
     @matchResult
     def pressAnyKeyToContinue(self):
@@ -246,19 +263,12 @@ class RelicDetect:
         击杀过boss了
         Returns:
         """
-        imgs = [
-            "killBoss02__163_45_16_17__113_0_116_112.png",
-            "killedBoss__163_45_15_16__113_0_115_111.png",
-        ]
-        pot = ()
-        ok = False
-        for i in imgs:
-            path = IMG_PATH.joinpath(f"Main/relic/{i}")
-            img = MyImread(path)
-            rois,ok = imgSearchArea(GetSnapShot().img, img, [91,40,91,48])
-            if ok:
-                pot = (703,210)
-                break
+        roi = [102,74,6,6]
+        pot = (703,210)
+        img = GetSnapShot().img
+
+        img = img[roi[1]:roi[1]+roi[3],roi[0]:roi[0]+roi[2]]
+        ok = imgFindByColor(img, "FE9DFB", 0.6)
 
         return {"name": "击杀过boss了", "pot": pot}, ok
 
