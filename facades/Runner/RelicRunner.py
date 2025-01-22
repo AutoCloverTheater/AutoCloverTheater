@@ -5,6 +5,7 @@ from PIL import Image
 from airtest.core.api import click, swipe
 from collections import Counter
 
+from facades.Detect.Common.ErrorDetect import ErrorDetect
 from facades.Detect.Common.FlashBattleDetect import FlashBattleDetect
 from facades.Detect.Relic.RelicDetect import RelicDetect
 from facades.Emulator.Emulator import UpdateSnapShot, ConnectEmulator, GetSnapShot
@@ -198,7 +199,6 @@ def inRelic():
         # 战斗
         resp, ok = fastBattle.exeFlashBattle()
         if ok:
-            logx.info(f"点位 {resp}")
             click(resp['pot'])
             times = 0
             time.sleep(0.2)
@@ -251,9 +251,16 @@ def inRelic():
         times+= 1
 
 if __name__ == '__main__':
-    for i in range(10):
+    def run():
         ConnectEmulator()
         Login()
         FindAdventure("hasRelicButton")
         beforeRelic()
         inRelic()
+
+    for i in range(10):
+        run()
+        resp,ok = ErrorDetect().error()
+        if ok :
+            click(resp['pot'])
+            run()

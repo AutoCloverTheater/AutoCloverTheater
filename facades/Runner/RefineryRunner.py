@@ -94,32 +94,11 @@ def InRefinery():
         # 更新截图
         UpdateSnapShot()
         # 处理快闪
-        resp, ok = fastBattle.isInBattleResultWindow()
-        if ok:
-            click((0, 0))
-            times = 0
-            continue
-        resp, ok = fastBattle.isInFailedFlashBattleWindow()
+        resp, ok = fastBattle.exeFlashBattle
         if ok:
             click(resp['pot'])
             times = 0
             continue
-        resp, ok = fastBattle.isInSuccessFlashBattleWindow()
-        if ok:
-            click((0, 0))
-            times = 0
-            continue
-        resp, ok = fastBattle.inFastBattleWindow()
-        if ok:
-            time.sleep(1)
-            times = 0
-            continue
-        resp, ok = fastBattle.isLoading()
-        if ok:
-            time.sleep(1)
-            times = 0
-            continue
-
         # 尝试识别今天的次数是否用光，用光了则跳过
         countToday,ok = refinery.isZeroCountForToday()
         if ok:
@@ -141,46 +120,6 @@ def InRefinery():
         times += 1
 
     return matchResult
-
-def down():
-    refineryDetect = RefineryDetect()
-    fastBattle = FlashBattleDetect()
-
-    isOkCountZeroOk = False
-
-    while not isOkCountZeroOk:
-        UpdateSnapShot()
-        _, inRefinery = refineryDetect.isInRefinery()
-        if not inRefinery:
-            logx.info("不在矿场内")
-            break
-        _, isOkCountZeroOk = refineryDetect.isZeroCountForToday()
-        if isOkCountZeroOk:
-            logx.info("次数用光")
-            break
-        fastBattleRoi,ok = refineryDetect.fastBattle()
-        if ok:
-            click(fastBattleRoi['pot'])
-            continue
-        # 处理快闪
-        resp,ok = fastBattle.isInBattleResultWindow()
-        if ok:
-            click(resp['pot'])
-            continue
-        resp,ok = fastBattle.isInFailedFlashBattleWindow()
-        if ok:
-            click(resp['pot'])
-            continue
-        resp,ok = fastBattle.isInSuccessFlashBattleWindow()
-        if ok:
-            click(resp['pot'])
-            continue
-        resp,ok = fastBattle.inFastBattleWindow()
-        if ok:
-            time.sleep(1)
-            continue
-
-
 
 if __name__ == '__main__':
     ConnectEmulator()

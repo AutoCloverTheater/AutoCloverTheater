@@ -118,7 +118,7 @@ class FlashBattleDetect:
         """
         path = IMG_PATH.joinpath("Main/fastBattle/startPerform__1041_647_128_30__991_597_228_123.png")
         loading = MyImread(path)
-        pot, ok  = imgSearchArea(GetSnapShot().img, loading, [1041, 647, 128, 30])
+        pot, ok  = imgSearchArea(GetSnapShot().img, loading, [1041, 647, 128, 30], 0.99)
         if ok:
             pot = pot.pop()
         return {"name":"开始表演...","pot":pot},ok

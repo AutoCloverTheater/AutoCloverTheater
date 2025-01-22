@@ -1,6 +1,8 @@
 import cv2
 import numpy as np
 
+from facades.Logx.Logx import logx
+
 
 def hex_to_bgr(hex_color):
     """
@@ -64,3 +66,66 @@ def imgGetColor(img, low, top):
     result = cv2.bitwise_and(image, image, mask=mask)
 
     return result
+
+def imgFindByColor(image, hex_color = '', threshold=0.9):
+    """
+    在图片中寻找符合的颜色
+    :param image: cv2 格式的图片
+    :param hex_color: 16进制rgb
+    :param threshold: 符合的颜色在输入图片中的所占比例，高于返回true，低于返回false
+    :return:
+    """
+    # 定义目标颜色 (#2F218F)
+    hex_color = f"#{hex_color.replace('#', '')}"
+    rgb_color = tuple(int(hex_color[i:i + 2], 16) for i in (1, 3, 5))  # 转换为 RGB
+    bgr_color = (rgb_color[2], rgb_color[1], rgb_color[0])  # 转换为 BGR
+
+    # 将 BGR 颜色转换为 HSV
+    bgr_color_np = np.uint8([[list(bgr_color)]])  # 转换为 NumPy 数组
+    hsv_color = cv2.cvtColor(bgr_color_np, cv2.COLOR_BGR2HSV)[0][0]
+
+    # 定义 HSV 范围
+    lower_bound = np.array([hsv_color[0] - 10, 50, 50])  # HSV 下限
+    upper_bound = np.array([hsv_color[0] + 10, 255, 255])  # HSV 上限
+
+    # 读取图像
+    x,y = image.shape[:2]
+    total = x*y
+
+    # 将图像转换为 HSV 颜色空间
+    hsv_image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+
+    # 创建掩码
+    mask = cv2.inRange(hsv_image, lower_bound, upper_bound)
+
+    # 统计符合标准的像素数量
+    pixel_count = cv2.countNonZero(mask)
+
+    return  (pixel_count / total) > threshold
+
+    # # 查找轮廓
+    # contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    #
+    # # 在原图上绘制轮廓
+    # for contour in contours:
+    #     x, y, w, h = cv2.boundingRect(contour)
+    #     cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)  # 绘制绿色矩形框
+    #
+    # # 显示结果
+    # cv2.imshow('Original Image', image)
+    # cv2.imshow('Mask', mask)
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
+
+if __name__ == "__main__":
+    img = cv2.imread("temp.png")
+
+    c = "FE9DFB"# 遗迹boss点的颜色
+    res = imgFindByColor(img, c, 0.5)
+    logx.info(f"符合的像素点数: {res}")
+
+    img = cv2.imread("temp2.png")
+
+    c = "FE9DFB"# 遗迹boss点的颜色
+    res = imgFindByColor(img, c, 0.5)
+    logx.info(f"符合的像素点数: {res}")
