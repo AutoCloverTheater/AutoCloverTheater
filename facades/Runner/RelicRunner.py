@@ -20,34 +20,31 @@ def beforeRelic():
     fastBattle = FlashBattleDetect()
     times = 0
     while True:
-        if times >= 5:
+        if times >= 12:
             logx.warning("跳过遗迹准备阶段")
             break
         UpdateSnapShot()
+        _, ok = relic.isInRelicGame()
+        if ok:
+            break
+
         go,ok = fastBattle.startPerform()
         if ok:
             Click(go['pot'])
             times = 0
-            time.sleep(0.1)
             continue
-        _, ok = relic.isInRelicGame()
-        if ok:
-            time.sleep(0.3)
-            break
         settingMap, ok = relic.hasSettingMap()
         if ok:
             Click(settingMap['pot'])
             times = 0
-            time.sleep(0.1)
         settingRank, ok = relic.hasSettingRank()
         if ok:
             Click(settingRank['pot'])
             times = 0
-            time.sleep(0.1)
         start,ok = relic.hasGoExplore()
         if ok:
             Click(start['pot'])
-            time.sleep(0.3)
+            times = 0
             continue
         # 加载
         _,ok = fastBattle.isLoading()
@@ -316,7 +313,7 @@ if __name__ == '__main__':
         beforeRelic()
         inRelic()
 
-    for i in range(10):
+    for i in range(1):
         run()
         resp,ok = ErrorDetect().error()
         if ok :

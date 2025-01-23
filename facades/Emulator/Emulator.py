@@ -87,7 +87,11 @@ def ConnectEmulator() :
 def UpdateSnapShot():
     return ActivityEmulator.updateSnapShop()
 def GetSnapShot()->numpy.array:
+    img = ActivityEmulator.selfGetCachedSnapShot()
+    if img is None:
+        return UpdateSnapShot()
     return ActivityEmulator.selfGetCachedSnapShot()
+
 
 def Click(point:tuple[float|int,float|int], sleep=0.1):
     x,y = point
@@ -139,4 +143,4 @@ if __name__ == "__main__":
     resp = ActivityEmulator.device.app_list()
     logx.info(f"app_list:{resp}")
 
-    StartApp()
+    AppStart()

@@ -115,7 +115,7 @@ class FlashBattleDetect:
         """
         path = IMG_PATH.joinpath("Main/fastBattle/startPerform__1041_647_128_30__991_597_228_123.png")
         loading = MyImread(path)
-        pot, ok  = imgSearchArea(GetSnapShot(), loading, [1041, 647, 128, 30], 0.99)
+        pot, ok  = imgSearchArea(GetSnapShot(), loading, [1041, 647, 128, 30], 0.95)
         if ok:
             pot = pot.pop()
         return {"name":"开始表演...","pot":pot},ok
@@ -131,6 +131,7 @@ class FlashBattleDetect:
             'flashBattleClosed__1153_497_114_25__1103_447_177_125.png',
             'skipFormationClosed__1155_549_114_23__1105_499_175_123.png',
             'battleSuccess__509_416_265_71__459_366_365_171.png',
+            'battleSuccess__596_526_120_24__546_476_220_124.png',
             'inFastBattle__1099_172_20_92__1049_122_120_192.png',
             'battleFailed_509_410_268_79_459_360_368_179.png',
             'settlementBattle__502_40_280_63__452_0_380_153.png',
@@ -139,6 +140,7 @@ class FlashBattleDetect:
             [1153, 497, 114, 25],
             [1155, 549, 114, 23],
             [509, 410, 268, 79],
+            [596,526,120,24],
             [1099, 172, 20, 92],
             [509, 410, 268, 79],
             [502, 40, 280, 63],
@@ -147,6 +149,7 @@ class FlashBattleDetect:
             "快闪表演-关闭",
             "跳过编队-关闭",
             "快闪战斗胜利",
+            "快闪战斗胜利",
             "快闪战斗中。。。。",
             "快闪战斗失败",
             "演出结算",
@@ -154,6 +157,7 @@ class FlashBattleDetect:
         pots = [
             (1128, 532),# flashBattleClosed
             (1129, 588),# skipFormationClosed
+            (0.5, 0.0),# battleSuccess
             (0.5, 0.0),# battleSuccess
             (0.5, 0.0),# inFastBattle
             (0.5, 0.0),# battleFailed
@@ -178,3 +182,46 @@ class FlashBattleDetect:
                 break
 
         return {"name":name,"pot":pot},ok
+
+    @matchResult
+    def inComBat(self):
+        """
+        战斗中
+        """
+        img = [
+            {
+                "url":"inCombat__90_609_72_31__40_559_172_131.png",
+                "roi":[90,609,72,31]
+            }
+        ]
+        pot = ()
+        ok = False
+        for item in img:
+            path = IMG_PATH.joinpath(f"Main/normalBattle/{item['url']}")
+            img = MyImread(path)
+            pot, ok = imgSearchArea(GetSnapShot(), img, item["roi"], 0.95)
+            if ok:
+                pot = pot.pop()
+                break
+        return  {"name":"在战斗中","pot":pot},ok
+
+    def combatSuccess(self):
+        """
+        战斗胜利
+        """
+        img = [
+            {
+                "url":"combatSuccess__490_471_312_46__440_421_412_146.png",
+                "roi":[490,471,312,46]
+            }
+        ]
+        pot = ()
+        ok = False
+        for item in img:
+            path = IMG_PATH.joinpath(f"Main/normalBattle/{item['url']}")
+            img = MyImread(path)
+            pot, ok = imgSearchArea(GetSnapShot(), img, item["roi"], 0.95)
+            if ok:
+                pot = pot.pop()
+                break
+        return  {"name":"在战斗中","pot":pot},ok

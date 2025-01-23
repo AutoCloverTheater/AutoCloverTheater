@@ -40,6 +40,12 @@ def Login():
         if ok:
             times = 0
             continue
+        # 更新内容
+        resp,ok = main.dlc()
+        if ok:
+            Click(resp['pot'])
+            times = 0
+            continue
         # 服务器维护中
         _,ok = errors.gameUpdating()
         if ok:
@@ -88,7 +94,7 @@ def Login():
             times = 0
             continue
         # 登录主页面
-        isMainWindowResp, ok = main.isMainWindow()
+        isMainWindowResp, ok = main.needLogin()
         if ok:
             # y坐标增加60
             clickXy = (isMainWindowResp['pot'][0], isMainWindowResp['pot'][1] + 60)
@@ -96,6 +102,7 @@ def Login():
             times = 0
             continue
         times+=1
+        logx.info("未知页面")
 
     return matchResult
 

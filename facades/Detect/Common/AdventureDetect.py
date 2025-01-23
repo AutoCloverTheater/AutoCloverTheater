@@ -51,7 +51,7 @@ class AdventureDetect:
         素材收集
         :return:
         """
-        path = IMG_PATH.joinpath("Main/adventure/itemsCollection.png")
+        path = IMG_PATH.joinpath("Main/adventure/itemsCollection__525_390_274_164__475_340_374_264.png")
         mainWindow = MyImread(path)
         pot, ok  = imgSearchArea(GetSnapShot(), mainWindow, [0,336,1280,278])
         if ok:

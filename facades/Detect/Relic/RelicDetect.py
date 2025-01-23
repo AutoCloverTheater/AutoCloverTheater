@@ -117,7 +117,7 @@ class RelicDetect:
             pot,ok = imgSearchArea(GetSnapShot(), img, roi)
             if ok :
                 logx.info(f"选择按钮{k}")
-                pot = (roi[0] + roi[2] / 2,roi[1]+ roi[3] / 2)
+                pot = (int(roi[0] + roi[2] / 2),int(roi[1]+ roi[3] / 2))
                 break
 
         return {"name": "选择", "pot": pot}, ok

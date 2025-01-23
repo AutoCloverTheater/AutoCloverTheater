@@ -41,6 +41,7 @@ class ErrorDetect:
             img = MyImread(path)
             pot, ok = imgSearchArea(GetSnapShot(), img, item["roi"])
             if ok:
+                pot = pot[0]
                 break
 
         return {"name":"服务器维护中","pot":pot},ok
