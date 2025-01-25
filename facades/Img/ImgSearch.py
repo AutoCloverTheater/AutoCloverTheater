@@ -1,7 +1,5 @@
 import glob
 import os
-import time
-from typing import List
 
 import cv2
 import numpy
@@ -9,6 +7,8 @@ import numpy as np
 
 from facades.Constant.Constant import IMG_PATH
 from facades.Emulator.Emulator import ConnectEmulator, GetSnapShot, UpdateSnapShot, Click
+from facades.Img import find_template, find_all_template
+from facades.Img.ImgRead import MyImread
 from facades.Logx.Logx import logx
 
 
@@ -240,8 +240,42 @@ def mask():
     return result
 
 if __name__ == '__main__':
+
     ConnectEmulator()
-    UpdateSnapShot()
-    res = mask()
-    logx.info("原始识别结果")
-    logx.info([item['name'] for item in res])
+
+    while True:
+        UpdateSnapShot()
+        img = GetSnapShot()
+        imgG = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+        temp = MyImread("point__975_417_80_23__925_367_180_123.png")
+        tempG = cv2.cvtColor(temp, cv2.COLOR_BGR2GRAY)
+
+        # 设定亮度阈值（0-255，值越小，亮度要求越低）
+        brightness_threshold = 100
+
+        # 创建掩码：亮度低于阈值的区域为黑色，其余为白色
+        mask = cv2.threshold(imgG, brightness_threshold, 255, cv2.THRESH_BINARY)[1]
+
+        # 将掩码应用到原图上
+        imgG = cv2.bitwise_and(imgG, imgG, mask=mask)
+
+        res = find_all_template(imgG, tempG, threshold=0.75)
+        #
+
+        # res , ok = imgMultipleResultSearch(imgG, tempG)
+        #
+        # logx.info(f"ok :{ok}, res: {res}")
+
+        for item in res:
+            left = item['rectangle'][0]
+            bottom = item['rectangle'][3]
+            cv2.rectangle(img, left, bottom, (0, 255, 0), 2)
+
+        cv2.imshow("png", img)
+
+        if cv2.waitKey(1) & 0xFF == ord('q'):  # 按 'q' 退出
+            cv2.destroyAllWindows()
+            break
+        # while True:
+

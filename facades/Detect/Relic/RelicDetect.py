@@ -90,6 +90,10 @@ class RelicDetect:
         :return:[]roi
         :return:bool
         """
+        imgs = [
+            'main/relic/confirm01__618_558_67_30__568_508_167_130.png',
+        ]
+
         path = IMG_PATH.joinpath("main/relic/confirm01__618_558_67_30__568_508_167_130.png")
         img = MyImread(path)
         pot,ok = imgSearchArea(GetSnapShot(), img, [618,558,67,30])
@@ -97,6 +101,22 @@ class RelicDetect:
             pot = pot.pop()
 
         return {"name": "确认", "pot": pot}, ok
+
+    @matchResult
+    def hasConfirmButton03(self):
+        """
+        确认按钮
+        :return:[]roi
+        :return:bool
+        """
+
+        path = IMG_PATH.joinpath("main/relic/c03__617_556_72_35__567_506_172_135.png")
+        img = MyImread(path)
+        pot, ok = imgSearchArea(GetSnapShot(), img, [618, 558, 67, 30])
+        if ok:
+            pot = pot.pop()
+
+        return {"name": "确认03", "pot": pot}, ok
 
     @matchResult
     def hasSelectButton(self):
@@ -180,7 +200,8 @@ class RelicDetect:
             'green.png',
             'boss.png',
             'exit.png',
-            "relicExit.png"
+            "relicExit.png",
+            "elite.png"
         ]
         names = [
             "跳楼减价",
@@ -188,7 +209,8 @@ class RelicDetect:
             "奇遇事件",
             "首领怪物",
             "传送门",
-            "离开"
+            "离开",
+            "精英怪物"
         ]
 
         # 降低亮度
@@ -306,12 +328,15 @@ class RelicDetect:
 
         """
         maps = [
-            "沙漠星城"
+            {
+                "name":"热砂",
+                "url":"hot.png",
+            }
         ]
 
-        path = IMG_PATH.joinpath("main/relic/desert__138_205_108_40__88_155_208_140.png")
+        path = IMG_PATH.joinpath("main/relic/hot.png")
         img = MyImread(path)
-        pot,ok = imgSearchArea(GetSnapShot(), img, [138, 205, 108, 40])
+        pot,ok = imgSearchArea(GetSnapShot(), img, [124,63,161,645])
         if ok:
             pot = pot[0]
 
@@ -324,12 +349,12 @@ class RelicDetect:
         :return:
         """
         ranks = [
-            "普通"
+            "噩梦"
         ]
 
-        path = IMG_PATH.joinpath("main/relic/normal__352_105_97_25__302_55_197_125.png")
+        path = IMG_PATH.joinpath("main/relic/nightmare__350_233_96_24__300_183_196_124.png")
         img = MyImread(path)
-        pot,ok = imgSearchArea(GetSnapShot(), img, [352, 105, 97, 25])
+        pot,ok = imgSearchArea(GetSnapShot(), img, [350, 233, 96, 24])
         if ok:
             pot = pot[0]
 

@@ -11,9 +11,12 @@ from facades.Runner.layout.LoginRunner import Login
 
 def beforeTopLeverItemCollection():
     item = ItemsDetect()
-    _, ok = item.zeroNum()
-    if ok:
-        return
+    # 剩余次数
+    _, ok1 = item.hasTopLeverButton()
+    if ok1:
+        _, ok = item.zeroNum()
+        if ok:
+            return
 
     for i in range(20):
         UpdateSnapShot()
@@ -48,7 +51,6 @@ def inTopLeverItemCollection():
         resp,ok = item.hasTopLeverButton()
         if ok:
             break
-
         # 处理快闪战斗
         resp, ok = flash.exeFlashBattle()
         if ok:

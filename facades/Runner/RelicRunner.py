@@ -196,6 +196,11 @@ def inRelic():
             time.sleep(0.1)
             times = 0
             continue
+        resp, ok = relic.hasConfirmButton03()
+        if ok:
+            Click(resp['pot'])
+            times = 0
+            continue
         # 战斗
         resp, ok = fastBattle.exeFlashBattle()
         if ok:
@@ -296,26 +301,12 @@ def beforeClickSelect():
 
 if __name__ == '__main__':
     ConnectEmulator()
-    # relic = RelicDetect()
-    # while True:
-    #     UpdateSnapShot()
-    #     res,r = relic.killedBoss()
-    #     logx.info(r)
-
-    #     TearCrystal = beforeClickEventPoint()
-    #     logx.info(TearCrystal)
-
 
     def run():
-        ConnectEmulator()
         Login()
         FindAdventure("hasRelicButton")
         beforeRelic()
         inRelic()
 
-    for i in range(1):
+    for i in range(10):
         run()
-        resp,ok = ErrorDetect().error()
-        if ok :
-            Click(resp['pot'])
-            run()

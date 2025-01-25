@@ -129,7 +129,6 @@ class FlashBattleDetect:
         """
         imgs = [
             'flashBattleClosed__1153_497_114_25__1103_447_177_125.png',
-            'skipFormationClosed__1155_549_114_23__1105_499_175_123.png',
             'battleSuccess__509_416_265_71__459_366_365_171.png',
             'battleSuccess__596_526_120_24__546_476_220_124.png',
             'inFastBattle__1099_172_20_92__1049_122_120_192.png',
@@ -138,7 +137,6 @@ class FlashBattleDetect:
         ]
         roi = [
             [1153, 497, 114, 25],
-            [1155, 549, 114, 23],
             [509, 410, 268, 79],
             [596,526,120,24],
             [1099, 172, 20, 92],
@@ -147,7 +145,6 @@ class FlashBattleDetect:
         ]
         names = [
             "快闪表演-关闭",
-            "跳过编队-关闭",
             "快闪战斗胜利",
             "快闪战斗胜利",
             "快闪战斗中。。。。",
@@ -156,7 +153,6 @@ class FlashBattleDetect:
         ]
         pots = [
             (1128, 532),# flashBattleClosed
-            (1129, 588),# skipFormationClosed
             (0.5, 0.0),# battleSuccess
             (0.5, 0.0),# battleSuccess
             (0.5, 0.0),# inFastBattle
@@ -170,9 +166,9 @@ class FlashBattleDetect:
         for k, i in enumerate(imgs):
 
             loading = MyImread(IMG_PATH.joinpath(f"Main/fastBattle/{i}"))
-            resp, ok  = imgSearchArea(GetSnapShot(), loading, roi[k])
+            resp, ok  = imgSearchArea(GetSnapShot(), loading, roi[k], 0.825)
             if ok:
-                if k >= 2:
+                if k >= 0:
                     pot = pots[k]
                 else:
                     pot = resp[0]

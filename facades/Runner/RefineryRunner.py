@@ -58,7 +58,7 @@ def BeforeRefinery():
     times = 0
 
     while 1:
-        if times >= 3:
+        if times >= 12:
             matchResult = False
             logx.warning("跳过矿厂准备阶段")
             break
@@ -97,6 +97,10 @@ def InRefinery():
             break
         # 更新截图
         UpdateSnapShot()
+        resp,ok = fastBattle.isLoading()
+        if ok:
+            time.sleep(1)
+            continue
         # 处理快闪
         resp, ok = fastBattle.exeFlashBattle()
         if ok:
