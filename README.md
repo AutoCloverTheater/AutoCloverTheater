@@ -1,8 +1,13 @@
-<div style="align-content: center">
+<div style="text-align: center">
 
 # 四叶草小助手
 
 </div>
+
+![License](https://img.shields.io/github/license/AutoCloverTheater/AutoCloverTheater)
+![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS-blueviolet)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/y/AutoCloverTheater/AutoCloverTheater)
+![Version](https://img.shields.io/badge/Version-0.1.0-blue)
 
 ### 项目概述
 本项目是一个自动化脚本集合，旨在实现游戏内的多种自动化任务，如自动世界树、每日矿场、自动登录等。项目使用Python编写，并依赖于uiautomator2库与模拟器进行交互。
@@ -41,20 +46,31 @@
     └── webui                         # Web界面
 ```
 ### 使用指引
+在运行本项目之前，请确保已安装以下依赖项：
+- python 3.10
+- git
+- pip（Python 包管理工具）
+
+1. 克隆本仓库：
 ```
 git clone https://github.com/AutoCloverTheater/AutoCloverTheater.git
 ```
+2. 复制 `env.yaml.example` 文件并重命名为 `env.yaml`：
 ```
 cd /yourpath/AutoCloverTheater
 cp env.yaml.example env.yaml
 ```
+3.安装 依赖项：
 ```
-修改env.yaml中的参数
+$ pip install -r requirements.txt
+```
 
+4.修改env.yaml中的参数
+```
 // 你的账号（可选），因为你游换设备登录会把旧设备踢下线，我经常换设备所以保留了输入账号密码。
-ACCOUNT:''
+ACCOUNT:'your_account'
 // 你的密码（可选）
-PASSWORD:''
+PASSWORD:'your_password'
 // 模拟器路径类似
 EMULATORPATH:'/Applications/MuMuPlayer.app/Contents/MacOS'
 // 模拟器类型:mumu（目前仅在mumu上测试过
@@ -64,6 +80,8 @@ ADDR: '127.0.0.1'
 // 模拟器端口
 SERIAL: 5555
 ```
+
+
 ### 已完成功能
 - 自动世界树
 - 每日矿场
@@ -74,16 +92,13 @@ SERIAL: 5555
 - 工会每日
 - 更换图片匹配（核心已经写在源码中，等待更换）
 - 删除用不到的静态资源
-### 已知问题
-- 自动探索采用穷举寻找下一节点（日后会优化的，大概。。。
 
 ### 遇到报错
 ```
 uiautomator2.exceptions.JsonRpcError: -32001 Jsonrpc error: <java.lang.SecurityException> data: java.lang.Secu rityException: Injecting to another application requires INJECT_EVENTS permission
 ```
 解决方法：
-```
-开启模拟器中的开发者模式->开启usb调试
-```
+- 开启模拟器中的开发者模式->开启usb调试
+
 ### 已知问题
 - uiautomator2在操作模拟器的时候人工操作模拟器可能导致断连
