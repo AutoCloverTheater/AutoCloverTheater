@@ -4,7 +4,7 @@ from facades.Detect.Common.ErrorDetect import ErrorDetect
 from facades.Detect.MainWindowDetect import MainWindowDetect
 from facades.Emulator.Emulator import UpdateSnapShot, ConnectEmulator, Click, Text, AppCurrent, AppStart
 from facades.Logx.Logx import logx
-from facades.Runner.Limit import error_function
+from facades.Runner.core.Limit import error_function
 
 
 def BeforeLogin():

@@ -73,7 +73,7 @@ def inTopLeverItemCollection():
         logx.info(f"剩余次数 {times}")
     logx.info("高难副本结束")
 
-
+# 每日高难副本
 if __name__ == '__main__':
     ConnectEmulator()
     Login()

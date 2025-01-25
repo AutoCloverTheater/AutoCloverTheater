@@ -129,7 +129,7 @@ def InRefinery():
         logx.info("未知页面")
 
     return matchResult
-
+# 神秘矿厂
 if __name__ == '__main__':
     ConnectEmulator()
     Login()

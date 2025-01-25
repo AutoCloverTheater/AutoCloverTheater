@@ -5,7 +5,7 @@ from facades.Detect.Common.FlashBattleDetect import FlashBattleDetect
 from facades.Detect.WorldTree.WorldTreeDetect import WorldTreeDetect
 from facades.Emulator.Emulator import ConnectEmulator, UpdateSnapShot, Click
 from facades.Logx.Logx import logx
-from facades.Runner.Limit import error_function
+from facades.Runner.core.Limit import error_function
 from facades.Runner.layout.AdventureRunner import FindAdventure
 from facades.Runner.layout.LoginRunner import Login
 

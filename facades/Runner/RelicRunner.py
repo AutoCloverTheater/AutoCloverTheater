@@ -300,7 +300,7 @@ def beforeClickSelect():
     logx.info(f"所需泪精数量 {num}")
     return num
 
-
+# 遗迹探索-【噩梦难度】【热砂】
 if __name__ == '__main__':
     ConnectEmulator()
 
