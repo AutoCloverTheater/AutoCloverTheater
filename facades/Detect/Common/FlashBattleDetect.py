@@ -152,7 +152,7 @@ class FlashBattleDetect:
             "演出结算",
         ]
         pots = [
-            (1128, 532),# flashBattleClosed
+            (1197, 509),# flashBattleClosed
             (0.5, 0.0),# battleSuccess
             (0.5, 0.0),# battleSuccess
             (0.5, 0.0),# inFastBattle

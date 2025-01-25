@@ -93,9 +93,9 @@ def GetSnapShot()->numpy.array:
     return ActivityEmulator.selfGetCachedSnapShot()
 
 
-def Click(point:tuple[float|int,float|int], sleep=0.1):
+def Click(point:tuple[float|int,float|int], sleep=0.3):
     x,y = point
-    if type(x) == float:
+    if type(x) == float and int(x) <= 1 and int(y) <= 1:
         x = int(x * ActivityEmulator.device.info["displayWidth"])
         y = int(y * ActivityEmulator.device.info["displayHeight"])
 

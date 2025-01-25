@@ -4,7 +4,6 @@ import imagehash
 from PIL import Image
 from collections import Counter
 
-from facades.Detect.Common.ErrorDetect import ErrorDetect
 from facades.Detect.Common.FlashBattleDetect import FlashBattleDetect
 from facades.Detect.Relic.RelicDetect import RelicDetect
 from facades.Emulator.Emulator import UpdateSnapShot, ConnectEmulator, GetSnapShot, Click, Swipe
@@ -33,13 +32,13 @@ def beforeRelic():
             Click(go['pot'])
             times = 0
             continue
-        settingMap, ok = relic.hasSettingMap()
+        rank, ok = relic.hasSettingRank()
         if ok:
-            Click(settingMap['pot'])
-            times = 0
-        settingRank, ok = relic.hasSettingRank()
+                Click(rank['pot'])
+                times = 0
+        maps, ok = relic.hasSettingMap()
         if ok:
-            Click(settingRank['pot'])
+            Click(maps['pot'])
             times = 0
         start,ok = relic.hasGoExplore()
         if ok:
@@ -62,23 +61,25 @@ def _findNextNode():
     # 探索点
     resp, ok = relic.eventPoint()
     if ok and inGame:
-        Click(resp['pot'])
+        Click(resp['pot'][0], 2)
         time.sleep(5)
         return resp
     maps = [
         {
-            "name":"右上角",
-            "point":[(0.5,0.5),(0.1,0.9)],
-        },{
+            "name": "右下角",
+            "point": [(0.5, 0.5), (0.1, 0.1)],
+        },
+        {
             "name": "左上角",
             "point": [(0.5,0.5),(0.9,0.9)],
-        },{
-            "name": "右下角",
-            "point": [(0.5,0.5),(0.1,0.1)],
-        },{
-            "name": "左下角",
-            "point": [(0.5,0.5),(0.9,0.1)],
-        }
+        },
+        # {
+        #     "name":"右上角",
+        #     "point":[(0.5,0.5),(0.1,0.9)],
+        # },{
+        #     "name": "左下角",
+        #     "point": [(0.5,0.5),(0.9,0.1)],
+        # }
     ]
     stop = False
     for item in maps:
@@ -117,7 +118,8 @@ def _findNextNode():
             # 探索点
             resp, ok = relic.eventPoint()
             if ok:
-                Click(resp['pot'])
+                Click(resp['pot'][0], 2)
+                time.sleep(5)
                 UpdateSnapShot()
                 # 在遗迹内
                 _, inGame = relic.isInRelicGame()
@@ -186,7 +188,7 @@ def inRelic():
 
     times = 0
     while True:
-        if times >= 5:
+        if times >= 12:
             logx.warning("跳过遗迹冒险")
             break
         UpdateSnapShot()
@@ -239,6 +241,7 @@ def inRelic():
             time.sleep(0.2)
             times = 0
             continue
+        # 探索结束
         explorationEnds,ok = relic.explorationEnds()
         if ok:
             Click(explorationEnds['pot'])
@@ -248,16 +251,15 @@ def inRelic():
         resp, ok = relic.eventPoint()
         if ok and inGame:
             TearCrystal = beforeClickEventPoint()
-            Click(resp['pot'])
-            ErikaMoving()
+            Click(resp['pot'][0], 2)
             times = 0
             continue
         # 没有找到探索点，开始寻找下一个探索点
         if not ok and inGame:
             _findNextNode()
-            ErikaMoving()
             times = 0
             continue
+        ErikaMoving()
         times+= 1
 
 def beforeClickEventPoint():

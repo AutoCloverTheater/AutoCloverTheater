@@ -2,7 +2,8 @@ import cv2
 
 from facades.Constant.Constant import IMG_PATH
 from facades.Detect.DetectLog import matchResult
-from facades.Emulator.Emulator import GetSnapShot
+from facades.Emulator.Emulator import GetSnapShot, ConnectEmulator, UpdateSnapShot
+from facades.Img import find_all_template
 from facades.Img.ImgColor import imgFindByColor
 from facades.Img.ImgRead import MyImread
 from facades.Img.ImgSearch import imgSearchArea, imgSearch
@@ -112,7 +113,7 @@ class RelicDetect:
 
         path = IMG_PATH.joinpath("main/relic/c03__617_556_72_35__567_506_172_135.png")
         img = MyImread(path)
-        pot, ok = imgSearchArea(GetSnapShot(), img, [618, 558, 67, 30])
+        pot, ok = imgSearchArea(GetSnapShot(), img, [618, 558, 67, 30], 0.95)
         if ok:
             pot = pot.pop()
 
@@ -190,58 +191,38 @@ class RelicDetect:
     @matchResult
     def  eventPoint(self):
         """
-        节点
-        :return:[]roi
+        遗迹兴趣点
+        :return:res
         :return:bool
         """
-        imgs = [
-            'blue.png',
-            'red.png',
-            'green.png',
-            'boss.png',
-            'exit.png',
-            "relicExit.png",
-            "elite.png"
-        ]
-        names = [
-            "跳楼减价",
-            "吐血甩卖",
-            "奇遇事件",
-            "首领怪物",
-            "传送门",
-            "离开",
-            "精英怪物"
-        ]
+        img = GetSnapShot()
+        imgG = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-        # 降低亮度
-        image = GetSnapShot()
+        temp = MyImread(IMG_PATH.joinpath("Main/relic/point__975_417_80_23__925_367_180_123.png"))
+        tempG = cv2.cvtColor(temp, cv2.COLOR_BGR2GRAY)
 
-        # 将图片转换为灰度图（计算亮度）
-        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-
-        # 定义亮度阈值（0-255，值越小，变黑的部分越多）
+        # 设定亮度阈值（0-255，值越小，亮度要求越低）
         brightness_threshold = 100
 
-        # 创建一个黑色掩码（亮度低于阈值的部分）
-        mask = gray < brightness_threshold
+        # 创建掩码：亮度低于阈值的区域为黑色，其余为白色
+        mask = cv2.threshold(imgG, brightness_threshold, 255, cv2.THRESH_BINARY)[1]
 
-        # 将亮度低的部分设置为黑色
-        image[mask] = [0, 0, 0]
-        darkened_image = image
-        # cv2.imwrite("d.png", darkened_image)
+        # 将掩码应用到原图上
+        imgG = cv2.bitwise_and(imgG, imgG, mask=mask)
 
-        ok = False
-        pot = ()
-        name = "未知图标"
-        for k,v in enumerate(imgs):
-            loading = MyImread(IMG_PATH.joinpath(f"Main/relic/{v}"))
-            resp, ok  = imgSearch(darkened_image, loading, 0.9)
-            if ok:
-                name = names[k]
-                pot = resp
-                break
+        res = find_all_template(imgG, tempG, threshold=0.75)
+        # 筛选出来x，y最小的点
+        sorted_data = sorted(res, key=lambda x: x['result'])
 
-        return {"name": name, "pot": pot}, ok
+        pot = [x['result'] for x in sorted_data]
+
+        # x < 400,y>400的剔除
+        for k, item in enumerate(pot):
+            x, y = item
+            if x < 400 < y:
+                del pot[k]
+
+        return {"name": "遗迹兴趣点", "pot": pot}, len(pot) > 0
 
     @matchResult
     def isInRelicGame(self):
@@ -283,12 +264,12 @@ class RelicDetect:
         击杀过boss了
         Returns:
         """
-        roi = [102,74,6,6]
+        roi = [752,150,13,8]
         pot = (703,210)
         img = GetSnapShot()
 
         img = img[roi[1]:roi[1]+roi[3],roi[0]:roi[0]+roi[2]]
-        ok = imgFindByColor(img, "FE9DFB", 0.6)
+        ok = imgFindByColor(img, "281e96", 0.6)
 
         return {"name": "击杀过boss了", "pot": pot}, ok
 
@@ -373,3 +354,24 @@ class RelicDetect:
             pot = (0.5, 0.0)
 
         return {"name": "获取道具", "pot": pot}, ok
+
+if __name__ == '__main__':
+    ConnectEmulator()
+
+    relic = RelicDetect()
+    # [699, 193, 120, 66]
+    while True:
+        UpdateSnapShot()
+        img = GetSnapShot()
+        _,ok = relic.killedBoss()
+        if ok :
+            left = (699,193)
+            bottom = (699+120,193+66)
+            cv2.rectangle(img, left, bottom, (0, 255, 0), 2)
+
+        cv2.imshow("png", img)
+
+        if cv2.waitKey(1) & 0xFF == ord('q'):  # 按 'q' 退出
+            cv2.destroyAllWindows()
+            break
+        # while True:

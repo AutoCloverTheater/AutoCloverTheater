@@ -260,7 +260,7 @@ if __name__ == '__main__':
         # 将掩码应用到原图上
         imgG = cv2.bitwise_and(imgG, imgG, mask=mask)
 
-        res = find_all_template(imgG, tempG, threshold=0.75)
+        res = find_all_template(imgG, tempG, threshold=0.81)
         #
 
         # res , ok = imgMultipleResultSearch(imgG, tempG)
