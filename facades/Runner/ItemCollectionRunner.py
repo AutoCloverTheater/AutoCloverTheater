@@ -6,6 +6,7 @@ from facades.Detect.Items.ItemsDetect import ItemsDetect
 from facades.Emulator.Emulator import ConnectEmulator, Click, UpdateSnapShot
 from facades.Logx.Logx import logx
 from facades.Runner.layout.AdventureRunner import FindAdventure
+from facades.Runner.layout.Back import backMain
 from facades.Runner.layout.LoginRunner import Login
 
 
@@ -40,7 +41,7 @@ def inTopLeverItemCollection():
     flash = FlashBattleDetect()
     lag = ErrorDetect()
 
-    times  = 10
+    times  = 12
     while times > 0:
         UpdateSnapShot()
         _,ok = lag.loading()
@@ -51,6 +52,11 @@ def inTopLeverItemCollection():
         resp,ok = item.hasTopLeverButton()
         if ok:
             break
+        resp, ok = flash.isLoading()
+        if ok:
+            time.sleep(0.5)
+            times = 10
+            continue
         # 处理快闪战斗
         resp, ok = flash.exeFlashBattle()
         if ok:
@@ -82,3 +88,5 @@ if __name__ == '__main__':
     for i in range(3):
         beforeTopLeverItemCollection()
         inTopLeverItemCollection()
+
+    backMain()

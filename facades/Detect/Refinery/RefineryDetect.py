@@ -84,7 +84,7 @@ class RefineryDetect:
         """
         path = IMG_PATH.joinpath("Main/refinery/refineryEntrance__944_408_302_172__894_358_386_272.png")
         mainWindow = MyImread(path)
-        pots, ok  = imgSearchArea(GetSnapShot(), mainWindow, [944, 408, 302, 172])
+        pots, ok  = imgSearchArea(GetSnapShot(), mainWindow, [0, 408, 1280, 172])
         if not ok:
             pots = [(0,0)]
         return {"name":"神秘矿厂入口","pot":pots.pop()},ok

@@ -11,7 +11,7 @@ import uiautomator2 as u2
 from facades.Logx.Logx import logx
 from mac.emulator.bluestacks import Bluestacks
 from mac.emulator.mumu import Mumu as MumuMac
-from win.emulator.mumu import Mumu as MumuWin
+from facades.Emulator.win.emulator.mumu import Mumu as MumuWin
 
 # 可用的模拟器驱动
 UsefulEmulator = {

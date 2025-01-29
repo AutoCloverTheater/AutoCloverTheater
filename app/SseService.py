@@ -1,5 +1,7 @@
 import logging
 import sys
+import threading
+import time
 import traceback
 
 from flask import Flask, Response, request, jsonify
@@ -103,7 +105,32 @@ def saveBaseSetting():
         "code":0,
         "msg":"success"
     }
+print_event = threading.Event()
+print_thread = None
+@app.route('/api/start', methods=['POST'])
+def start():
+    def print_time():
+        while not print_event.is_set():
+            print(time.strftime('%Y-%m-%d %H:%M:%S'))
+            time.sleep(1)
 
+    global print_thread
+    if print_thread is None or not print_thread.is_alive():
+        print_event.clear()
+    print_thread = threading.Thread(target=print_time)
+    print_thread.daemon = True  # 设置为守护线程，主程序退出时自动结束
+    print_thread.start()
+    return {
+        "code":0,
+        "msg":"success"
+    }, 200
+@app.route('/api/stop', methods=['POST'])
+def stop():
+    print_event.set()
+    return {
+        "code":0,
+        "msg":"success"
+    }, 200
 
 @app.errorhandler(Exception)
 def handle_exception(e):
@@ -120,4 +147,4 @@ def handle_exception(e):
 if __name__ == '__main__':
     logging.getLogger("flask").setLevel(logging.ERROR)
     logging.getLogger("werkzeug").setLevel(logging.ERROR)
-    app.run(port=8233)
+    app.run(port=8233, threaded=True)

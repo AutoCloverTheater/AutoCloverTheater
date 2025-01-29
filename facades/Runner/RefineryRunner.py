@@ -5,6 +5,7 @@ from facades.Detect.Common.FlashBattleDetect import FlashBattleDetect
 from facades.Detect.Refinery.RefineryDetect import RefineryDetect
 from facades.Emulator.Emulator import ConnectEmulator, UpdateSnapShot, Click, Swipe
 from facades.Logx.Logx import logx
+from facades.Runner.layout.Back import backMain
 from facades.Runner.layout.LoginRunner import Login
 
 
@@ -135,3 +136,4 @@ if __name__ == '__main__':
     Login()
     BeforeRefinery()
     InRefinery()
+    backMain()
