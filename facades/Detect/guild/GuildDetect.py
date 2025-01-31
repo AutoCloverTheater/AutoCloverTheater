@@ -96,6 +96,20 @@ class GuildDetect:
         return {"name":"可以领取奖励", "pot":pot},ok
 
     @matchResult
+    def getItem(self):
+        """
+        获得道具
+        """
+        path = IMG_PATH.joinpath(f"guild/getItem__497_104_282_37__447_54_382_137.png")
+        img = MyImread(path)
+        pot, ok = imgSearchArea(GetSnapShot(), img, [585, 595, 107, 28], 0.95)
+        if ok:
+            pot = pot[0]
+
+        return {"name":"获得道具", "pot":pot},ok
+
+
+    @matchResult
     def getReward(self):
         """
         领取全部奖励

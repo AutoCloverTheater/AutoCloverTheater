@@ -6,7 +6,7 @@ from collections import Counter
 
 from facades.Constant.Constant import IMG_PATH
 from facades.Detect.DetectLog import matchResult
-from facades.Emulator.Emulator import GetSnapShot
+from facades.Emulator.Emulator import GetSnapShot, Click
 from facades.Img.ImgRead import MyImread
 from facades.Img.ImgSearch import imgSearch, imgMultipleResultSearch, imgSearchArea
 from facades.Logx.Logx import logx
@@ -139,25 +139,32 @@ class WorldTreeDetect:
                 cards.append(img)
 
         cards = cards+ nb + eb
-        logx.info("排序点击后的结果")
-        logx.info([item['name'] for item in cards])
 
-        self.memeryOf.append(''.join([item['name'] for item in cards]))
 
-        if len(self.memeryOf) > 3:
-            self.memeryOf.pop(-1)
+        if 3 > len(cards) > 1:
+            logx.exception("卡片长度异常")
 
-        # 加入选择卡片的时候卡住了连续都是一样的卡片，则把三个坐标都点一遍
-        counter = Counter(self.memeryOf)
-        if counter[''.join([item['name'] for item in cards])] >=3:
-            logx.info("选择卡片卡住了，正在处理")
-            for roi in cards:
-                click(roi['pot'])
-                time.sleep(0.3)
-            # 处理完接下来就不用返回给上面了
-            return cards[0], False
+        # logx.info([item['name'] for item in cards])
+        #
+        # self.memeryOf.append(''.join([item['name'] for item in cards]))
+        #
+        # if len(self.memeryOf) > 3:
+        #     self.memeryOf.pop(-1)
+        #
+        # # 假如选择卡片的时候卡住了连续都是一样的卡片，则把三个坐标都点一遍
+        # counter = Counter(self.memeryOf)
+        #
+        # logx.info(f"{self.memeryOf}")
+        #
+        # if counter[''.join([item['name'] for item in cards])] >=3:
+        #     logx.info("选择卡片卡住了，正在处理")
+        #     for roi in cards:
+        #         time.sleep(1)
+        #         Click(roi['pot'], 1)
+        #     # 处理完接下来就不用返回给上面了
+        #     return cards[0], False
 
-        return cards[0], True
+        return cards, len(cards) > 0
 
     @matchResult
     def isInWorldTreeEndWindow(self) :
@@ -255,7 +262,7 @@ class WorldTreeDetect:
         """
         path = IMG_PATH.joinpath("Main").joinpath("worldTree").joinpath("selectConfirm2__606_650_69_31__556_600_169_120.png")
         selectBlessing = MyImread(path)
-        pot, ok  = imgSearch(GetSnapShot(), selectBlessing)
+        pot, ok  = imgSearch(GetSnapShot(), selectBlessing, 0.98)
         return {"name":"确认选择2","pot":pot},ok
     @matchResult
     def selectConfirm1(self):
@@ -266,7 +273,7 @@ class WorldTreeDetect:
         """
         path = IMG_PATH.joinpath("Main").joinpath("worldTree").joinpath("selectConfirm1__606_651_68_29__556_601_168_119.png")
         selectBlessing = MyImread(path)
-        pot, ok  = imgSearch(GetSnapShot(), selectBlessing)
+        pot, ok  = imgSearch(GetSnapShot(), selectBlessing, 0.98)
         return {"name":"确认选择1","pot":pot},ok
 
     @matchResult
@@ -373,3 +380,15 @@ class WorldTreeDetect:
         else:
             pot = (0,0)
         return {"name":"点击空白区域退出","pot":pot},ok
+
+    def reSelect(self):
+        """
+        当前路径不可用请重新选择
+        """
+        path = IMG_PATH.joinpath("Main/worldTree/reSelect__458_301_370_29__408_251_470_129.png")
+        items = MyImread(path)
+        pots,ok = imgSearchArea(GetSnapShot(), items, [458,289,364,70])
+        pot = (0, 0)
+        if ok:
+            pot = pots[-1]
+        return {"name":"当前路径不可用请重新选择","pot":pot},ok

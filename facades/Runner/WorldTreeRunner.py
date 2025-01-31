@@ -40,7 +40,7 @@ def BeforeInWorldTree():
             break
         # 出发冒险按钮
         searchStartWorldTreeAdvButton, ok = worldTree.searchStartWorldTreeAdvButton()
-        if ok and worldTree.lv < Config("app.worldTree.lever"):
+        if ok and worldTree.lv < 50:
             Click(searchStartWorldTreeAdvButton['pot'])
             logx.info(f"点击出发冒险按钮，等待选择难度")
             times = 0
@@ -86,7 +86,7 @@ def InWorldTree():
 
     times = 0
     while 1:
-        if times >= 3:
+        if times >= 12:
             matchResult = False
             logx.warning("跳过世界树探索阶段")
             break
@@ -99,48 +99,17 @@ def InWorldTree():
         #     logx.info(f"当前露水：{dew}")
 
         # 开启快闪，跳过编队
-        FlashBattleResp, ok = FlashBattle.isOpenFlashBattleClosed()
-        if ok :
-            Click(FlashBattleResp['pot'])
-            time.sleep(0.1)
-            logx.info(f"已跳过快闪")
-
-        SkipFormationResp,ok = FlashBattle.isOpenSkipFormationClosed()
-        if ok :
-            Click(SkipFormationResp['pot'])
-            time.sleep(0.1)
-            logx.info(f"已跳过编队")
-        # 战斗中
-        inFastBattleWindow,ok = FlashBattle.inFastBattleWindow()
-        if ok :
-            # 啥也不干等着打完
-            times = 0
-            time.sleep(1)
-        # 战斗失败
-        isInFailedFlashBattleWindow,ok = FlashBattle.isInFailedFlashBattleWindow()
-        if ok :
-            logx.info(f"战斗失败返回世界树主页")
-            pot = (0,0)
-            Click(pot)
-
-            times = 0
+        resp, ok = FlashBattle.isLoading()
+        if ok:
             continue
-        # 战斗胜利
-        isInSuccessFlashBattleWindow,ok = FlashBattle.isInSuccessFlashBattleWindow()
+        FlashBattleResp, ok = FlashBattle.exeFlashBattle()
         if ok :
-            logx.info(f"战斗胜利-点击下一步")
-            pot = (0, 0)
-            Click(pot)
-
-            times = 0
+            Click(FlashBattleResp['pot'], 0.4)
             continue
-        # 战斗结算
-        isInBattleResultWindow,ok = FlashBattle.isInBattleResultWindow()
-        if ok :
-            logx.info(f"战斗结算-点击下一步")
-            pot = (0, 0)
-            Click(pot)
-
+        # 选择
+        Confirm, ok = worldTree.selectConfirm1()
+        if ok:
+            Click(Confirm['pot'], 0.3)
             times = 0
             continue
         # 赠礼
@@ -159,27 +128,10 @@ def InWorldTree():
         isInSelectYourBlessing, ok = worldTree.isInSelectYourBlessing()
         if ok:
             Click(isInSelectYourBlessing['pot'])
-        # 选择
-        Confirm,ok = worldTree.selectConfirm2()
-        if ok:
-            Click(Confirm['pot'])
-
-            times = 0
-            time.sleep(0.2)
-            continue
-        # 选择
-        Confirm, ok = worldTree.selectConfirm1()
-        if ok:
-            Click(Confirm['pot'])
-
-            times = 0
-            time.sleep(0.2)
-            continue
         # 结束购买
         endBuy,ok = worldTree.hasEndBuyButton()
         if ok:
             Click(endBuy['pot'])
-
             times = 0
             continue
         # 放弃奖励
@@ -214,13 +166,7 @@ def InWorldTree():
         # 假设已经返回世界树冒险主页面
         isInWorldTree2,ok = worldTree.isInWorldTreeMainWindow()
         if ok:
-            # 识别等级
-            _, ok = worldTree.isLeverMax()
-            if ok:
-                logx.info(f"已到达最大等级，退出世界树")
-                times = 3
-                break
-            continue
+            break
         exits, ok = worldTree.hasExit()
         if ok:
             Click(exits['pot'])
@@ -230,13 +176,18 @@ def InWorldTree():
         inGame, ok = worldTree.isInworldTreeCardWindow()
         if ok:
             times = 0
-            time.sleep(0.2)
-        # 奇遇卡-这里最好使用ocr，然后再根据排序选择需要的卡
+            time.sleep(0.5)
+        # 奇遇卡
         BizarreCard, ok = worldTree.hasBizarreCard()
         if ok:
-            Click(BizarreCard['pot'])
+            pot = BizarreCard.pop(-1)
+            Click(pot['pot'])
             times = 0
-            continue
+        reSelectResp, ok = worldTree.reSelect()
+        if ok:
+            pot = BizarreCard.pop()
+            Click(pot['pot'])
+            times = 0
 
         times += 1
         logx.warning(f"执行次数：{times}")

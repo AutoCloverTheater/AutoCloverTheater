@@ -128,53 +128,64 @@ class FlashBattleDetect:
 
         """
         imgs = [
-            'flashBattleClosed__1153_497_114_25__1103_447_177_125.png',
-            'battleSuccess__509_416_265_71__459_366_365_171.png',
-            'battleSuccess__596_526_120_24__546_476_220_124.png',
-            'inFastBattle__1099_172_20_92__1049_122_120_192.png',
-            'battleFailed_509_410_268_79_459_360_368_179.png',
-            'settlementBattle__502_40_280_63__452_0_380_153.png',
+            {
+                "img":'flashBattleClosed__1153_497_114_25__1103_447_177_125.png',
+                "roi":[1153, 497, 114, 25],
+                "name":"快闪表演-关闭",
+                "pot":(1197, 509),# flashBattleClosed
+            },{
+                "img":"flashClosed__1124_530_71_20__1074_480_171_120.png",
+                "roi":[1124, 530, 71, 20],
+                "name":"快闪表演-关闭",
+                "pot":(1124+35, 530+10),# skipFormationClosed
+            },
+            {
+                "img":'battleSuccess__509_416_265_71__459_366_365_171.png',
+                "roi":[509, 410, 268, 79],
+                "name":"快闪战斗胜利",
+                "pot":(0.5, 0.0),# battleSuccess
+            },            {
+                "img":'battleSuccess__596_526_120_24__546_476_220_124.png',
+                "roi":[596,526,120,24],
+                "name":"快闪战斗胜利",
+                "pot":(0.5, 0.0),# battleSuccess
+            },            {
+                "img":'inFastBattle__1099_172_20_92__1049_122_120_192.png',
+                "roi":[1099, 172, 20, 92],
+                "name":"快闪战斗中。。。。",
+                "pot":(0.5, 0.0),# inFastBattle
+            },            {
+                "img":'battleFailed_509_410_268_79_459_360_368_179.png',
+                "roi":[509, 410, 268, 79],
+                "name":"快闪战斗失败",
+                "pot":(0.5, 0.0),# battleFailed
+            },            {
+                "img":'settlementBattle__502_40_280_63__452_0_380_153.png',
+                "roi":[502, 40, 280, 63],
+                "name":"演出结算",
+                "pot":(0.5, 0.0),# settlementBattle
+            },{
+                "img":"settlementBattle__482_42_311_66__432_0_411_158.png",
+                "roi": [482, 42, 311, 66],
+                "name": "演出结算",
+                "pot": (0.5, 0.0),  # settlementBattle
+            }
         ]
-        roi = [
-            [1153, 497, 114, 25],
-            [509, 410, 268, 79],
-            [596,526,120,24],
-            [1099, 172, 20, 92],
-            [509, 410, 268, 79],
-            [502, 40, 280, 63],
-        ]
-        names = [
-            "快闪表演-关闭",
-            "快闪战斗胜利",
-            "快闪战斗胜利",
-            "快闪战斗中。。。。",
-            "快闪战斗失败",
-            "演出结算",
-        ]
-        pots = [
-            (1197, 509),# flashBattleClosed
-            (0.5, 0.0),# battleSuccess
-            (0.5, 0.0),# battleSuccess
-            (0.5, 0.0),# inFastBattle
-            (0.5, 0.0),# battleFailed
-            (0.5, 0.0),# settlementBattle
-        ]
+
         name = "未知"
         ok = False
         pot = []
 
-        for k, i in enumerate(imgs):
+        for k, item in enumerate(imgs):
 
-            loading = MyImread(IMG_PATH.joinpath(f"Main/fastBattle/{i}"))
-            resp, ok  = imgSearchArea(GetSnapShot(), loading, roi[k], 0.825)
+            loading = MyImread(IMG_PATH.joinpath(f"Main/fastBattle/{item['img']}"))
+            resp, ok  = imgSearchArea(GetSnapShot(), loading, item['roi'])
             if ok:
                 if k >= 0:
-                    pot = pots[k]
+                    pot = item['pot']
                 else:
                     pot = resp[0]
-
-                name = names[k]
-                logx.info(f"{names[k]}")
+                # logx.info(f"{item['name']}")
                 break
 
         return {"name":name,"pot":pot},ok

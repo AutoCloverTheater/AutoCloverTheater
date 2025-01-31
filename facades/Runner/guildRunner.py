@@ -53,6 +53,10 @@ def getReward():
             logx.info("退出领取奖励")
             break
         UpdateSnapShot()
+        resp, ok = guild.getItem()
+        if ok:
+            Click(resp['pot'], 0.3)
+            continue
         resp, ok = guild.hasMeettingRoom()
         if ok:
             Click(resp['pot'], 0.3)
