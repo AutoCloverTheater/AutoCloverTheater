@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>自动化脚本控制台</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f0f2f5;
+            font-family: Arial, sans-serif;
+        }
+
+        #container {
+            width: 800px;
+            height: 720px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            display: flex;
+        }
+
+        #left-panel {
+            width: 300px;
+            padding: 20px;
+            border-right: 1px solid #e8e8e8;
+        }
+
+        .config-section {
+            margin-bottom: 20px;
+        }
+
+        .config-section h3 {
+            margin: 0 0 10px 0;
+            color: #1890ff;
+            font-size: 14px;
+        }
+
+        #right-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #log-container {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #000;
+            color: #00ff00;
+            font-family: monospace;
+        }
+
+        #top-bar {
+            height: 60px;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            border-bottom: 1px solid #e8e8e8;
+        }
+
+        #status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        #status-icon {
+            width: 30px;
+            height: 30px;
+        }
+
+        #control-btn {
+            margin-left: auto;
+            padding: 5px 15px;
+            background: #1890ff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        select, input {
+            width: 50%;
+            padding: 5px;
+            margin: 5px 0;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .horizontal {
+            display: flex;
+            gap: 10px;
+        }
+        .horizontal select {
+            flex: 1;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div id="left-panel">
+            <div class="config-section">
+                <h3>日常配置</h3>
+                <input type="number" placeholder="次数">
+                <select>
+                    <option>简单难度</option>
+                    <option>普通难度</option>
+                    <option>困难难度</option>
+                </select>
+            </div>
+
+            <div class="config-section">
+                <h3>世界树配置</h3>
+                <input type="number" placeholder="次数">
+                <select>
+                    <option>初级难度</option>
+                    <option>中级难度</option>
+                    <option>高级难度</option>
+                </select>
+            </div>
+
+            <div class="config-section">
+                <h3>遗迹配置</h3>
+                <div class="horizontal">
+                    <select>
+                        <option>地图A</option>
+                        <option>地图B</option>
+                        <option>地图C</option>
+                    </select>
+                    <select>
+                        <option>普通难度</option>
+                        <option>精英难度</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="config-section">
+                <h3>模拟器配置</h3>
+                <select>
+                    <option>夜神模拟器</option>
+                    <option>雷电模拟器</option>
+                    <option>MuMu模拟器</option>
+                </select>
+                <input type="text" placeholder="连接地址">
+            </div>
+
+            <div class="config-section">
+                <h3>日志配置</h3>
+                <select>
+                    <option>DEBUG</option>
+                    <option>INFO</option>
+                    <option>WARNING</option>
+                    <option>ERROR</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="right-panel">
+            <div id="top-bar">
+                <div id="status">
+                    <img id="status-icon" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="状态">
+                    <span>运行中</span>
+                </div>
+                <button id="control-btn">暂停</button>
+            </div>
+            <div id="log-container"></div>
+        </div>
+    </div>
+
+    <script>
+        const maxLogs = 1000;
+        const logContainer = document.getElementById('log-container');
+        let logs = [];
+
+        function addLog(message) {
+            const now = new Date();
+            const timestamp = now.toLocaleTimeString();
+            logs.push(`[${timestamp}] ${message}`);
+
+            if(logs.length > maxLogs) {
+                logs.shift();
+            }
+
+            logContainer.innerHTML = logs.join('<br>');
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+
+        setInterval(() => {
+            addLog(`系统运行正常 ${Math.random().toString(16).substr(2, 8)}`);
+        }, 1000);
+
+        const controlBtn = document.getElementById('control-btn');
+        let isRunning = true;
+
+        controlBtn.addEventListener('click', () => {
+            isRunning = !isRunning;
+            controlBtn.textContent = isRunning ? '暂停' : '开始';
+            document.getElementById('status-icon').src = isRunning ?
+                'running.gif' : 'paused.png';
+        });
+    </script>
+</body>
+</html>
