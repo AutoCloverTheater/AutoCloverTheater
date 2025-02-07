@@ -1,12 +1,13 @@
 import datetime
 
+import cv2
 import uiautomator2 as u2
 
 from facades.Configs.Config import Config
 
 
 def connect():
-    d = u2.connect(f"127.0.0.1:16384")
+    d = u2.connect(f"127.0.0.1:16480")
     return d
 
 u2Device = connect()
@@ -21,7 +22,12 @@ def appStart():
 
 if __name__ == '__main__':
     connect()
-    while 1:
-        screenshot()
-        r = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        print(r)
+    # print(u2Device.info)
+    while True:
+        res = screenshot()
+        cv2.imshow("png", res)
+
+        if cv2.waitKey(1) & 0xFF == ord('q'):  # 按 'q' 退出
+            break
+
+    cv2.destroyAllWindows()

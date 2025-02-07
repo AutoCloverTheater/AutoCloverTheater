@@ -1,9 +1,7 @@
 import time
 
-from airtest.core.api import click, swipe
-
 from facades.Detect.Common.AdventureDetect import AdventureDetect
-from facades.Emulator.Emulator import UpdateSnapShot, ConnectEmulator
+from facades.Emulator.Emulator import UpdateSnapShot, ConnectEmulator, Click, Swipe
 from facades.Logx.Logx import logx
 
 def FindAdventure(callAdv:str):
@@ -29,7 +27,7 @@ def FindAdventure(callAdv:str):
     times = 0
     last = False
     while 1 :
-        if times >= 5:
+        if times >= 20:
             logx.warning("跳过寻找入口")
             break
         UpdateSnapShot()
@@ -41,7 +39,7 @@ def FindAdventure(callAdv:str):
         resp,ok = adv.isInMainUi()
         if ok:
             logx.info(f"坐标 {resp}")
-            click(resp['pot'])
+            Click(resp['pot'])
             time.sleep(0.3)
             times = 0
             continue
@@ -53,7 +51,7 @@ def FindAdventure(callAdv:str):
 
         button,buttonOk = method()
         if inOk and buttonOk:
-            click(button['pot'])
+            Click(button['pot'])
             time.sleep(0.3)
             times = 0
             break
@@ -61,13 +59,13 @@ def FindAdventure(callAdv:str):
         # 👈
         if last:
             logx.info("向前翻页")
-            swipe((0.5, 0.5),(0.9, 0.5), duration=2)
+            Swipe((0.5, 0.5),(0.9, 0.5),sleep=2)
             time.sleep(0.2)
             continue
         #  👉
         else:
             logx.info("向后翻页")
-            swipe((0.9, 0.5),(0.5, 0.5), duration=2)
+            Swipe((0.9, 0.5),(0.5, 0.5),sleep=2)
             time.sleep(0.2)
             continue
 

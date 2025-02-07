@@ -15,7 +15,7 @@ def saveCard():
     翻新世界树卡片资源用
     :return:
     """
-    img = GetSnapShot().img
+    img = GetSnapShot()
     y, x, _ = img.shape
     cardxy = img[565:595, :]
 
@@ -43,29 +43,10 @@ def saveCard():
     res3 = cv2.imwrite(f"{rp}", r)
     logx.info(f"保存结果 {res1},{res2},{res3}\n")
 
-names = []
-# 遗迹出口
-def saveExit():
-    img = GetSnapShot().img
-    y, x, _ = img.shape
-    # [703,211,128,58]
-    cardxy = img[221:221+58, 703:703+128]
-    # res3 = cv2.imwrite("c.png", cardxy)
-    name = imagehash.average_hash(Image.fromarray(cardxy))
-    if f'{name}' in names:
-        logx.info(f"{name} 重复")
-        return
-    else:
-        names.append(f"{name}")
-    logx.error(f"{names}")
-    logx.info(len(names))
-    # res = cv2.imwrite(f"{name}.png", cardxy)
-
 
 if __name__ == '__main__':
     ConnectEmulator()
     UpdateSnapShot()
-    # saveCard()
     while True:
         UpdateSnapShot()
-        saveExit()
+        saveCard()
