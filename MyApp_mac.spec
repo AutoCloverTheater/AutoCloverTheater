@@ -2,12 +2,15 @@
 
 
 a = Analysis(
-    ['src/app/main.py'],
+    ['main.py'],
     pathex=['src'],
     binaries=[],
-    datas=[('img', 'img'),('src','src')],
+    datas=[
+    ('img', 'img'),
+    ('env.yaml.example', '.')
+    ,('src','src')
+    ],
     hiddenimports=[
-    'yaml',
     'Flask',
     'Flask_Cors',
     'ImageHash',

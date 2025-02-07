@@ -1,9 +1,12 @@
 import time
 
+import cv2
+
 from src.facades.Detect.Common.ErrorDetect import ErrorDetect
 from src.facades.Detect.Common.FlashBattleDetect import FlashBattleDetect
 from src.facades.Detect.Items.ItemsDetect import ItemsDetect
-from src.facades.Emulator.Emulator import ConnectEmulator, Click, UpdateSnapShot
+from src.facades.Detect.MainWindowDetect import MainWindowDetect
+from src.facades.Emulator.Emulator import ConnectEmulator, Click, UpdateSnapShot, GetSnapShot
 from src.facades.Logx.Logx import logx
 from src.facades.Runner.layout.AdventureRunner import FindAdventure
 from src.facades.Runner.layout.Back import backMain
@@ -81,6 +84,7 @@ def inTopLeverItemCollection():
 # 每日高难副本
 if __name__ == '__main__':
     ConnectEmulator()
+
     Login()
     FindAdventure("hasItemsCollectionButton")
 

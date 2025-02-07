@@ -2,6 +2,7 @@ import yaml
 
 from src.facades.Constant.Constant import ROOT_PATH
 from src.facades.Logx.Logx import logx
+from src.facades.tool import create_env_if_not_exists
 
 
 class EnvDriver:
@@ -45,6 +46,8 @@ def Env(key: str, default=None):
             data = data.get(i)
             temp = data
     return temp
+
+create_env_if_not_exists()
 
 if __name__== "__main__":
     print(Env("worldTree.lever"))

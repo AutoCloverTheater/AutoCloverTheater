@@ -1,17 +1,25 @@
+import cv2
+
 from src.facades.Constant.Constant import IMG_PATH
 from src.facades.Detect.DetectLog import matchResult
 from src.facades.Emulator.Emulator import GetSnapShot
+from src.facades.Img import find_template
 from src.facades.Img.ImgRead import MyImread
 from src.facades.Img.ImgSearch import imgSearch, imgSearchArea
+from src.facades.Logx.Logx import logx
 
 
 class MainWindowDetect:
     # 输入账号密码
     @matchResult
     def pleaseInputAccount(self):
-        path = IMG_PATH.joinpath("Main").joinpath("pleaseInputAccount.png")
+        path = IMG_PATH.joinpath("Main/pleaseInputAccount__478_227_117_34__428_177_217_134.png")
         mainWindow = MyImread(path)
-        pot, ok  = imgSearch(GetSnapShot(), mainWindow)
+
+        img = cv2.cvtColor(GetSnapShot(), cv2.COLOR_BGR2GRAY)
+        temp = cv2.cvtColor(mainWindow, cv2.COLOR_BGR2GRAY)
+
+        pot, ok  = imgSearchArea(img, temp, [478,227,117,34])
         return {"name":"需要账号密码","pot":pot},ok
     @matchResult
     def isInDailySignRewardWindow(self):
@@ -45,9 +53,12 @@ class MainWindowDetect:
 
     @matchResult
     def hasLoginButton(self):
-        path = IMG_PATH.joinpath("Main").joinpath("loginButton.png")
+        path = IMG_PATH.joinpath("Main/loginButton__717_435_51_29__667_385_151_129.png")
         mainWindow = MyImread(path)
-        pot, ok  = imgSearch(GetSnapShot(), mainWindow)
+        pot, ok  = imgSearchArea(GetSnapShot(), mainWindow, [717,435,51,29])
+        if ok:
+            pot = pot[0]
+
         return {"name":"登录按钮","pot":pot},ok
     @matchResult
     def userAgreementBotSelected(self):

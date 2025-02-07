@@ -64,11 +64,11 @@ def Login():
         pleaseInputAccount, pleaseInput = main.pleaseInputAccount()
         if pleaseInput:
             logx.info(f"输入账号")
-            accountInput = (460, 210)
+            accountInput = (478+50, 227+15)
             Click(accountInput)
             Text(f'{Config("app").get("account")}')
             logx.info(f"输入账号完毕")
-            passwordInput = (460, 280)
+            passwordInput = (478+50, 289+15)
             logx.info(f"输入密码")
             Click(passwordInput)
             Text(f'{Config("app").get("password")}')
