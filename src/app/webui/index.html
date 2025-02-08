@@ -124,10 +124,10 @@
             <div class="config-section">
                 <h3>账号配置</h3>
                 <label>
-                   <input type="text" placeholder="账号">
+                   <input type="text" placeholder="账号" v-model="account" @blur="handleBlur($event, 'account')">
                 </label>
                 <label>
-                   <input type="text" placeholder="密码">
+                   <input type="text" placeholder="密码" v-model="password" @blur="handleBlur($event, 'password')">
                 </label>
             </div>
             <div class="config-section">
@@ -196,6 +196,22 @@ createApp({
     setup() {
         const title = ref('四叶草🍀小助手')
         const status = ref('暂停中')
+
+        const inputValue = ref(''); // 当前输入值
+        const previousValue = ref(''); // 输入前的值
+
+        const account = ref('abc');
+        const password = ref('123456');
+
+        // 监听输入框失去焦点事件
+        const handleBlur = (e, index) => {
+            const reqData = {[index]:e.target.value}
+            console.table(reqData)
+
+          return true
+        };
+
+
         function getConfig() {
             getReq("http://localhost:8233/api/setting",{},(data) => {
               // 处理正确的响应数据
@@ -206,7 +222,7 @@ createApp({
 
         getConfig()
         return {
-        status,title
+            status,title,password,account,handleBlur,inputValue,previousValue
         }
     }
 }).mount('#app')
