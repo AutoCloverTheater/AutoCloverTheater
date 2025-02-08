@@ -200,8 +200,8 @@ createApp({
         const inputValue = ref(''); // 当前输入值
         const previousValue = ref(''); // 输入前的值
 
-        const account = ref('abc');
-        const password = ref('123456');
+        const account = ref('');
+        const password = ref('');
 
         // 监听输入框失去焦点事件
         const handleBlur = (e, index) => {
@@ -216,7 +216,8 @@ createApp({
             getReq("http://localhost:8233/api/setting",{},(data) => {
               // 处理正确的响应数据
                 console.table(data)
-
+                account.value = data.account
+                password.value = data.password
             })
         }
 

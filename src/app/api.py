@@ -1,3 +1,4 @@
+import sys
 from pathlib import Path
 
 from flask import request, Blueprint
@@ -23,7 +24,9 @@ def getBaseSetting():
     获取模拟器设置
     :return:
     """
-    return get_config()
+    resp = get_config()
+    resp['platform'] = sys.platform
+    return resp,200
 @api_bp.route('/api/setting', methods=['POST'])
 def saveBaseSetting():
     """
