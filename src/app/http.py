@@ -1,5 +1,6 @@
 import logging
 import os
+from pathlib import Path
 import sys
 import threading
 import time
@@ -9,20 +10,13 @@ from flask import Flask, Response, request, jsonify
 from flask_cors import CORS
 from threading import Lock, Event
 
+from src.app import send_event, clients_lock, clients, data_queue, app
 from src.config.app import get_config
 from src.facades.Constant.Constant import ROOT_PATH
 from src.facades.Emulator.Emulator import UsefulEmulator
 from src.facades.Env.Env import EnvDriver
 
-app = Flask(__name__)
-CORS(app)  # 启用 CORS
-# 用于存储 SSE 客户端的连接
-clients = {}
-clients_lock = Lock()
 
-# 用于触发发送数据的事件
-send_event = Event()
-data_queue = []
 
 def generate(client_id):
     while True:
@@ -84,28 +78,7 @@ def getEmulatorList():
         "data": allIn
     })
 
-@app.route('/api/baseSetting', methods=['GET'])
-def getBaseSetting():
-    """
-    获取模拟器设置
-    :return:
-    """
-    return get_config()
-@app.route('/api/baseSetting', methods=['POST'])
-def saveBaseSetting():
-    """
-    保存模拟器设置
-    :return:
-    """
-    data = request.get_json()
-    envx = EnvDriver().iniFromFile(ROOT_PATH.joinpath("env.yaml"))
-    for key, value in data.items():
-        envx.setValue(key.upper(), value)
-    envx.saveToFile(ROOT_PATH.joinpath("env.yaml"))
-    return {
-        "code":0,
-        "msg":"success"
-    }
+
 print_event = threading.Event()
 print_thread = None
 @app.route('/api/start', methods=['POST'])
@@ -144,8 +117,3 @@ def handle_exception(e):
         "message": "An unexpected error occurred",
         "trace": tb
     }), 500
-
-if __name__ == '__main__':
-    logging.getLogger("flask").setLevel(logging.ERROR)
-    logging.getLogger("werkzeug").setLevel(logging.ERROR)
-    app.run(port=8233, threaded=True)

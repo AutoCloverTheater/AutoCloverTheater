@@ -10,3 +10,4 @@ opencv_python==4.11.0.86
 Pillow==11.1.0
 PyYAML==6.0.2
 uiautomator2==3.2.8
+PyQt5==5.15.11

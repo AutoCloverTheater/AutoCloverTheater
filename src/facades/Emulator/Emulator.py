@@ -58,9 +58,9 @@ class Emulator:
             device instance
         """
         serial = self.instance.searchAndOpenDevice()
-        logx.info(f"准备连接设备「Android:///{serial}")
+        logx.info(f"准备连接设备「{serial}」")
         self.device = u2.connect(serial)
-        logx.info(f"连接设备成功「Android:///{serial}")
+        logx.info(f"连接设备成功「{serial}」")
         return self
 
     def updateSnapShop(self):
