@@ -2,8 +2,8 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>自动化脚本控制台</title>
-     <link rel="icon" href="https://static.jianniang.com/clover1/pc/images/p1/favicon.ico" type="image/x-icon">
+    <title>四叶草🍀小助手</title>
+    <link rel="icon" href="https://static.jianniang.com/clover1/pc/images/p1/favicon.ico" type="image/x-icon">
     <style>
         body {
             margin: 0;
@@ -15,7 +15,7 @@
             font-family: Arial, sans-serif;
         }
 
-        #container {
+        .container {
             width: 800px;
             height: 720px;
             background: white;
@@ -32,6 +32,8 @@
 
         .config-section {
             margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
         }
 
         .config-section h3 {
@@ -74,7 +76,7 @@
             height: 30px;
         }
 
-        #control-btn {
+        .control-btn {
             margin-left: auto;
             padding: 5px 15px;
             background: #1890ff;
@@ -98,8 +100,8 @@
         }
     </style>
 </head>
-<body>
-    <div id="container">
+<body id="app">
+    <div class="container">
         <div id="left-panel">
             <div class="config-section">
                 <h3>模拟器配置</h3>
@@ -174,47 +176,90 @@
 
         <div id="right-panel">
             <div id="top-bar">
-                <div id="status">
-                    <img id="status-icon" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="状态">
-                    <span>运行中</span>
+                <div class="svg-spinners--180-ring"></div>
+                <div class="svg-spinners--gooey-balls-1"></div>
+                <p>{{status}}</p>
+                <div>
+                    <button class="control-btn" @click="status = status === '暂停中' ? '运行中' : '暂停中'">{{status === '暂停中' ? '开始' : '暂停'}}</button>
                 </div>
-                <button id="control-btn">暂停</button>
             </div>
             <div id="log-container"></div>
         </div>
     </div>
 
-    <script>
-        const maxLogs = 1000;
-        const logContainer = document.getElementById('log-container');
-        let logs = [];
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 
-        function addLog(message) {
-            const now = new Date();
-            const timestamp = now.toLocaleTimeString();
-            logs.push(`[${timestamp}] ${message}`);
+<script>
+const { createApp, ref } = Vue
 
-            if(logs.length > maxLogs) {
-                logs.shift();
-            }
+createApp({
+    setup() {
+        const title = ref('四叶草🍀小助手')
+        const status = ref('暂停中')
+        function getConfig() {
+            getReq("http://localhost:8233/api/setting",{},(data) => {
+              // 处理正确的响应数据
+                console.table(data)
 
-            logContainer.innerHTML = logs.join('<br>');
-            logContainer.scrollTop = logContainer.scrollHeight;
+            })
         }
 
-        setInterval(() => {
-            addLog(`系统运行正常 ${Math.random().toString(16).substr(2, 8)}`);
-        }, 1000);
+        getConfig()
+        return {
+        status,title
+        }
+    }
+}).mount('#app')
 
-        const controlBtn = document.getElementById('control-btn');
-        let isRunning = true;
+function getReq(url,data, resp){
+    const queryParams = new URLSearchParams(data)
+        .toString();
 
-        controlBtn.addEventListener('click', () => {
-            isRunning = !isRunning;
-            controlBtn.textContent = isRunning ? '暂停' : '开始';
-            document.getElementById('status-icon').src = isRunning ?
-                'running.gif' : 'paused.png';
-        });
-    </script>
+    const fullUrl = `${url}?${queryParams}`;
+
+    fetch(fullUrl)
+    .then(response => {
+      // 处理响应
+      if (response.ok) { // 如果响应状态码为 2xx
+        return response.json(); // 解析响应体为 JSON 格式
+      } else {
+        throw new Error('Network response was not ok'); // 抛出错误
+      }
+    })
+    .then(data => {
+      resp(data); // 调用回调函数，传递 null 作为错误，传递解析后的数据
+    })
+    .catch(error => {
+      // 处理错误响应
+      console.error('Error:', error);
+    });
+}
+
+function postReq(url,reqData, resp){
+    fetch(url, {
+      method: "POST", // 指定请求方法为 POST
+      headers: {
+        'Content-Type': 'application/json' // 设置请求头，表明发送的是 JSON 格式数据
+      },
+      body: JSON.stringify(reqData) // 将 JavaScript 对象转换为 JSON 字符串作为请求体
+    })
+    .then(response => {
+      // 处理响应
+      if (response.ok) { // 如果响应状态码为 2xx
+        return response.json(); // 解析响应体为 JSON 格式
+      } else {
+        throw new Error('Network response was not ok'); // 抛出错误
+      }
+    })
+    .then(data => {
+      resp(data); // 调用回调函数，传递 null 作为错误，传递解析后的数据
+    })
+    .catch(error => {
+      // 处理错误响应
+      console.error('Error:', error);
+    });
+}
+
+</script>
 </body>
 </html>

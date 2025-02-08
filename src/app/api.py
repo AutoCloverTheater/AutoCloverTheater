@@ -1,28 +1,30 @@
 from pathlib import Path
 
-from flask import request
+from flask import request, Blueprint
 
-from src.app import app
 from src.config.app import get_config
 from src.facades.Constant.Constant import ROOT_PATH
 from src.facades.Env.Env import EnvDriver
 
 
-@app.route('/', methods=['GET'])
+# 创建一个蓝图对象
+api_bp = Blueprint('api', __name__)
+
+@api_bp.route('/', methods=['GET'])
 def index():
     file_path = Path("./src/app/webui/index.html")  # 替换为你的文件路径
 
     content = file_path.read_text(encoding="utf-8")  # 读取文本文件
     return content,200
 
-@app.route('/api/baseSetting', methods=['GET'])
+@api_bp.route('/api/setting', methods=['GET'])
 def getBaseSetting():
     """
     获取模拟器设置
     :return:
     """
     return get_config()
-@app.route('/api/baseSetting', methods=['POST'])
+@api_bp.route('/api/setting', methods=['POST'])
 def saveBaseSetting():
     """
     保存模拟器设置

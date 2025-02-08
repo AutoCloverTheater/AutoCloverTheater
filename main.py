@@ -1,6 +1,6 @@
 import logging
 
-from src.app.http import app
+from src.app import app
 from src.facades.Logx.Logx import logx
 
 logging.getLogger("flask").setLevel(logging.ERROR)

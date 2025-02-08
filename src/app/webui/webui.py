@@ -13,19 +13,6 @@ def mainWindow():
 
     content = file_path.read_text(encoding="utf-8")  # 读取文本文件
 
-    # HTML 内容
-    html_content = """
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <title>My HTML Page</title>
-    </head>
-    <body>
-        <h1>Hello, World!</h1>
-        <p>This is a rendered HTML page.</p>
-    </body>
-    </html>
-    """
     window = (800,720)
 
     # 启动应用

@@ -16,8 +16,6 @@ from src.facades.Constant.Constant import ROOT_PATH
 from src.facades.Emulator.Emulator import UsefulEmulator
 from src.facades.Env.Env import EnvDriver
 
-
-
 def generate(client_id):
     while True:
         send_event.wait(0.3)  # 等待事件触发
