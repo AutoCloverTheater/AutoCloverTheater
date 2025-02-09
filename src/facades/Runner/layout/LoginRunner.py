@@ -60,9 +60,9 @@ def Login():
         if ok:
             logx.info("识别到游戏主页面登录流程结束")
             break
-        # 登录页面-需要输入账号密码
-        pleaseInputAccount, pleaseInput = main.pleaseInputAccount()
-        if pleaseInput:
+        # 不需要输入账号密码或者已经输入了
+        login, ok = main.hasLoginButton()
+        if ok:
             logx.info(f"输入账号")
             accountInput = (478+50, 227+15)
             Click(accountInput)
@@ -75,10 +75,6 @@ def Login():
             logx.info(f"输入账号完毕")
             # 等待登录完成
             times = 0
-            continue
-        # 不需要输入账号密码或者已经输入了
-        login, ok = main.hasLoginButton()
-        if ok and not pleaseInput:
             logx.info(f"点击登录{login}")
             Click(login['pot'])
         DailySignReward,ok = main.isInDailySignRewardWindow()

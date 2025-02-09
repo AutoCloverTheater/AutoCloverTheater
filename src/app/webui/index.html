@@ -211,8 +211,9 @@
         }
     </style>
 </head>
-<body id="app">
-    <div class="container">
+<body>
+<div id="app">
+        <div class="container">
         <div id="left-panel">
             <div class="config-section">
                 <h3>模拟器配置</h3>
@@ -348,12 +349,10 @@
             </div>
         </transition-group>
     </div>
+</div>
 
 
-</body>
 <script>
-
-
     const { createApp, ref } = Vue
 
     createApp({
@@ -525,12 +524,13 @@
                 emulatorMap,platformMap,
                 addr,serial,emulatorType,platform,password,account,
 
-                showMessage,removeMessageById,messages,
+                showMessage,removeMessage,removeMessageById,messages,
             }
         }
 
     }).mount('#app')
 
-
 </script>
+</body>
+
 </html>

@@ -1,3 +1,4 @@
+from PyQt5 import Qt
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWebEngineWidgets import QWebEngineView
 from PyQt5.QtWidgets import QApplication, QDesktopWidget
