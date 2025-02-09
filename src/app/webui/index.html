@@ -5,6 +5,105 @@
     <title>四叶草🍀小助手</title>
     <link rel="icon" href="https://static.jianniang.com/clover1/pc/images/p1/favicon.ico" type="image/x-icon">
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+<!--    弹出消息样式-->
+    <style>
+        /* 消息容器样式 */
+        .message-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-width: 400px;
+        }
+
+        /* 消息框基础样式 */
+        .message-box {
+            position: relative;
+            display: flex;
+            align-items: flex-start;
+            padding: 15px 20px;
+            border-radius: 6px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            background: white;
+            transition: all 0.3s ease;
+            min-width: 280px;
+        }
+
+        /* 状态颜色 */
+        .message-box.success {
+            border-left: 4px solid #4CAF50;
+            background: #f5fbf5;
+        }
+
+        .message-box.error {
+            border-left: 4px solid #f44336;
+            background: #fff5f5;
+        }
+
+        /* 图标样式 */
+        .message-icon {
+            flex-shrink: 0;
+            margin-right: 12px;
+            padding-top: 2px;
+        }
+
+        .message-icon svg {
+            vertical-align: middle;
+        }
+
+        /* 内容区域 */
+        .message-content {
+            flex: 1;
+        }
+
+        .message-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: #333;
+        }
+
+        .message-text {
+            font-size: 0.9em;
+            color: #666;
+            line-height: 1.4;
+        }
+
+        /* 关闭按钮 */
+        .message-close {
+            flex-shrink: 0;
+            margin-left: 15px;
+            background: none;
+            border: none;
+            color: #999;
+            font-size: 18px;
+            line-height: 1;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .message-close:hover {
+            color: #666;
+        }
+
+        /* 过渡动画 */
+        .message-slide-enter-from {
+            opacity: 0;
+            transform: translateX(100%);
+        }
+
+        .message-slide-leave-to {
+            opacity: 0;
+            transform: translateY(-20%);
+        }
+
+        .message-slide-leave-active {
+            position: absolute;
+        }
+    </style>
+<!--    主页面样式-->
     <style>
         body {
             margin: 0;
@@ -224,136 +323,214 @@
         </div>
     </div>
 
+    <!-- 新增消息容器 -->
+    <div class="message-container">
+        <transition-group name="message-slide">
+            <div
+                    v-for="(msg, index) in messages"
+                    :key="msg.id"
+                    class="message-box"
+                    :class="[msg.type]"
+            >
+                <div class="message-icon">
+                    <svg v-if="msg.type === 'success'" width="16" height="16" viewBox="0 0 24 24">
+                        <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10s10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5l1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                    </svg>
+                    <svg v-else width="16" height="16" viewBox="0 0 24 24">
+                        <path fill="currentColor" d="M11 15h2v2h-2zm0-8h2v6h-2zm.99-5C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8s8 3.58 8 8s-3.58 8-8 8z"/>
+                    </svg>
+                </div>
+                <div class="message-content">
+                    <div class="message-title">{{ msg.title }}</div>
+                    <div class="message-text">{{ msg.text }}</div>
+                </div>
+                <button class="message-close" @click="removeMessage(index)">×</button>
+            </div>
+        </transition-group>
+    </div>
 
 
-    <script>
-
-        function getReq(url,data, resp){
-            const queryParams = new URLSearchParams(data)
-                .toString();
-
-            const fullUrl = `${url}?${queryParams}`;
-
-            fetch(fullUrl)
-                .then(response => {
-                    // 处理响应
-                    if (response.ok) { // 如果响应状态码为 2xx
-                        return response.json(); // 解析响应体为 JSON 格式
-                    } else {
-                        throw new Error('Network response was not ok'); // 抛出错误
-                    }
-                })
-                .then(data => {
-                    resp(data); // 调用回调函数，传递 null 作为错误，传递解析后的数据
-                })
-                .catch(error => {
-                    // 处理错误响应
-                    console.error('Error:', error);
-                });
-        }
-
-        function postReq(url,reqData, resp){
-            fetch(url, {
-                method: "POST", // 指定请求方法为 POST
-                headers: {
-                    'Content-Type': 'application/json' // 设置请求头，表明发送的是 JSON 格式数据
-                },
-                body: JSON.stringify(reqData) // 将 JavaScript 对象转换为 JSON 字符串作为请求体
-            })
-                .then(response => {
-                    // 处理响应
-                    if (response.ok) { // 如果响应状态码为 2xx
-                        return response.json(); // 解析响应体为 JSON 格式
-                    } else {
-                        throw new Error('Network response was not ok'); // 抛出错误
-                    }
-                })
-                .then(data => {
-                    resp(data); // 调用回调函数，传递 null 作为错误，传递解析后的数据
-                })
-                .catch(error => {
-                    // 处理错误响应
-                    console.error('Error:', error);
-                });
-        }
-        const { createApp, ref } = Vue
-
-        createApp({
-            setup() {
-                const emulatorMap = [
-                    { label: 'MuMu模拟器', value: 'mumu' },
-                    { label: '蓝叠模拟器', value: 'bluestacks' },
-                ]
-
-                const platformMap = [
-                    { label: 'windows', value: 'win32' },
-                    { label: 'mac', value: 'darwin' },
-                    { label: 'linux', value: 'linux' },
-                ]
-
-                const title = ref('四叶草🍀小助手')
-                const status = ref('暂停中')
-                const addr = ref('')
-                const serial = ref('')
-                const accountType = ref('password')
-                const passwordType = ref('password')
-
-
-                const inputValue = ref(''); // 当前输入值
-                const previousValue = ref(''); // 输入前的值
-
-                const account = ref('');
-                const password = ref('');
-                const emulatorType = ref('');
-                const platform = ref('');
-
-
-                const showText = (e,c) => {
-                    if (c==="account"){
-                        accountType.value = accountType.value === "text"?"password":"text"
-                    }
-                    if (c==="password"){
-                        passwordType.value = passwordType.value === "text"?"password":"text"
-                    }
-                };
-
-                // 监听输入框失去焦点事件
-                const handleBlur = (e, index) => {
-                    const reqData = {[index]:e.target.value}
-                    console.table(reqData)
-
-                    return true
-                };
-
-
-                function getConfig() {
-                    getReq("http://localhost:8233/api/setting",{},(data) => {
-                        // 处理正确的响应数据
-                        console.table(data)
-                        platform.value = data.platform
-                        account.value = data.account
-                        password.value = data.password
-                        addr.value = data.addr
-                        serial.value = data.serial
-                        emulatorType.value = data.emulatorType
-                    })
-                }
-
-                getConfig()
-                return {
-                    status,title,handleBlur,inputValue,previousValue,showText,accountType,passwordType,
-
-                    emulatorMap,platformMap,
-                    addr,serial,emulatorType,platform,password,account
-                }
-            }
-        }).mount('#app')
-
-
-    </script>
-
-    <script setup>
-
-    </script>
 </body>
+<script>
+
+
+    const { createApp, ref } = Vue
+
+    createApp({
+        setup() {
+            const messages = ref([]);
+
+            const emulatorMap = [
+                { label: 'MuMu模拟器', value: 'mumu' },
+                { label: '蓝叠模拟器', value: 'bluestacks' },
+            ]
+
+            const platformMap = [
+                { label: 'windows', value: 'win32' },
+                { label: 'mac', value: 'darwin' },
+                { label: 'linux', value: 'linux' },
+            ]
+
+            const title = ref('四叶草🍀小助手')
+            const status = ref('暂停中')
+            const addr = ref('')
+            const serial = ref('')
+            const accountType = ref('password')
+            const passwordType = ref('password')
+
+
+            const inputValue = ref(''); // 当前输入值
+            const previousValue = ref(''); // 输入前的值
+
+            const account = ref('');
+            const password = ref('');
+            const emulatorType = ref('');
+            const platform = ref('');
+
+
+            const showText = (e,c) => {
+                if (c==="account"){
+                    accountType.value = accountType.value === "text"?"password":"text"
+                }
+                if (c==="password"){
+                    passwordType.value = passwordType.value === "text"?"password":"text"
+                }
+            };
+
+            // 监听输入框失去焦点事件
+            const handleBlur = (e, index) => {
+                const reqData = {[index]:e.target.value}
+                console.table(reqData)
+
+                return true
+            };
+
+
+            function getConfig() {
+                getReq("http://localhost:8233/api/setting",{},(data) => {
+                    // 处理正确的响应数据
+                    console.table(data)
+                    platform.value = data.platform
+                    account.value = data.account
+                    password.value = data.password
+                    addr.value = data.addr
+                    serial.value = data.serial
+                    emulatorType.value = data.emulatorType
+
+                    showMessage({
+                        type: 'success',
+                        title: '获取配置成功',
+                        text: ``,
+                        duration: 5000
+                    })
+                })
+            }
+
+            getConfig()
+
+
+            let messageId = 0;
+
+            // 添加消息
+            const showMessage = (options) => {
+                const id = messageId++;
+                const msg = {
+                    id,
+                    type: options.type || 'info',
+                    title: options.title || '',
+                    text: options.text || '',
+                    duration: options.duration || 3000
+                };
+
+                messages.value.unshift(msg);
+
+                // 自动关闭
+                if (msg.duration > 0) {
+                    setTimeout(() => {
+                        removeMessageById(id);
+                    }, msg.duration);
+                }
+            };
+
+            // 移除消息
+            const removeMessage = (index) => {
+                messages.value.splice(index, 1);
+            };
+
+            const removeMessageById = (id) => {
+                const index = messages.value.findIndex(msg => msg.id === id);
+                if (index > -1) removeMessage(index);
+            };
+
+            function getReq(url, data, resp) {
+                const queryParams = new URLSearchParams(data)
+                    .toString();
+
+                const fullUrl = `${url}?${queryParams}`;
+
+               fetch(fullUrl)
+                        .then(response => {
+                            // 处理响应
+                            if (response.ok) { // 如果响应状态码为 2xx
+                                return response.json(); // 解析响应体为 JSON 格式
+                            } else {
+                                throw new Error(`HTTP error! Status: ${response.status}`);
+                                // throw new Error('Network response was not ok'); // 抛出错误
+                            }
+                        })
+                        .then(data => {
+                            resp(data); // 调用回调函数，传递 null 作为错误，传递解析后的数据
+                        })
+                        .catch(error => {
+                            // 处理错误响应
+                            console.log(error)
+                            showMessage({
+                                type: 'error',
+                                title: '连接失败',
+                                text: `${error} CONNECTION_REFUSED`,
+                                duration: 5000
+                            })
+
+                        });
+
+            }
+
+            function postReq(url,reqData, resp){
+                fetch(url, {
+                    method: "POST", // 指定请求方法为 POST
+                    headers: {
+                        'Content-Type': 'application/json' // 设置请求头，表明发送的是 JSON 格式数据
+                    },
+                    body: JSON.stringify(reqData) // 将 JavaScript 对象转换为 JSON 字符串作为请求体
+                })
+                    .then(response => {
+                        // 处理响应
+                        if (response.ok) { // 如果响应状态码为 2xx
+                            return response.json(); // 解析响应体为 JSON 格式
+                        } else {
+                            throw new Error('Network response was not ok'); // 抛出错误
+                        }
+                    })
+                    .then(data => {
+                        resp(data); // 调用回调函数，传递 null 作为错误，传递解析后的数据
+                    })
+                    .catch(error => {
+                        // 处理错误响应
+                        console.error('Error:', error);
+                    });
+            }
+            return {
+                status,title,handleBlur,inputValue,previousValue,showText,accountType,passwordType,
+
+                emulatorMap,platformMap,
+                addr,serial,emulatorType,platform,password,account,
+
+                showMessage,removeMessageById,messages,
+            }
+        }
+
+    }).mount('#app')
+
+
+</script>
 </html>
