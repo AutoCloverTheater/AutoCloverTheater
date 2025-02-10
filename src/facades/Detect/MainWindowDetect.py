@@ -53,11 +53,11 @@ class MainWindowDetect:
 
     @matchResult
     def hasLoginButton(self):
-        path = IMG_PATH.joinpath("Main/loginButton__717_435_51_29__667_385_151_129.png")
+        path = IMG_PATH.joinpath("Main/needLogin__631_561_15_27__581_511_115_127.png")
         mainWindow = MyImread(path)
-        pot, ok  = imgSearchArea(GetSnapShot(), mainWindow, [717,435,51,29])
+        pot, ok  = imgSearchArea(GetSnapShot(), mainWindow, [631,561,15,27])
         if ok:
-            pot = pot[0]
+            pot = (728,430)
 
         return {"name":"登录按钮","pot":pot},ok
     @matchResult

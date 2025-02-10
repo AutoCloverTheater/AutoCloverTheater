@@ -64,7 +64,7 @@ def Login():
         login, ok = main.hasLoginButton()
         if ok:
             logx.info(f"输入账号")
-            accountInput = (478+50, 227+15)
+            accountInput = (478+50, 210)
             Click(accountInput)
             Text(f'{Config("app").get("account")}')
             logx.info(f"输入账号完毕")
@@ -76,7 +76,7 @@ def Login():
             # 等待登录完成
             times = 0
             logx.info(f"点击登录{login}")
-            Click(login['pot'])
+            Click(login['pot'], 1)
         DailySignReward,ok = main.isInDailySignRewardWindow()
         if ok:
             logx.info(f"准备关闭签到页面")

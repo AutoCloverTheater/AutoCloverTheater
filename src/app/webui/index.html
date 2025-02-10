@@ -116,7 +116,7 @@
         }
 
         .container {
-            width: 800px;
+            width: 1000px;
             height: 720px;
             background: white;
             border-radius: 8px;
@@ -125,7 +125,7 @@
         }
 
         #left-panel {
-            width: 300px;
+            width: 350px;
             padding: 20px;
             border-right: 1px solid #e8e8e8;
         }
@@ -163,17 +163,6 @@
             align-items: center;
             padding: 0 20px;
             border-bottom: 1px solid #e8e8e8;
-        }
-
-        #status {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        #status-icon {
-            width: 30px;
-            height: 30px;
         }
 
         .control-btn {
@@ -214,13 +203,32 @@
 <body>
 <div id="app">
         <div class="container">
-        <div id="left-panel">
+        <div v-if="platform === 'darwin'" id="left-panel">
+            <div class="config-section">
+                <h3>mac模拟器配置</h3>
+                <div style="display: flex;align-content: center;align-items: center;gap: 5px">
+
+
+                        <select v-model="serialIndex">
+                                <option disabled value="">请选模拟器</option>
+                                <option v-for="serial in serialList" :key="serial.value" :value="serial.value">
+                                    {{serial.label}}
+                                </option>
+                        </select>
+
+                    <span @click="mumuInfoListReq" class="control-btn-sm">刷新</span>
+                    <span @click="startEmulatorReq" class="control-btn-sm">启动</span>
+                    <span @click="stopEmulatorReq" class="control-btn-sm">暂停</span>
+                </div>
+
+            </div>
             <div class="config-section">
                 <h3>模拟器配置</h3>
                 <div>
                     <label>
                         <select disabled v-model="platform">
-                            <option v-for="platform in platformMap" :key="platform.vaue" :value="platform.value">
+                            <option disabled value="">请选平台</option>
+                            <option v-for="platform in platformMap" :key="platform.value" :value="platform.value">
                                 {{platform.label}}
                             </option>
                         </select>
@@ -239,7 +247,6 @@
                 <div style="display: flex;align-items: center;gap: 5px;">
                     <input v-model="addr"   type="text" placeholder="模拟器地址" style="flex: 1">
                     <input v-model="serial" type="text" placeholder="端口" style="flex: 1">
-                    <span style="flex: 2"><span class="control-btn-sm">自动查询</span></span>
                 </div>
             </div>
             <div class="config-section">
@@ -370,6 +377,10 @@
                 { label: 'linux', value: 'linux' },
             ]
 
+            const serialList = ref([])
+
+            const serialIndex = ref(0)
+
             const title = ref('四叶草🍀小助手')
             const status = ref('暂停中')
             const addr = ref('')
@@ -405,7 +416,7 @@
             };
 
 
-            function getConfig() {
+            function getConfigReq() {
                 getReq("http://localhost:8233/api/setting",{},(data) => {
                     // 处理正确的响应数据
                     console.table(data)
@@ -425,7 +436,48 @@
                 })
             }
 
-            getConfig()
+            function mumuInfoListReq(){
+                getReq("http://localhost:8233/api/mumuInfoList",{},(resp) => {
+                    serialList.value = resp.data.map((item, index) => {
+                        return {
+                            label: `${item.name} 状态:${item.state}`,
+                            value: item.index,
+                        };
+                    });
+
+                    console.table(serialList.value)
+                })
+            }
+
+            function startEmulatorReq(){
+                postReq("http://localhost:8233/api/startEmulator",{
+                    index:serialIndex.value,
+                },(data) => {
+                    // 处理正确的响应数据
+                    console.table(data)
+                    showMessage({
+                        type: 'success',
+                        title: '启动模拟器成功',
+                    })
+                }
+                )
+            }
+
+            function stopEmulatorReq(){
+                postReq("http://localhost:8233/api/stopEmulator",{
+                    index:serialIndex.value,
+                },(data) => {
+                    // 处理正确的响应数据
+                    console.table(data)
+                    showMessage({
+                        type: 'success',
+                        title
+                    })
+                }
+                )
+            }
+
+            getConfigReq()
 
 
             let messageId = 0;
@@ -519,12 +571,14 @@
                     });
             }
             return {
-                status,title,handleBlur,inputValue,previousValue,showText,accountType,passwordType,
+                status,title,handleBlur,inputValue,previousValue,showText,accountType,passwordType,serialIndex,
 
-                emulatorMap,platformMap,
+                emulatorMap,platformMap,serialList,
                 addr,serial,emulatorType,platform,password,account,
-
+                // 内置方法
                 showMessage,removeMessage,removeMessageById,messages,
+                // http请求方法
+                startEmulatorReq,mumuInfoListReq
             }
         }
 

@@ -6,6 +6,9 @@ from src.facades.Logx.Logx import logx
 
 
 class Mumu:
+    def getConnectStr(self) -> str:
+        return f'{Config("app.addr")}:{Config("app.serial")}'
+
     def getSerial(self)-> list:
         return self._mumuTollInfoAll()
 
@@ -21,7 +24,8 @@ class Mumu:
                 self._openmumu()
                 time.sleep(3)
                 total += 1
-
+    def mumuInfoAll(self):
+        return self._mumuTollInfoAll()
     def _mumuTollInfoAll(self):
         toolPath = Config("app", {}).get("emulatorPath", "")
         cmd = f"{toolPath}/mumutool info all"
@@ -44,24 +48,65 @@ class Mumu:
 
     def _openmumu(self):
         toolPath = Config("app", {}).get("emulatorPath", "")
-        cmd = f"open -a {toolPath}/MuMuPlayer && osascript -e 'tell application \"MuMuPlayer\" to minimize'"
+        cmd = f"open -a {toolPath}/MuMuPlayer"
         subprocess.Popen(cmd, shell=True)
+
+    def openEmulator(self):
+         self._openmumu()
+
+    def openDevice(self, index):
+       self._openDevice(index)
+
+    def closeDevice(self, index):
+        self._closeDevice(index)
+
     def _openDevice(self, index: int) -> bool:
-        toolPath = Config("app", {}).get("emulatorPath", "")
-        cmd = f"{toolPath}/mumutool open {index}"
-        process = subprocess.Popen(
-            cmd,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            shell=True,
-            )
-        output, error = process.communicate()
-        if error.decode() != "":
-           logx.error(f"mumutool cmd({cmd}) err:{error.decode()}")
-           return False
-        else:
-            logx.info(f"打开了设备:{index}")
-        return True
+        times = 30
+        status = True
+        while True:
+            if times <= 0:
+                logx.error(f"打开设备失败:{index}")
+                raise Exception(f"打开设备失败:{index}")
+
+            toolPath = Config("app", {}).get("emulatorPath", "")
+            cmd = f"{toolPath}/mumutool open {index}"
+            process = subprocess.Popen(
+                cmd,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                shell=True,
+                )
+            output, error = process.communicate()
+            if error.decode() != "":
+                times-=1
+                time.sleep(1)
+                continue
+            else:
+                break
+
+        times = 30
+        status = False
+        while True:
+            if times <= 0:
+                logx.error(f"启动设备失败:{index}")
+                raise Exception(f"启动设备失败:{index}")
+
+            # 查看是否已经在运行
+            res = self._mumuTollInfoAll()
+
+            for device in res:
+                logx.info(device)
+                if int(device.get("index")) == index and device.get("state") == "running":
+                    logx.info("running")
+                    status = True
+            if not status:
+                times-=1
+                time.sleep(1)
+                continue
+            else:
+                break
+        logx.info(f"打开了设备:{index}")
+        return status
     def _closeDevice(self, index: int) -> bool:
         toolPath = Config("app", {}).get("emulatorPath", "")
         cmd = f"{toolPath}/mumutool close {index}"

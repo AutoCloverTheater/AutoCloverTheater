@@ -9,9 +9,9 @@ import uiautomator2
 from src.facades.Configs.Config import Config
 import uiautomator2 as u2
 
-from src.facades.Emulator.mac.emulator.bluestacks import Bluestacks
-from src.facades.Emulator.mac.emulator.mumu import Mumu as MumuMac
-from src.facades.Emulator.win.emulator.mumu import Mumu as MumuWin
+from src.facades.Emulator.mac.bluestacks import Bluestacks
+from src.facades.Emulator.mac.mumu import Mumu as MumuMac
+from src.facades.Emulator.win.mumu import Mumu as MumuWin
 from src.facades.Logx.Logx import logx
 
 # 可用的模拟器驱动
@@ -57,10 +57,25 @@ class Emulator:
         Returns:
             device instance
         """
-        serial = self.instance.searchAndOpenDevice()
+        serial = self.instance.getConnectStr()
         logx.info(f"准备连接设备「{serial}」")
         self.device = u2.connect(serial)
         logx.info(f"连接设备成功「{serial}」")
+
+        dpi = int(self.device.info["displayWidth"]/self.device.info["displaySizeDpX"]*160)
+        if self.device.info['displayWidth'] != Config('app.displayWidth'):
+            logx.exception(f"设备屏幕宽需要设置为{Config('app.displayWidth')}")
+            raise Exception(f"设备屏幕宽需要设置为{Config('app.displayWidth')}")
+        if self.device.info['displayHeight'] != Config('app.displayHeight'):
+            logx.exception(f"设备屏幕高需要设置为{Config('app.displayHeight')}")
+            raise Exception(f"设备屏幕高需要设置为{Config('app.displayHeight')}")
+
+        if dpi != Config('app.dpi'):
+            logx.exception(f"设备dpi，必须为{Config('app.dpi')}")
+            raise Exception(f"设备dpi，必须为{Config('app.dpi')}")
+
+
+        logx.info(f'设备信息 屏幕宽：{self.device.info["displayWidth"]} 高：{self.device.info["displayHeight"]} dpi：{int(self.device.info["displayWidth"]/self.device.info["displaySizeDpX"]*160)}')
         return self
 
     def updateSnapShop(self):
@@ -104,7 +119,9 @@ def Click(point:tuple[float|int,float|int], sleep=0.3):
     time.sleep(sleep)
 
 def Text(text:str):
-    return ActivityEmulator.device.send_keys(text,clear=True)
+    ActivityEmulator.device.send_keys(text,clear=True)
+    time.sleep(0.3)
+    return
 
 def Swipe(start:tuple[float|int,float|int], end:tuple[float|int,float|int], steps: Optional[int] = None, sleep=0.1):
     x,y = start
