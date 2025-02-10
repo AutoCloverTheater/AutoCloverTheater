@@ -2,7 +2,6 @@ import sys
 import time
 from pathlib import Path
 
-from exceptiongroup import catch
 from flask import request, Blueprint
 
 from src.config.app import get_config

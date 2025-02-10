@@ -203,8 +203,8 @@
 <body>
 <div id="app">
         <div class="container">
-        <div v-if="platform === 'darwin'" id="left-panel">
-            <div class="config-section">
+        <div id="left-panel">
+            <div v-if="platform === 'darwin'" class="config-section">
                 <h3>mac模拟器配置</h3>
                 <div style="display: flex;align-content: center;align-items: center;gap: 5px">
 
@@ -578,7 +578,7 @@
                 // 内置方法
                 showMessage,removeMessage,removeMessageById,messages,
                 // http请求方法
-                startEmulatorReq,mumuInfoListReq
+                startEmulatorReq,mumuInfoListReq,stopEmulatorReq
             }
         }
 
