@@ -57,7 +57,7 @@ class MainWindowDetect:
         mainWindow = MyImread(path)
         pot, ok  = imgSearchArea(GetSnapShot(), mainWindow, [631,561,15,27])
         if ok:
-            pot = (728,430)
+            pot = (780,480)
 
         return {"name":"登录按钮","pot":pot},ok
     @matchResult
