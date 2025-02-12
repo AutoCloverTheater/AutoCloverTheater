@@ -41,6 +41,7 @@
         .message-box.success {
             border-left: 4px solid #4CAF50;
             background: #f5fbf5;
+
         }
 
         .message-box.error {
@@ -48,9 +49,10 @@
             background: #fff5f5;
         }
 
-        .message-box.warring {
+        .message-box.warning {
             border-left: 4px solid gold;
-            background: yellow;
+            background: rgb(247.5, 227.1, 196.5);
+            color: rgb(247.5, 227.1, 196.5);
         }
 
         /* 图标样式 */
@@ -297,11 +299,11 @@
                 </div>
                 <div>
                     <label>
-                        <select>
-                            <option>绝境I</option>
-                            <option>绝境II</option>
-                            <option>绝境III</option>
-                            <option>绝境IV</option>
+                        <select v-model="itemCollectionTopLever.lever">
+                            <option disabled>请选择难度</option>
+                            <option v-for="payload in itemCollectionTopLever.payload" :key="payload.value" :value="payload.value">
+                                {{ payload.label }}
+                            </option>
                         </select>
                     </label>
                 </div>
@@ -320,10 +322,11 @@
                 </div>
                 <div>
                     <label>
-                        <select>
-                            <option>简单</option>
-                            <option>普通</option>
-                            <option>绝境</option>
+                        <select v-model="worldTree.lever">
+                            <option disabled>请选择难度</option>
+                            <option v-for="payload in worldTree.payload" :key="payload.value" :value="payload.value">
+                                {{ payload.label }}
+                            </option>
                         </select>
                     </label>
                 </div>
@@ -336,17 +339,21 @@
                 </div>
                 <div>
                     <label>
-                        <select>
-                            <option>呼啸林地</option>
-                            <option>炽热沙地</option>
+                        <select v-model="relic.map">
+                            <option disabled>请选择地图</option>
+                            <option v-for="payload in relic.mapPayload" :key="payload.value" :value="payload.value">
+                                {{ payload.label }}
+                            </option>
                         </select>
                     </label>
                 </div>
                 <div>
                     <label>
-                        <select>
-                            <option>简单</option>
-                            <option>噩梦</option>
+                        <select v-model="relic.lever">
+                            <option disabled>请选择难度</option>
+                            <option v-for="payload in relic.leverPayload" :key="payload.value" :value="payload.value">
+                                {{ payload.label }}
+                            </option>
                         </select>
                     </label>
                 </div>
@@ -436,20 +443,28 @@
 
             // 遗迹
             const  relic = ref({
-                switch: false,
+                switch: true,
+                map: "",
+                lever: "",
+                mapPayload:[],
+                leverPayload:[]
             })
 
             // 世界树
             const worldTree = ref({
-                switch: false,
+                switch: true,
+                lever: "",
+                payload:[]
             })
             // 神秘矿厂
             const refinery = ref({
-                switch: false,
+                switch: true,
             })
             // 素材高难度副本
             const itemCollectionTopLever = ref({
                 switch: false,
+                lever: "",
+                payload:[]
             })
 
 
@@ -480,6 +495,11 @@
                     password.value = data.password
                     addr.value = data.addr
                     serial.value = data.serial
+
+                    refinery.value = data.refinery
+                    itemCollectionTopLever.value = data.itemCollectionTopLever
+                    worldTree.value = data.worldTree
+                    relic.value = data.relic
 
                     emulatorMap.forEach((item, index) => {
                         if (item.value === data.emulatorType) {
@@ -619,7 +639,7 @@
                                 response.json().then(err => {
                                     resp = JSON.stringify(err)
                                     showMessage({
-                                        type: 'warring',
+                                        type: 'warning',
                                         title: err.msg,
                                     })
                                 })
