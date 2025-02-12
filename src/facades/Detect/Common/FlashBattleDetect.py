@@ -3,6 +3,7 @@ from src.facades.Detect.DetectLog import matchResult
 from src.facades.Emulator.Emulator import GetSnapShot
 from src.facades.Img.ImgRead import MyImread
 from src.facades.Img.ImgSearch import imgSearchArea
+from src.facades.Logx.Logx import logx
 
 
 class FlashBattleDetect:
@@ -204,13 +205,14 @@ class FlashBattleDetect:
                 "roi":[90,609,72,31]
             }
         ]
-        pot = ()
+        pot = []
         ok = False
         for item in img:
             path = IMG_PATH.joinpath(f"Main/normalBattle/{item['url']}")
             img = MyImread(path)
-            pot, ok = imgSearchArea(GetSnapShot(), img, item["roi"], 0.95)
+            pot, ok = imgSearchArea(GetSnapShot(), img, item["roi"], 0.99)
             if ok:
+                logx.info(pot)
                 pot = pot.pop()
                 break
         return  {"name":"在战斗中","pot":pot},ok
@@ -234,4 +236,4 @@ class FlashBattleDetect:
             if ok:
                 pot = pot.pop()
                 break
-        return  {"name":"在战斗中","pot":pot},ok
+        return  {"name":"战斗胜利","pot":pot},ok

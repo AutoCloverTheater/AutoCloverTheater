@@ -167,50 +167,25 @@ def imgSearchArea(image :numpy.array, template :numpy.array,roi, threshold=0.9):
     # 提取局部区域
     local_region = image[y1:y2, x1:x2]
 
-    # 进行模板匹配
-    result = cv2.matchTemplate(local_region, template, cv2.TM_CCOEFF_NORMED)
+    resp = find_all_template(local_region, template, threshold)
 
-    # 找到所有大于阈值的位置
-    locations = np.where(result >= threshold)
-
+    # results = [item['result'] for item in resp]
     results = []
     # 遍历所有匹配结果
-
-    for pt in zip(*locations[::-1]):  # locations 是 (y, x) 格式，需要反转
-        if len(results) >0:
-            break
-        # 获取匹配区域的左上角坐标
-        top = pt
-
-
-        # 找到最佳匹配位置
-        # 将局部区域的坐标转换为全局坐标
-        top_left = (int(top[0] + x1), int(top[1] + y1))
-
-        # 计算中心点坐标
-        center_x = top_left[0] + (template_width / 2)
-        center_y = top_left[1] + (template_height / 2)
-        center = (int(center_x), int(center_y))
+    for item in resp:
+        top_left = item['result']
+        center = (top_left[0] + roi[0], top_left[1] + roi[1])
         results.append(center)
 
-        bottom_right = (top_left[0] + template_width, top_left[1] + template_height)
-        # logx.info(f"lef {top_left}")
-        # logx.info(f"center {center}")
-        # logx.info(f"right {bottom_right}")
-
-        # 在原始图像上绘制矩形框
-        # cv2.rectangle(image, top_left, bottom_right, (0, 255, 0), 2)
-        # cv2.imshow("Match Result", image)
-        # cv2.waitKey(0)
+    # 在原始图像上绘制矩形框
+    # cv2.rectangle(image, top_left, bottom_right, (0, 255, 0), 2)
+    # cv2.imshow("Match Result", image)
+    # cv2.waitKey(0)
 
     if len(results) > 0:
         return results, True
     else:
         return [], False
-        # 显示结果
-        # cv2.imshow("Match Result", image)
-        # cv2.waitKey(2000)
-        # cv2.destroyAllWindows()
 
 def mask():
     cardRoi = [[293, 565, 200, 40], [555, 565, 200, 40], [800, 565, 200, 40]]

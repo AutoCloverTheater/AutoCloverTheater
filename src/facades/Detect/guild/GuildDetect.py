@@ -102,7 +102,7 @@ class GuildDetect:
         """
         path = IMG_PATH.joinpath(f"guild/getItem__497_104_282_37__447_54_382_137.png")
         img = MyImread(path)
-        pot, ok = imgSearchArea(GetSnapShot(), img, [585, 595, 107, 28], 0.95)
+        pot, ok = imgSearchArea(GetSnapShot(), img, [497, 104, 282, 37], 0.95)
         if ok:
             pot = pot[0]
 
@@ -129,7 +129,7 @@ class GuildDetect:
         """
         path = IMG_PATH.joinpath(f"guild/meettingRoom__71_193_81_26__21_143_181_126.png")
         img = MyImread(path)
-        pot, ok = imgSearchArea(GetSnapShot(), img, [71, 193, 81, 26], 0.95)
+        pot, ok = imgSearchArea(GetSnapShot(), img, [71, 193, 81, 26], 0.99)
         if ok:
             pot = pot[0]
         return {"name":"议事厅", "pot":pot},ok
