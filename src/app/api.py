@@ -1,3 +1,4 @@
+import os.path
 import sys
 import time
 from pathlib import Path
@@ -79,6 +80,31 @@ def mumuInfoList():
             "code":500,
             "msg":f"{error}",
         }
+@api_bp.route('/api/getEmulatorInstallPath', methods=['GET'])
+def getEmulatorInstallPath():
+    """
+    尝试获取模拟器安装地址
+    :return:
+    """
+    ok = False
+    path = "/Applications/MuMuPlayer.app/Contents/MacOS"
+    if os.path.exists(path):
+        ok = True
+    if os.path.exists(f"~/{path}"):
+        path = f"~/{path}"
+        ok = True
+
+    if ok :
+        return {
+            "code":0,
+            "msg":"success",
+            "data":path
+        }
+    else:
+        return {
+            "code":500,
+            "msg":"未找到模拟器安装路径"
+        },400
 @api_bp.route('/api/startEmulator', methods=['POST'])
 def startEmulator():
     """
@@ -94,6 +120,23 @@ def startEmulator():
     }
 @api_bp.route('/api/stopEmulator', methods=['POST'])
 def stopEmulatorReq():
+    data = request.get_json()
+    ActivityEmulator.instance.closeDevice(data['index'])
+    return {
+        "code":0,
+        "msg":"success"
+    }
+
+@api_bp.route('/api/startRun', methods=['POST'])
+def startRun():
+    """
+    开始任务
+    :return:
+    """
+    # 1 读取配置开始编排任务
+    # - 高难度每日
+    # - 矿厂每日
+    # - 世界树
     data = request.get_json()
     ActivityEmulator.instance.closeDevice(data['index'])
     return {

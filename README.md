@@ -18,8 +18,6 @@
 ├── README.md                         # 项目简介及使用指南
 ├── LICENSE                           # 许可证
 ├── env.yaml.example                  # 环境变量配置
-├── mac                               # macOS平台下模拟器控制脚本
-│   └── emulator                      # 模拟器接口实现
 ├── facades                           # 各类功能模块封装
 │   ├── App                           # 应用层接口
 │   ├── Configs                       # 配置管理
@@ -39,8 +37,6 @@
 │   │   └── core                      # 暂时没用到的函数
 │   │   └── layout                    # 可通用的任务执行器
 │   └── tool                          # 辅助工具（主要是截取世界树卡组的图片）
-├── win                               # Windows平台下模拟器控制脚本
-│   └── emulator                      # 模拟器接口实现
 └── app                               # 应用服务端代码
     ├── api                           # API接口
     └── webui                         # Web界面
@@ -60,12 +56,12 @@ git clone https://github.com/AutoCloverTheater/AutoCloverTheater.git
 cd /yourpath/AutoCloverTheater
 cp env.yaml.example env.yaml
 ```
-3.安装 依赖项：
+3. 安装 依赖项：
 ```
 $ pip install -r requirements.txt
 ```
 
-4.修改env.yaml中的参数
+4. 修改env.yaml中的参数
 ```
 // 你的账号（可选），因为你游换设备登录会把旧设备踢下线，我经常换设备所以保留了输入账号密码。
 ACCOUNT:'your_account'
@@ -87,7 +83,7 @@ SERIAL: 5555
 - 每日矿场
 - 每日高难度素材
 - 遗迹探索
-- - 工会每日
+- 工会每日
 
 ### 接下来要做的
 - 删除用不到的静态资源

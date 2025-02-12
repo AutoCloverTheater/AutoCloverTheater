@@ -4,7 +4,13 @@
     <meta charset="UTF-8">
     <title>四叶草🍀小助手</title>
     <link rel="icon" href="https://static.jianniang.com/clover1/pc/images/p1/favicon.ico" type="image/x-icon">
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+<!--    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>-->
+      <!-- Import style -->
+      <link rel="stylesheet" href="//unpkg.com/element-plus/dist/index.css" />
+      <!-- Import Vue 3 -->
+      <script src="//unpkg.com/vue@3"></script>
+      <!-- Import component library -->
+      <script src="//unpkg.com/element-plus"></script>
 <!--    弹出消息样式-->
     <style>
         /* 消息容器样式 */
@@ -128,6 +134,7 @@
             width: 350px;
             padding: 20px;
             border-right: 1px solid #e8e8e8;
+            overflow-y: auto;
         }
 
         .config-section {
@@ -178,6 +185,16 @@
         .control-btn-sm {
             padding: 5px 5px;
             background: #1890ff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            line-height: 16px;
+        }
+        .control-btn-sm-disable{
+            padding: 5px 5px;
+            background: #333333;
             color: white;
             border: none;
             border-radius: 4px;
@@ -236,13 +253,17 @@
                 </div>
                 <div>
                     <label>
-                        <select v-model="emulatorType">
+                        <select v-model="emulatorType" @change="changeEmulator">
                             <option disabled value="">请选模拟器</option>
                             <option v-for="emulator in emulatorMap" :key="emulator.value" :value="emulator.value">
                                 {{ emulator.label }}
                             </option>
                         </select>
                     </label>
+                </div>
+                <div style="display: flex;align-items: center;gap: 5px;">
+                    <input v-model="emulatorPath" type="text" placeholder="模拟器安装地址">
+                    <span @click="getEmulatorInstallPathReq" class="control-btn-sm">获取</span>
                 </div>
                 <div style="display: flex;align-items: center;gap: 5px;">
                     <input v-model="addr"   type="text" placeholder="模拟器地址" style="flex: 1">
@@ -268,6 +289,9 @@
             <div class="config-section">
                 <h3>高难日常配置</h3>
                 <div>
+                  <el-switch v-model="itemCollectionTopLever.switch" active-text="开" inactive-text="关"></el-switch>
+                </div>
+                <div>
                     <label>
                         <select>
                             <option>绝境I</option>
@@ -277,11 +301,19 @@
                         </select>
                     </label>
                 </div>
-
+            </div>
+            <div class="config-section">
+                <h3>神秘矿厂</h3>
+                 <div>
+                  <el-switch v-model="refinery.switch" active-text="开" inactive-text="关"></el-switch>
+                </div>
             </div>
 
             <div class="config-section">
                 <h3>世界树配置</h3>
+                <div>
+                  <el-switch v-model="worldTree.switch" active-text="开" inactive-text="关"></el-switch>
+                </div>
                 <div>
                     <label>
                         <select>
@@ -295,25 +327,25 @@
 
             <div class="config-section">
                 <h3>遗迹配置</h3>
-
-                    <div>
-                        <label>
-                            <select>
-                                <option>呼啸林地</option>
-                                <option>炽热沙地</option>
-                            </select>
-                        </label>
-                    </div>
-
-
-                    <div>
-                        <label>
-                            <select>
-                                <option>简单</option>
-                                <option>噩梦</option>
-                            </select>
-                        </label>
-                    </div>
+                <div>
+                 <el-switch v-model="relic.switch" active-text="开" inactive-text="关"></el-switch>
+                </div>
+                <div>
+                    <label>
+                        <select>
+                            <option>呼啸林地</option>
+                            <option>炽热沙地</option>
+                        </select>
+                    </label>
+                </div>
+                <div>
+                    <label>
+                        <select>
+                            <option>简单</option>
+                            <option>噩梦</option>
+                        </select>
+                    </label>
+                </div>
             </div>
 
         </div>
@@ -362,13 +394,13 @@
 <script>
     const { createApp, ref } = Vue
 
-    createApp({
+    const app = createApp({
         setup() {
             const messages = ref([]);
 
             const emulatorMap = [
-                { label: 'MuMu模拟器', value: 'mumu' },
-                { label: '蓝叠模拟器', value: 'bluestacks' },
+                { label: 'MuMu模拟器', value: 'mumu'},
+                { label: '蓝叠模拟器', value: 'bluestacks'},
             ]
 
             const platformMap = [
@@ -395,7 +427,26 @@
             const account = ref('');
             const password = ref('');
             const emulatorType = ref('');
+            const emulatorPath = ref('');
             const platform = ref('');
+
+            // 遗迹
+            const  relic = ref({
+                switch: false,
+            })
+
+            // 世界树
+            const worldTree = ref({
+                switch: false,
+            })
+            // 神秘矿厂
+            const refinery = ref({
+                switch: false,
+            })
+            // 素材高难度副本
+            const itemCollectionTopLever = ref({
+                switch: false,
+            })
 
 
             const showText = (e,c) => {
@@ -425,13 +476,20 @@
                     password.value = data.password
                     addr.value = data.addr
                     serial.value = data.serial
-                    emulatorType.value = data.emulatorType
+
+                    emulatorMap.forEach((item, index) => {
+                        if (item.value === data.emulatorType) {
+                            emulatorType.value = item.value
+                            emulatorPath.value = data.emulatorPath
+                            item.path = data.emulatorPath
+                        }
+                    });
 
                     showMessage({
                         type: 'success',
                         title: '获取配置成功',
                         text: ``,
-                        duration: 5000
+                        duration: 700
                     })
                 })
             }
@@ -477,7 +535,36 @@
                 )
             }
 
+            function  getEmulatorInstallPathReq(){
+                getReq("http://localhost:8233/api/getEmulatorInstallPath",{},(data) => {
+                    // 处理正确的响应数据
+                    console.table(data)
+                    emulatorMap.forEach((item, index) => {
+                        if (item.value === emulatorType) {
+                            item.path = data.data
+                        }
+                    })
+
+                    emulatorPath.value = data.data
+                    showMessage({
+                        type: 'success',
+                        title: '获取模拟器安装路径成功',
+                        duration: 2000
+                    })
+                })
+            }
+
             getConfigReq()
+
+
+            const changeEmulator = () => {
+                emulatorMap.forEach((item, index) => {
+                    if (item.value === emulatorType.value) {
+                        emulatorType.value = item.value
+                        emulatorPath.value = item.path
+                    }
+                });
+            }
 
 
             let messageId = 0;
@@ -574,15 +661,18 @@
                 status,title,handleBlur,inputValue,previousValue,showText,accountType,passwordType,serialIndex,
 
                 emulatorMap,platformMap,serialList,
-                addr,serial,emulatorType,platform,password,account,
+                addr,serial,emulatorType,emulatorPath,platform,password,account,relic,worldTree,refinery,itemCollectionTopLever,
+                // 点击事件
+                changeEmulator,
                 // 内置方法
                 showMessage,removeMessage,removeMessageById,messages,
                 // http请求方法
-                startEmulatorReq,mumuInfoListReq,stopEmulatorReq
+                startEmulatorReq,mumuInfoListReq,stopEmulatorReq,getEmulatorInstallPathReq,
             }
         }
-
-    }).mount('#app')
+    })
+    app.use(ElementPlus);
+    app.mount('#app');
 
 </script>
 </body>
