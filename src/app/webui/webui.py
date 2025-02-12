@@ -14,11 +14,11 @@ def mainWindow():
 
     content = file_path.read_text(encoding="utf-8")  # 读取文本文件
 
-    window = (800,720)
+    window = (1000,720)
 
     # 启动应用
     app = QApplication([])
-
+    app.setApplicationName("四叶草🍀小助手")
     app.setWindowIcon(QIcon(f'{IMG_PATH.joinpath("uiWindowIcon.jpg")}'))
 
     # # 获取屏幕对象
@@ -34,6 +34,7 @@ def mainWindow():
 
     # 创建浏览器窗口
     browser = QWebEngineView()
+    browser.setFixedSize(window[0], window[1])
     browser.setHtml(content)  # 渲染 HTML 内容
     # 设置窗口位置和大小（x, y, width, height）
     browser.setGeometry(left_point[0], left_point[1], window[0], window[1])  # 窗口左上角
