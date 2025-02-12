@@ -49,6 +49,11 @@
             background: #fff5f5;
         }
 
+        .message-box.warring {
+            border-left: 4px solid gold;
+            background: yellow;
+        }
+
         /* 图标样式 */
         .message-icon {
             flex-shrink: 0;
@@ -611,24 +616,37 @@
                             // 处理响应
                             if (response.ok) { // 如果响应状态码为 2xx
                                 return response.json(); // 解析响应体为 JSON 格式
+                            } if(response.status === 400){
+                                response.json().then(err => {
+                                    resp = JSON.stringify(err)
+                                    showMessage({
+                                        type: 'warring',
+                                        title: err.msg,
+                                    })
+                                })
                             } else {
-                                throw new Error(`HTTP error! Status: ${response.status}`);
+                                throw new Error({
+                                    "status" : response.status,
+                                }.toString());
                                 // throw new Error('Network response was not ok'); // 抛出错误
                             }
                         })
                         .then(data => {
-                            resp(data); // 调用回调函数，传递 null 作为错误，传递解析后的数据
+                            if (data !== undefined) {
+                                resp(data); // 调用回调函数，传递 null 作为错误，传递解析后的数据
+                            }
                         })
                         .catch(error => {
                             // 处理错误响应
-                            console.log(error)
-                            showMessage({
-                                type: 'error',
-                                title: '连接失败',
-                                text: `${error} CONNECTION_REFUSED`,
-                                duration: 5000
-                            })
-
+                            console.log(JSON.stringify(error))
+                            if (error.status !== 400){
+                                showMessage({
+                                    type: 'error',
+                                    title: '连接失败',
+                                    text: `${error} CONNECTION_REFUSED`,
+                                    duration: 5000
+                                })
+                            }
                         });
 
             }
