@@ -1,29 +1,10 @@
 # -*- mode: python ; coding: utf-8 -*-
-
-
 a = Analysis(
-    ['main.py'],
-    pathex=['src'],
+    ['setup.py'],
+    pathex=[],
     binaries=[],
-    datas=[
-    ('img', 'img'),
-    ('env.yaml.example', '.')
-    ,('src','src')
-    ],
-    hiddenimports=[
-    'Flask',
-    'Flask_Cors',
-    'ImageHash',
-    'loguru',
-    'cnocr',
-    'cnstd',
-    'numpy',
-    'opencv_contrib_python',
-    'opencv_python',
-    'Pillow',
-    'PyYAML',
-    'uiautomator2'
-    ],
+    datas=[],
+    hiddenimports=[],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
@@ -39,7 +20,7 @@ exe = EXE(
     a.binaries,
     a.datas,
     [],
-    name='MyApp_mac',
+    name='act',
     debug=True,
     bootloader_ignore_signals=False,
     strip=False,
@@ -55,7 +36,7 @@ exe = EXE(
 )
 app = BUNDLE(
     exe,
-    name='MyApp_mac.app',
+    name='MyApp_mac',
     icon=None,
     bundle_identifier=None,
 )

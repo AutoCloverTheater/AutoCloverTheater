@@ -3,16 +3,61 @@ import sys
 import time
 from pathlib import Path
 
-from flask import request, Blueprint
+from flask import request, Blueprint, Response, stream_with_context
 
 from src.config.app import get_config
+from src.facades.App.App import data_queue, send_event, clients_lock, clients, timer_executed, getExecuted, setExecuted
 from src.facades.Constant.Constant import ROOT_PATH
 from src.facades.Emulator.Emulator import ActivityEmulator
 from src.facades.Env.Env import EnvDriver
 
+def generate(client_id):
+    try:
+        while True:
+            send_event.wait(0.1)  # 等待事件触发
+            send_event.clear()  # 清除事件
+
+            if data_queue:
+                data = data_queue.pop(0)
+                setExecuted(True)
+                yield f"data: {data} \n\n"
+            else:
+                yield ""
+    except GeneratorExit:
+        print("生成器退出：客户端断开连接")
+    except Exception as e:
+        print(f"发生异常：{str(e)}")
+
+# 创建一个蓝图对象
+sse_bp = Blueprint('sse', "sse")
+@sse_bp.route('/stream')
+def stream():
+    client_id = id(Response())
+
+    @stream_with_context
+    def ge():
+        return generate(client_id)
+
+    response = Response(ge(), mimetype='text/event-stream',headers={
+            'Cache-Control': 'no-cache',
+            'Connection': 'keep-alive'
+        })
+
+    with clients_lock:
+        clients[client_id] = response
+    return response
+
 
 # 创建一个蓝图对象
 api_bp = Blueprint('api', __name__)
+
+@api_bp.route('/trigger', methods=['POST'])
+def trigger():
+    data = f"data: 1223\n\n"
+    with clients_lock:
+        data_queue.append(data)
+    send_event.set()
+    return "Data sent!"
 
 @api_bp.route('/', methods=['GET'])
 def index():
@@ -29,6 +74,52 @@ def getBaseSetting():
     """
     resp = get_config()
     resp['platform'] = sys.platform
+
+    payload = {
+        "itemCollectionTopLever": {  # 高难度每日，打完为止
+            "payload": [
+                {
+                    "label": "绝境战I",
+                    "value": "绝境战I"
+                }, {
+                    "label": "绝境战II",
+                    "value": "绝境战II"
+                }, {
+                    "label": "绝境战III",
+                    "value": "绝境战III"
+                }, {
+                    "label": "绝境战IV",
+                    "value": "绝境战IV"
+                }
+            ]
+        },
+        "relic": {
+            "leverPayload": [{
+                "label": "普通难度",
+                "value": "普通难度"
+            }, {
+                "label": "噩梦难度",
+                "value": "噩梦难度"
+            }],
+            "mapPayload": [
+                {
+                    "label": "沙漠星城",
+                    "value": "沙漠星城"
+                }, {
+                    "label": "热沙寒落",
+                    "value": "热沙寒落"
+                },
+            ]
+        },
+        "worldTree": {  # 世界树
+            "payload": [{
+                "label": "死境",
+                "value": "死境"
+            }]
+        }
+    }
+
+
     return resp,200
 @api_bp.route('/api/setting', methods=['POST'])
 def saveBaseSetting():

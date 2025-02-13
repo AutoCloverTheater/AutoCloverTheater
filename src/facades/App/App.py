@@ -1,46 +1,25 @@
-import logging
-import threading
+from threading import Lock,Event
 
-from src.facades.Runner.WorldTreeRunner import WorldTreeRunner
+# 用于存储 SSE 客户端的连接
+clients = {}
+clients_lock = Lock()
 
+# 用于触发发送数据的事件
+send_event = Event()
+data_queue = []
 
-class App:
-    def __init__(self):
-        # 配置日志
-        self.threads = []
-        logging.basicConfig(level=logging.INFO, format='%(asctime)s - 「Clover」%(levelname)s - %(message)s')
-    def searchDevice(self) -> list:
-        """
-        根据选中的模拟器类型搜索设备
-        :return:
-        """
-        return []
-    def connectDevice(self):
-        """
-        连接设备
-        :return:
-        """
-        pass
+# 定义一个标志变量，用于跟踪定时器是否已经执行
+timer_executed = False
 
-    def runWorldTree(self):
-        """
-        运行世界树
-        :return:
-        """
-        run = WorldTreeRunner()
-        thread = threading.Thread(run.run(), name=run.__class__.__name__)
-        self.threads.append({"thread":thread, "runnerInstance": run})
-        pass
+def getExecuted():
+    return timer_executed
 
-    def runAll(self):
-        self.runWorldTree()
+def setExecuted(value):
+    timer_executed = value
+    return timer_executed
 
-
-    def stopAll(self, t):
-        for item in self.threads:
-            if item.thread.is_alive():
-                item.runnerInstance.stop()
-                item.thread.join(timeout=t)  # 等待线程结束，最多等待1秒
-                if item.thread.is_alive():
-                    logging.warning(f"Thread {item.runnerInstance.__class__.__name__} did not terminate in time")
-        self.threads.clear()  # 清空线程列表
+def sseOutPut(message):
+    with clients_lock:
+        data_queue.append(message)
+        send_event.set()
+    pass

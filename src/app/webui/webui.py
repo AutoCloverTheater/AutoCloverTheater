@@ -3,16 +3,16 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWebEngineWidgets import QWebEngineView
 from PyQt5.QtWidgets import QApplication, QDesktopWidget
 
-from src.facades.Constant.Constant import IMG_PATH
+from src.facades.Constant.Constant import IMG_PATH, ROOT_PATH, APP_PATH
 from src.facades.Logx.Logx import logx
 from pathlib import Path
 
-def mainWindow():
+def mainWindow(port = 8233):
 
 
-    file_path = Path("index.html")  # 替换为你的文件路径
+    file_path = Path(APP_PATH.joinpath("webui/index.html"))  # 替换为你的文件路径
 
-    content = file_path.read_text(encoding="utf-8")  # 读取文本文件
+    content = file_path.read_text(encoding="utf-8").replace("http://localhost:8233", f"http://localhost:{port}")  # 读取文本文件
 
     window = (1000,720)
 

@@ -163,11 +163,15 @@
 
         #log-container {
             flex: 1;
-            padding: 20px;
+            padding: 10px;
             overflow-y: auto;
             background: #000;
             color: #00ff00;
             font-family: monospace;
+        }
+
+        #log-container div{
+            padding: 3px;
         }
 
         #top-bar {
@@ -370,7 +374,9 @@
                     <button class="control-btn" @click="status = status === '暂停中' ? '运行中' : '暂停中'" style="margin-left: 10px">{{status === '暂停中' ? '开始' : '暂停'}}</button>
                 </div>
             </div>
-            <div id="log-container"></div>
+            <div id="log-container"  ref="scrollContainer">
+                <div v-for="msg in sse">{{msg}}</div>
+            </div>
         </div>
     </div>
 
@@ -403,6 +409,8 @@
 
 
 <script>
+
+
     const { createApp, ref } = Vue
 
     const app = createApp({
@@ -515,6 +523,25 @@
                         text: ``,
                         duration: 700
                     })
+                    const eventSource = new EventSource('http://localhost:8233/stream');
+                    eventSource.onmessage = function(event) {
+                        console.log(event);
+                        if (sse.value.length > 1000){
+                            sse.value = sse.value.slice(1000);
+                        }
+
+                        if (event.data !== '1') {
+                            sse.value.push(event.data);
+                            scrollContainer.value.scrollTop = scrollContainer.value.scrollHeight;
+                        }
+                    };
+                    eventSource.onopen = function(event) {
+                        console.log(event);
+                        sse.value.push('连接成功');
+                    };
+                    eventSource.onerror = function(event) {
+                        console.log(event);
+                    };
                 })
             }
 
@@ -694,11 +721,18 @@
                         console.error('Error:', error);
                     });
             }
+
+            const sse = ref([]);
+
+            const scrollContainer = ref(null);
+
             return {
                 status,title,handleBlur,inputValue,previousValue,showText,accountType,passwordType,serialIndex,
 
-                emulatorMap,platformMap,serialList,
+                emulatorMap,platformMap,serialList,sse,
                 addr,serial,emulatorType,emulatorPath,platform,password,account,relic,worldTree,refinery,itemCollectionTopLever,
+                // 滚动窗口
+                scrollContainer,
                 // 点击事件
                 changeEmulator,
                 // 内置方法

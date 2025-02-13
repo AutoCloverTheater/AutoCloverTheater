@@ -4,6 +4,8 @@ import sys
 import time
 
 from loguru import logger
+
+from src.facades.App.App import sseOutPut
 from src.facades.Constant.Constant import RUNTIME_PATH
 
 # 自定义日志格式和颜色
@@ -29,6 +31,9 @@ def setup_logger():
                rotation="1 week", enqueue=True,backtrace=True, diagnose=True,level=logging.ERROR)
 
     logger.add(sys.stdout,format=custom_format,
+               level=logging.INFO)
+
+    logger.add(sseOutPut,format=custom_format,
                level=logging.INFO)
 
 setup_logger()
