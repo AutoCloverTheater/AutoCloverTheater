@@ -1,6 +1,8 @@
 # -*- mode: python ; coding: utf-8 -*-
+
+
 a = Analysis(
-    ['setup.py'],
+    ['install.py'],
     pathex=[],
     binaries=[],
     datas=[],
@@ -20,23 +22,18 @@ exe = EXE(
     a.binaries,
     a.datas,
     [],
-    name='act',
-    debug=True,
+    name='clover.exe',
+    debug=False,
     bootloader_ignore_signals=False,
     strip=False,
     upx=True,
     upx_exclude=[],
     runtime_tmpdir=None,
-    console=False,
+    console=True,
     disable_windowed_traceback=False,
     argv_emulation=False,
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-)
-app = BUNDLE(
-    exe,
-    name='MyApp_mac',
-    icon=None,
-    bundle_identifier=None,
+    icon=['img/build/my_icon.ico'],
 )

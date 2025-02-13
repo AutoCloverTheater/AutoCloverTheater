@@ -4,7 +4,8 @@ import subprocess
 
 # 定义常量
 PYTHON_VERSION = "3.10"
-VENV_DIR = "venv"
+VENV_DIR = os.path.join(os.getcwd(), "venv")  # 虚拟环境绝对路径
+
 REQUIREMENTS_FILE = "requirements.txt"
 FILES_TO_CHECK = ["requirements.txt", "main.py"]  # 需要检查的文件列表
 
@@ -78,6 +79,11 @@ def main():
         install_requirements()
 
     print("安装引导程序执行完成。")
+    # 启动一个新的 Python 进程来运行另一个脚本
+    subprocess.Popen(['python', 'main.py'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+    # 退出当前脚本
+    sys.exit()
 
 if __name__ == "__main__":
     main()

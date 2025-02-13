@@ -1,0 +1,88 @@
+name: Release Clover
+on:
+  push:
+    tags:
+      - 'v*'  # 使用 v 开头的标签触发，例如 v1.0.0
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+    - name: Install dependencies
+      run: pip install pyinstaller
+    - name: Build Windows Executable
+      run: pyinstaller WinInstall.spec
+    - name: Package Windows Build
+      run: |
+        Compress-Archive -Path dist/* -DestinationPath "clover-windows-${{ github.ref_name }}.zip"
+        dir
+      env:
+        VERSION: ${{ github.ref_name }}
+    - uses: actions/upload-artifact@v4
+      with:
+        name: windows-package
+        path: clover-windows-${{ github.ref_name }}.zip
+    - uses: actions/upload-artifact@v4
+      with:
+        name: windows-clover
+        path: dist/clover.exe
+  build-mac:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+    - name: Install dependencies
+      run: pip install pyinstaller
+    - name: Build Mac Executable
+      run: pyinstaller MacInstall.spec
+    - name: Package Mac Build
+      run: |
+        cd dist
+        zip -r clover-macOS-${{ github.ref_name }}.zip *
+      shell: bash
+    - uses: actions/upload-artifact@v4
+      with:
+        name: mac-package
+        path: dist/clover-macOS-${{ github.ref_name }}.zip
+    - uses: actions/upload-artifact@v4
+      with:
+        name: mac-clover
+        path: dist/clover
+  create-release:
+    needs: [build-windows, build-mac]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # 获取完整的提交历史
+    - name: Download Artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: artifacts
+    - name: Prepare Source Package
+      run: |
+        # 创建包含源码的压缩包
+        mv ./artifacts/windows-clover/clover.exe ./
+        mv ./artifacts/mac-clover/clover ./
+        zip -r "repository-source-${{ github.ref_name }}.zip" . -x "venv/*" "dist/*" "build/*"
+      shell: bash
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: ${{ github.ref }}
+        name: ${{ github.ref_name }}
+        files: |
+          ./artifacts/windows-package/clover-windows-${{ github.ref_name }}.zip
+          ./artifacts/mac-package/clover-macOS-${{ github.ref_name }}.zip
+          repository-source-${{ github.ref_name }}.zip
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

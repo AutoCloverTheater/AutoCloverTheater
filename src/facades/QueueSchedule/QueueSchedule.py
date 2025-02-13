@@ -21,7 +21,7 @@ class QueueSchedule:
             if not self.queue.empty():
                 func, args, kwargs = self.queue.get()
                 try:
-                    logx.info(f"Executing function: {func.__name__}")
+                    logx.debug(f"Executing function: {func.__name__}")
                     func(*args, **kwargs)  # 执行函数
                 except Exception as e:
                     logx.exception(f"Error executing function: {e}")
@@ -30,6 +30,8 @@ class QueueSchedule:
                     self.queue.task_done()  # 标记任务完成
             else:
                 time.sleep(0.1)  # 队列为空时稍作等待，避免过度占用CPU
+
+taskQueue =  QueueSchedule()
 
 if __name__ == '__main__':
     q = QueueSchedule()

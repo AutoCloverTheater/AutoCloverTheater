@@ -371,7 +371,8 @@
                 <div class="svg-spinners--gooey-balls-1"></div>
                 <p>{{status}}</p>
                 <div>
-                    <button class="control-btn" @click="status = status === '暂停中' ? '运行中' : '暂停中'" style="margin-left: 10px">{{status === '暂停中' ? '开始' : '暂停'}}</button>
+                    <button class="control-btn" @click="startRunReq" style="margin-left: 10px">{{status === '暂停中' ? '开始' : '暂停'}}</button>
+                    <button class="control-btn" @click="saveConfig" style="margin-left: 10px">保存</button>
                 </div>
             </div>
             <div id="log-container"  ref="scrollContainer">
@@ -448,6 +449,7 @@
             const emulatorType = ref('');
             const emulatorPath = ref('');
             const platform = ref('');
+            const eventSource = ref(null);
 
             // 遗迹
             const  relic = ref({
@@ -493,6 +495,57 @@
                 return true
             };
 
+            function startRunReq(url,data,callback) {
+                postReq("http://localhost:8233/api/startRun",{},(data) => {
+                     showMessage({
+                        type: 'success',
+                        title: '启动任务',
+                        text: ``,
+                        duration: 2000
+                    })
+                    status.value = status.value === '暂停中' ? '运行中' : '暂停中'
+                })
+            }
+
+            function saveConfig(){
+                const relicX = {
+                    switch: relic.value.switch,
+                    map: relic.value.map,
+                    lever: relic.value.lever,
+                }
+                const worldTreeX = {
+                    switch: worldTree.value.switch,
+                    lever: worldTree.value.lever,
+                }
+                const refineryX = {
+                    switch: refinery.value.switch,
+                }
+                const itemCollectionTopLeverX = {
+                    switch: itemCollectionTopLever.value.switch,
+                    lever: itemCollectionTopLever.value.lever,
+                }
+                postReq("http://localhost:8233/api/setting",{
+                    account:account.value,
+                    password:password.value,
+                    addr:addr.value,
+                    serial:serial.value,
+                    emulatorType:emulatorType.value,
+                    emulatorPath:emulatorPath.value,
+                    relic:relicX,
+                    worldTree:worldTreeX,
+                    refinery:refineryX,
+                    itemCollectionTopLever:itemCollectionTopLeverX
+                }, (data) => {
+                    showMessage({
+                        type: 'success',
+                        title: '保存成功',
+                        text: ``,
+                        duration: 2000
+                    })
+                    getConfigReq()
+                })
+            }
+
 
             function getConfigReq() {
                 getReq("http://localhost:8233/api/setting",{},(data) => {
@@ -523,25 +576,27 @@
                         text: ``,
                         duration: 700
                     })
-                    const eventSource = new EventSource('http://localhost:8233/stream');
-                    eventSource.onmessage = function(event) {
-                        console.log(event);
-                        if (sse.value.length > 1000){
-                            sse.value = sse.value.slice(1000);
-                        }
+                    if (eventSource.value == null){
+                        const eventx = new EventSource('http://localhost:8233/stream');
+                        eventx.onmessage = function(event) {
+                            if (sse.value.length > 1000){
+                                sse.value = sse.value.slice(1000);
+                            }
 
-                        if (event.data !== '1') {
-                            sse.value.push(event.data);
-                            scrollContainer.value.scrollTop = scrollContainer.value.scrollHeight;
-                        }
-                    };
-                    eventSource.onopen = function(event) {
-                        console.log(event);
-                        sse.value.push('连接成功');
-                    };
-                    eventSource.onerror = function(event) {
-                        console.log(event);
-                    };
+                            if (event.data !== '1') {
+                                sse.value.push(event.data);
+                                scrollContainer.value.scrollTop = scrollContainer.value.scrollHeight;
+                            }
+                        };
+                        eventx.onopen = function(event) {
+                            sse.value.push('连接成功');
+                        };
+                        eventx.onerror = function(event) {
+                            console.log(event);
+                        };
+                        eventSource.value = eventx;
+                    }
+
                 })
             }
 
@@ -734,7 +789,7 @@
                 // 滚动窗口
                 scrollContainer,
                 // 点击事件
-                changeEmulator,
+                changeEmulator,startRunReq,saveConfig,
                 // 内置方法
                 showMessage,removeMessage,removeMessageById,messages,
                 // http请求方法

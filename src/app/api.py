@@ -1,5 +1,6 @@
 import os.path
 import sys
+import threading
 import time
 from pathlib import Path
 
@@ -7,9 +8,18 @@ from flask import request, Blueprint, Response, stream_with_context
 
 from src.config.app import get_config
 from src.facades.App.App import data_queue, send_event, clients_lock, clients, timer_executed, getExecuted, setExecuted
+from src.facades.Configs.Config import Config
 from src.facades.Constant.Constant import ROOT_PATH
-from src.facades.Emulator.Emulator import ActivityEmulator
+from src.facades.Emulator.Emulator import ActivityEmulator, ConnectEmulator
 from src.facades.Env.Env import EnvDriver
+from src.facades.QueueSchedule.QueueSchedule import taskQueue
+from src.facades.Runner.ItemCollectionRunner import inTopLeverItemCollection, beforeTopLeverItemCollection
+from src.facades.Runner.RefineryRunner import BeforeRefinery, InRefinery
+from src.facades.Runner.guildRunner import beforeInGuild, donate, getReward
+from src.facades.Runner.layout.AdventureRunner import FindAdventure
+from src.facades.Runner.layout.Back import backMain
+from src.facades.Runner.layout.LoginRunner import Login
+
 
 def generate(client_id):
     try:
@@ -72,8 +82,8 @@ def getBaseSetting():
     获取模拟器设置
     :return:
     """
-    resp = get_config()
-    resp['platform'] = sys.platform
+    config = get_config()
+    config['platform'] = sys.platform
 
     payload = {
         "itemCollectionTopLever": {  # 高难度每日，打完为止
@@ -119,8 +129,12 @@ def getBaseSetting():
         }
     }
 
+    config['itemCollectionTopLever']['payload'] = payload['itemCollectionTopLever']['payload']
+    config['relic']['leverPayload'] = payload['relic']['leverPayload']
+    config['relic']['mapPayload'] = payload['relic']['mapPayload']
+    config['worldTree']['payload'] = payload['worldTree']['payload']
 
-    return resp,200
+    return config,200
 @api_bp.route('/api/setting', methods=['POST'])
 def saveBaseSetting():
     """
@@ -129,12 +143,13 @@ def saveBaseSetting():
     """
     data = request.get_json()
     envx = EnvDriver().iniFromFile(ROOT_PATH.joinpath("env.yaml"))
+
     for key, value in data.items():
-        envx.setValue(key.upper(), value)
+            envx.setValue(key.upper(), value)
     envx.saveToFile(ROOT_PATH.joinpath("env.yaml"))
     return {
         "code":0,
-        "msg":"success"
+        "msg":"success",
     }
 
 @api_bp.route('/api/mumuInfoList', methods=['GET'])
@@ -228,8 +243,48 @@ def startRun():
     # - 高难度每日
     # - 矿厂每日
     # - 世界树
-    data = request.get_json()
-    ActivityEmulator.instance.closeDevice(data['index'])
+    taskQueue.push(ConnectEmulator)
+    taskQueue.push(Login)
+    if Config("app.itemCollectionTopLever.switch"):
+        for i in range(4):
+            taskQueue.push(FindAdventure, "hasItemsCollectionButton")
+            taskQueue.push(beforeTopLeverItemCollection)
+            taskQueue.push(inTopLeverItemCollection)
+        taskQueue.push(backMain)
+    if Config("app.refinery.switch"):
+        taskQueue.push(BeforeRefinery)
+        taskQueue.push(InRefinery)
+        taskQueue.push(backMain)
+    if Config("app.refinery.switch"):
+        taskQueue.push(beforeInGuild)
+        taskQueue.push(donate)
+        taskQueue.push(getReward)
+        taskQueue.push(backMain)
+    # if Config("app.worldTree.switch"):
+    # if Config("app.relic.switch"):
+
+    threading.Thread(target=taskQueue.run, daemon=True).start()
+
+    return {
+        "code":0,
+        "msg":"success"
+    }
+
+@api_bp.route('/api/stopRun', methods=['POST'])
+def stopRun():
+    """
+    停止任务
+    :return:
+    """
+    # 1 读取配置开始编排任务
+    # - 高难度每日
+    # - 矿厂每日
+    # - 世界树
+    def stop():
+        raise Exception("human click stop")
+
+    threading.Thread(target=stop, daemon=True).start()
+
     return {
         "code":0,
         "msg":"success"

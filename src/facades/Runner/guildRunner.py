@@ -1,4 +1,4 @@
-from src.facades.Detect.guild.GuildDetect import GuildDetect
+from src.facades.Detect.Guild.GuildDetect import GuildDetect
 from src.facades.Emulator.Emulator import ConnectEmulator, UpdateSnapShot, Click
 from src.facades.Logx.Logx import logx
 from src.facades.Runner.layout.Back import backMain
@@ -40,7 +40,7 @@ def donate():
                 Click((0.9,0.5), 0.3)
             break
         if not ok1 and ok2:
-            Click(resp['pot'], 0.3)
+            Click(resp['pot'], 2)
             continue
         times -= 1
     return
