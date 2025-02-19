@@ -39,7 +39,7 @@ def create_venv():
     """创建虚拟环境"""
     try:
         print(f"创建虚拟环境 {VENV_DIR}...")
-        subprocess.run([sys.executable, "-m", "venv", VENV_DIR], check=True, capture_output=True,text=True)
+        subprocess.run(['python', "-m", "venv", VENV_DIR], check=True, capture_output=True,text=True)
         print(f"虚拟环境 {VENV_DIR} 创建完成。")
     except subprocess.CalledProcessError as e:
         print(f"创建虚拟环境失败：{e}")
