@@ -1,3 +1,6 @@
+import ctypes
+import sys
+
 from PyQt5 import Qt
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWebEngineWidgets import QWebEngineView
@@ -8,7 +11,9 @@ from src.facades.Logx.Logx import logx
 from pathlib import Path
 
 def mainWindow(port = 8233):
-
+    if sys.platform == "win32":
+        myappid = "github.clover.auto"  # 替换为你的唯一标识符
+        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 
     file_path = Path(APP_PATH.joinpath("webui/index.html"))  # 替换为你的文件路径
 

@@ -1,6 +1,7 @@
 import os
 import sys
 import subprocess
+import time
 
 # 定义常量
 PYTHON_VERSION = "3.10"
@@ -8,6 +9,12 @@ VENV_DIR = os.path.join(os.getcwd(), "venv")  # 虚拟环境绝对路径
 
 REQUIREMENTS_FILE = "requirements.txt"
 FILES_TO_CHECK = ["requirements.txt", "main.py"]  # 需要检查的文件列表
+
+if sys.platform == "win32":
+    ExePath = os.path.join(VENV_DIR, "Scripts", "python")
+else:
+    ExePath = os.path.join(VENV_DIR, "bin", "python")
+
 
 def check_python_version():
     """检查Python版本是否为3.10"""
@@ -51,7 +58,7 @@ def check_files():
 def install_requirements():
     """安装依赖项"""
     print("安装依赖项...")
-    subprocess.run([os.path.join(VENV_DIR, "bin", "python"), "-m", "pip", "install", "-r", REQUIREMENTS_FILE], check=True)
+    subprocess.run([ExePath, "-m", "pip", "install", "-r", REQUIREMENTS_FILE], check=True, shell=True)
     print("依赖项安装完成。")
 
 def check_requirements():
@@ -80,7 +87,7 @@ def main():
 
     print("安装引导程序执行完成。")
     # 启动一个新的 Python 进程来运行另一个脚本
-    subprocess.Popen(['python', 'main.py'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    subprocess.Popen([ExePath, 'main.py'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
     # 退出当前脚本
     sys.exit()
