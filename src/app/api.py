@@ -15,6 +15,7 @@ from src.facades.Env.Env import EnvDriver
 from src.facades.QueueSchedule.QueueSchedule import taskQueue
 from src.facades.Runner.ItemCollectionRunner import inTopLeverItemCollection, beforeTopLeverItemCollection
 from src.facades.Runner.RefineryRunner import BeforeRefinery, InRefinery
+from src.facades.Runner.WorldTreeRunner import BeforeInWorldTree, InWorldTree
 from src.facades.Runner.guildRunner import beforeInGuild, donate, getReward
 from src.facades.Runner.layout.AdventureRunner import FindAdventure
 from src.facades.Runner.layout.Back import backMain
@@ -260,7 +261,10 @@ def startRun():
         taskQueue.push(donate)
         taskQueue.push(getReward)
         taskQueue.push(backMain)
-    # if Config("app.worldTree.switch"):
+    if Config("app.worldTree.switch"):
+        taskQueue.push(FindAdventure, "hasWorldTreeButton")
+        taskQueue.push(BeforeInWorldTree)
+        taskQueue.push(InWorldTree)
     # if Config("app.relic.switch"):
 
     threading.Thread(target=taskQueue.run, daemon=True).start()

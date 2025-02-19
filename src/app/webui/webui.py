@@ -14,6 +14,7 @@ def mainWindow(port = 8233):
     if sys.platform == "win32":
         myappid = "github.clover.auto"  # 替换为你的唯一标识符
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
+        logx.info("设置当前进程为显式应用用户模型标识符")
 
     file_path = Path(APP_PATH.joinpath("webui/index.html"))  # 替换为你的文件路径
 
