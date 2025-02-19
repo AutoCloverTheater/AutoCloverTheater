@@ -37,17 +37,6 @@ class Emulator:
         Raises:
             Exception: 如果平台或模拟器不支持，则抛出异常。
         """
-
-        platform = UsefulEmulator.get(sys.platform, None)
-        if platform is None:
-            raise Exception(f"不支持平台「{platform}」")
-
-        if platform.get(Config("app").get('emulatorType'), None) is None:
-            raise Exception(f"平台「{sys.platform}」,不支持模拟器「{Config('app').get('emulatorType')}」")
-
-        instance = UsefulEmulator[sys.platform][Config('app').get('emulatorType')]()
-        self.instance = instance
-
         self.lock = threading.Lock()
 
     def ConnectDevice(self):
@@ -57,6 +46,15 @@ class Emulator:
         Returns:
             device instance
         """
+        instance = UsefulEmulator[sys.platform][Config('app').get('emulatorType')]()
+        self.instance = instance
+
+        platform = UsefulEmulator.get(sys.platform, None)
+        if platform is None:
+            raise Exception(f"不支持平台「{platform}」")
+        if platform.get(Config("app").get('emulatorType'), None) is None:
+            raise Exception(f"平台「{sys.platform}」,不支持模拟器「{Config('app').get('emulatorType')}」")
+
         serial = self.instance.getConnectStr()
         logx.info(f"准备连接设备「{serial}」")
         self.device = u2.connect(serial)

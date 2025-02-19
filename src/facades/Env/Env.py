@@ -52,4 +52,4 @@ def Env(key: str, default=None):
 create_env_if_not_exists()
 
 if __name__== "__main__":
-    print(Env("WORLDTREE.switch"))
+    print(Env("WORLDTREE.SWITCH"))
