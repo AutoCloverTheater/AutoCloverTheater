@@ -2,8 +2,6 @@ import os
 import sys
 import subprocess
 
-import pkg_resources
-
 # 定义常量
 PYTHON_VERSION = "3.1"
 VENV_DIR = os.path.join(os.getcwd(), "venv")  # 虚拟环境绝对路径
@@ -56,50 +54,6 @@ def check_files():
         print("所有文件完整。")
         return True
 
-def _check_requirements(requirements_file='requirements.txt'):
-    """检查当前环境是否满足依赖要求"""
-    try:
-        with open(requirements_file, 'r', encoding='utf-8') as f:
-            requirements = [
-                line.strip()
-                for line in f
-                if line.strip() and not line.startswith(('#', '-'))
-            ]
-    except FileNotFoundError:
-        print(f"错误：{requirements_file} 文件不存在")
-        return False
-    missing = []
-    wrong_version = []
-    satisfied = []
-    for req_line in requirements:
-        try:
-            req = pkg_resources.Requirement.parse(req_line)
-        except (ValueError, pkg_resources.RequirementParseError):
-            print(f"警告：无法解析依赖项 '{req_line}'")
-            continue
-        try:
-            dist = pkg_resources.get_distribution(req.name)
-            if not dist in req:
-                wrong_version.append(f"{dist.key}=={dist.version} (需要 {req.specifier})")
-            else:
-                satisfied.append(f"{dist.key}=={dist.version}")
-        except pkg_resources.DistributionNotFound:
-            missing.append(req.name)
-    # 打印检查结果
-    print("\n检查结果：")
-    print(f"[✓] 已满足 {len(satisfied)} 个依赖项")
-    for item in satisfied:
-        print(f"  - {item}")
-    if wrong_version:
-        print(f"\n[!] 版本不符 {len(wrong_version)} 个：")
-        for item in wrong_version:
-            print(f"  - {item}")
-    if missing:
-        print(f"\n[×] 缺失 {len(missing)} 个依赖项：")
-        for item in missing:
-            print(f"  - {item}")
-    return not (missing or wrong_version)
-
 def install_requirements():
     """安装依赖项"""
     print("安装依赖项...")
@@ -119,6 +73,93 @@ def check_requirements():
         print("requirements.txt 不存在，跳过依赖项安装。")
         return False
 
+def get_installed_packages():
+    """获取当前环境已安装的包及版本"""
+    if sys.platform == "win32":
+        result = subprocess.run([ExePath, '-m', 'pip', 'list', '--format=freeze'], check=True, shell=True, capture_output=True, text=True)
+    else:
+        result = subprocess.run([ExePath, '-m', 'pip', 'list', '--format=freeze'], check=True, capture_output=True, text=True)
+    packages = {}
+    for line in result.stdout.splitlines():
+        if '==' in line:
+            pkg, version = line.split('==', 1)
+            pkg = pkg.replace('-', '_')
+            packages[pkg.lower()] = version.strip()
+    return packages
+
+
+def parse_requirements(file_path):
+    """解析requirements.txt文件"""
+    requirements = {}
+    ignore = []
+    error = []
+    with open(file_path, 'r') as f:
+        for row, line in enumerate(f):
+            line = line.strip()
+            if not line or line.startswith('#'):
+                ignore.append(line)
+                continue
+
+            # 处理带版本号的包
+            if '==' in line:
+                pkg, spec = line.split('==', 1)
+                pkg = pkg.replace('-', '_')
+                requirements[pkg.lower()] = f'=={spec.strip()}'
+            elif '@' not in line:  # 忽略非版本号格式
+                error.append(line)
+                print(f"解析失败: {line}")
+    if len(ignore):
+        for ignore_line in ignore:
+            print(f"忽略行: {ignore_line}")
+
+    if len(error):
+        for err in error:
+            print(f"解析失败: {err}")
+
+    return requirements
+
+
+def check_dependencies(file = 'requirements.txt'):
+    """主检查函数"""
+    installed = get_installed_packages()
+
+    requirements = parse_requirements(file)
+
+    missing_packages = []
+    version_mismatch = []
+    satisfied = []
+    for pkg, spec in requirements.items():
+        if  pkg not in installed:
+            missing_packages.append(pkg)
+            continue
+        installed_ver = installed[pkg]
+        try:
+            # 构建版本规范 严格匹配指定版本
+            spec_set = spec.split("=")
+            if str(spec_set[-1]) != str(installed_ver):
+                version_mismatch.append({
+                    'package': pkg,
+                    'required': spec,
+                    'installed': installed_ver
+                })
+            else:
+                satisfied.append(f"{pkg}=={installed_ver}")
+        except Exception as e:
+            print(f"版本检查错误: {pkg} - {e}")
+    # 打印结果
+    print("\n检查结果：")
+    print(f"✅ 满足要求的包 ({len(satisfied)})：")
+    print('\n'.join(satisfied))
+
+    print(f"\n❌ 缺失的包 ({len(missing_packages)})：")
+    print('\n'.join(missing_packages))
+
+    print(f"\n⚠️ 版本不符的包 ({len(version_mismatch)})：")
+    for item in version_mismatch:
+        print(f"{item['package']} 需要 {item['required']} (已安装 {item['installed']})")
+
+    return len(missing_packages) >0 or len(version_mismatch) > 0
+
 def main():
     if not check_python_version():
         print("请安装 Python 3.10 后再运行此脚本。")
@@ -133,8 +174,8 @@ def main():
 
     if check_requirements() is False:
         raise ValueError("requirements.txt 不存在，无法安装依赖项。")
-    if _check_requirements() is False:
-        print("依赖项不满足要求，正在尝试安装")
+
+    if check_dependencies(REQUIREMENTS_FILE):
         install_requirements()
 
     # 启动一个新的 Python 进程来运行另一个脚本
