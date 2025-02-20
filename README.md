@@ -1,13 +1,17 @@
-<div style="text-align: center">
+<h1 align="center">四叶草小助手</h1>
 
-# 四叶草小助手
+<div align="center">
+
+[![License](https://img.shields.io/badge/License-MIT%202.0-blue.svg)](https://opensource.org/licenses/MIT-2.0)
+![Windows](https://img.shields.io/badge/-Windows%20x64-0078D6?logo=microsoft)
+![macOS](https://img.shields.io/badge/-macOS%20Arm64-000000?logo=apple)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/m/AutoCloverTheater/AutoCloverTheater)
+[![Version](https://img.shields.io/github/v/release/AutoCloverTheater/AutoCloverTheater?color=blue&label=Version)](https://github.com/AutoCloverTheater/AutoCloverTheater/releases)
+
+[//]: # ( ![Platform]&#40;https://img.shields.io/badge/Platform-Windows%20%7C%20macOS-blueviolet&#41;)
+
 
 </div>
-
-![License](https://img.shields.io/github/license/AutoCloverTheater/AutoCloverTheater)
-![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS-blueviolet)
-![GitHub commit activity](https://img.shields.io/github/commit-activity/y/AutoCloverTheater/AutoCloverTheater)
-![Version](https://img.shields.io/badge/Version-0.1.0-blue)
 
 ### 项目概述
 本项目是一个自动化脚本集合，旨在实现游戏内的多种自动化任务，如自动世界树、每日矿场、自动登录等。项目使用Python编写，并依赖于uiautomator2库与模拟器进行交互。
@@ -50,11 +54,35 @@
         ├── api                           # API接口
         └── webui                         # Web界面
 ```
+
 ### 使用指引
+## 1. 直接使用发行版本
+🚀 一键下载 [![GitHub Release](https://img.shields.io/github/v/release/AutoCloverTheater/AutoCloverTheater)](https://github.com/AutoCloverTheater/AutoCloverTheater/releases)
+
+**运行程序**：
+   ```bash
+   # 解压文件
+   unzip repository-source-*.zip -d clover-theater
+   
+   # 进入目录并运行
+   cd clover-theater && ./clover
+
+
+## 2. 源码运行
+
 在运行本项目之前，请确保已安装以下依赖项：
 - python 3.10
 - git
 - pip（Python 包管理工具）
+
+#### 快捷方式:
+安装好python后直接运行 
+```
+python install.py
+```
+安装程序帮你搞定
+
+#### 或者
 
 1. 克隆本仓库：
 ```
@@ -95,8 +123,8 @@ SERIAL: 5555
 - 工会每日
 
 ### 接下来要做的
-- ui一键启动
-- ui保存设置
+- 每日素材本
+- 每日商店免费资源
 - 删除用不到的静态资源
 
 ### 遇到报错
