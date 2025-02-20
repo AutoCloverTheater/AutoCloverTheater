@@ -1,10 +1,11 @@
 import os
 import sys
 import subprocess
-import time
+
+import pkg_resources
 
 # 定义常量
-PYTHON_VERSION = "3.10"
+PYTHON_VERSION = "3.1"
 VENV_DIR = os.path.join(os.getcwd(), "venv")  # 虚拟环境绝对路径
 
 REQUIREMENTS_FILE = "requirements.txt"
@@ -23,7 +24,7 @@ def check_python_version():
         print(f"Python {PYTHON_VERSION} 已安装。")
         return True
     else:
-        print(f"Python {PYTHON_VERSION} 未安装，当前版本为 {version}。")
+        print(f"Python >= {PYTHON_VERSION}0 未安装，当前版本为 {version}。")
         return False
 
 def check_venv():
@@ -55,10 +56,58 @@ def check_files():
         print("所有文件完整。")
         return True
 
+def _check_requirements(requirements_file='requirements.txt'):
+    """检查当前环境是否满足依赖要求"""
+    try:
+        with open(requirements_file, 'r', encoding='utf-8') as f:
+            requirements = [
+                line.strip()
+                for line in f
+                if line.strip() and not line.startswith(('#', '-'))
+            ]
+    except FileNotFoundError:
+        print(f"错误：{requirements_file} 文件不存在")
+        return False
+    missing = []
+    wrong_version = []
+    satisfied = []
+    for req_line in requirements:
+        try:
+            req = pkg_resources.Requirement.parse(req_line)
+        except (ValueError, pkg_resources.RequirementParseError):
+            print(f"警告：无法解析依赖项 '{req_line}'")
+            continue
+        try:
+            dist = pkg_resources.get_distribution(req.name)
+            if not dist in req:
+                wrong_version.append(f"{dist.key}=={dist.version} (需要 {req.specifier})")
+            else:
+                satisfied.append(f"{dist.key}=={dist.version}")
+        except pkg_resources.DistributionNotFound:
+            missing.append(req.name)
+    # 打印检查结果
+    print("\n检查结果：")
+    print(f"[✓] 已满足 {len(satisfied)} 个依赖项")
+    for item in satisfied:
+        print(f"  - {item}")
+    if wrong_version:
+        print(f"\n[!] 版本不符 {len(wrong_version)} 个：")
+        for item in wrong_version:
+            print(f"  - {item}")
+    if missing:
+        print(f"\n[×] 缺失 {len(missing)} 个依赖项：")
+        for item in missing:
+            print(f"  - {item}")
+    return not (missing or wrong_version)
+
 def install_requirements():
     """安装依赖项"""
     print("安装依赖项...")
-    subprocess.run([ExePath, "-m", "pip", "install", "-r", REQUIREMENTS_FILE], check=True, shell=True)
+    if sys.platform == "win32":
+        subprocess.run([ExePath, "-m", "pip", "install", "-r", REQUIREMENTS_FILE], check=True, shell=True)
+    else:
+        subprocess.run([ExePath, "-m", "pip", "install", "-r", REQUIREMENTS_FILE], check=True)
+
     print("依赖项安装完成。")
 
 def check_requirements():
@@ -82,15 +131,22 @@ def main():
         print("请确保所有文件完整后再运行此脚本。")
         return
 
-    if check_requirements():
+    if check_requirements() is False:
+        raise ValueError("requirements.txt 不存在，无法安装依赖项。")
+    if _check_requirements() is False:
+        print("依赖项不满足要求，正在尝试安装")
         install_requirements()
 
-    print("安装引导程序执行完成。")
     # 启动一个新的 Python 进程来运行另一个脚本
-    subprocess.Popen([ExePath, 'main.py'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    if sys.platform == "win32":
+        subprocess.Popen([ExePath, 'main.py'], shell=True)
+    else:
+        subprocess.Popen([ExePath, 'main.py'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
+    print("安装引导程序执行完成。")
     # 退出当前脚本
     sys.exit()
+
 
 if __name__ == "__main__":
     main()
