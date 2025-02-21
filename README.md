@@ -60,14 +60,13 @@
 🚀 一键下载 [![GitHub Release](https://img.shields.io/github/v/release/AutoCloverTheater/AutoCloverTheater)](https://github.com/AutoCloverTheater/AutoCloverTheater/releases)
 
 **运行程序**：
-   ```bash
+```bash
    # 解压文件
    unzip repository-source-*.zip -d clover-theater
    
    # 进入目录并运行
    cd clover-theater && ./clover
-
-
+```
 ## 2. 源码运行
 
 在运行本项目之前，请确保已安装以下依赖项：
@@ -77,27 +76,26 @@
 
 #### 快捷方式:
 安装好python后直接运行 
-```
-python install.py
+```bash
+  python install.py
 ```
 安装程序帮你搞定
 
 #### 或者
 
 1. 克隆本仓库：
-```
-git clone https://github.com/AutoCloverTheater/AutoCloverTheater.git
+```bash
+  git clone https://github.com/AutoCloverTheater/AutoCloverTheater.git
 ```
 2. 复制 `env.yaml.example` 文件并重命名为 `env.yaml`：
-```
-cd /yourpath/AutoCloverTheater
-cp env.yaml.example env.yaml
+```bash
+  cd /yourpath/AutoCloverTheater
+  cp env.yaml.example env.yaml
 ```
 3. 安装 依赖项：
+```bash
+  pip install -r requirements.txt
 ```
-$ pip install -r requirements.txt
-```
-
 4. 修改env.yaml中的参数
 ```
 // 你的账号（可选），因为你游换设备登录会把旧设备踢下线，我经常换设备所以保留了输入账号密码。
@@ -113,8 +111,6 @@ ADDR: '127.0.0.1'
 // 模拟器端口
 SERIAL: 5555
 ```
-
-
 ### 已完成功能
 - 自动世界树
 - 每日矿场
@@ -126,7 +122,6 @@ SERIAL: 5555
 - 每日素材本
 - 每日商店免费资源
 - 删除用不到的静态资源
-
 ### 遇到报错
 ```
 uiautomator2.exceptions.JsonRpcError: -32001 Jsonrpc error: <java.lang.SecurityException> data: java.lang.Secu rityException: Injecting to another application requires INJECT_EVENTS permission
