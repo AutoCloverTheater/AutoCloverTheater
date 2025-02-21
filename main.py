@@ -55,6 +55,7 @@ def mainWindow(port = 8233):
     # 设置窗口位置和大小（x, y, width, height）
     browser.setGeometry(left_point[0], left_point[1], window[0], window[1])  # 窗口左上角
     browser.setWindowIcon(icon)
+    browser.setAcceptDrops(False)
     browser.show()
 
 

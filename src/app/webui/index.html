@@ -496,15 +496,28 @@
             };
 
             function startRunReq(url,data,callback) {
-                postReq("http://localhost:8233/api/startRun",{},(data) => {
+                if (status.value === '运行中') {
+                    postReq("http://localhost:8233/api/stopRun",{},(data) => {
+                        showMessage({
+                            type: 'success',
+                            title: '停止任务',
+                            text: ``,
+                            duration: 2000
+                        })
+                      status.value = status.value === '暂停中' ? '运行中' : '暂停中'
+                    })
+                } else {
+                   postReq("http://localhost:8233/api/startRun",{},(data) => {
                      showMessage({
                         type: 'success',
                         title: '启动任务',
                         text: ``,
                         duration: 2000
-                    })
-                    status.value = status.value === '暂停中' ? '运行中' : '暂停中'
-                })
+                     })
+                     status.value = status.value === '暂停中' ? '运行中' : '暂停中'
+                   })
+                }
+
             }
 
             function saveConfig(){
@@ -562,7 +575,7 @@
                     worldTree.value = data.worldTree
                     relic.value = data.relic
 
-                    emulatorMap.forEach((item, index) => {
+                    emulatorMap.forEach((item) => {
                         if (item.value === data.emulatorType) {
                             emulatorType.value = item.value
                             emulatorPath.value = data.emulatorPath
@@ -574,13 +587,13 @@
                         type: 'success',
                         title: '获取配置成功',
                         text: ``,
-                        duration: 700
+                        duration: 2000
                     })
                     if (eventSource.value == null){
-                        const eventx = new EventSource('http://localhost:8233/stream');
-                        eventx.onmessage = function(event) {
+                        const events = new EventSource('http://localhost:8233/stream');
+                        events.onmessage = function(event) {
                             if (sse.value.length > 1000){
-                                sse.value = sse.value.slice(1000);
+                                sse.value = sse.value.slice(900);
                             }
 
                             if (event.data !== '1') {
@@ -588,13 +601,14 @@
                                 scrollContainer.value.scrollTop = scrollContainer.value.scrollHeight;
                             }
                         };
-                        eventx.onopen = function(event) {
+                        events.onopen = function(event) {
+                            console.log(event);
                             sse.value.push('连接成功');
                         };
-                        eventx.onerror = function(event) {
+                        events.onerror = function(event) {
                             console.log(event);
                         };
-                        eventSource.value = eventx;
+                        eventSource.value = events;
                     }
 
                 })
@@ -602,7 +616,7 @@
 
             function mumuInfoListReq(){
                 getReq("http://localhost:8233/api/mumuInfoList",{},(resp) => {
-                    serialList.value = resp.data.map((item, index) => {
+                    serialList.value = resp.data.map((item) => {
                         return {
                             label: `${item.name} 状态:${item.state}`,
                             value: item.index,
@@ -645,7 +659,7 @@
                 getReq("http://localhost:8233/api/getEmulatorInstallPath",{},(data) => {
                     // 处理正确的响应数据
                     console.table(data)
-                    emulatorMap.forEach((item, index) => {
+                    emulatorMap.forEach((item) => {
                         if (item.value === emulatorType) {
                             item.path = data.data
                         }
@@ -664,7 +678,7 @@
 
 
             const changeEmulator = () => {
-                emulatorMap.forEach((item, index) => {
+                emulatorMap.forEach((item) => {
                     if (item.value === emulatorType.value) {
                         emulatorType.value = item.value
                         emulatorPath.value = item.path
