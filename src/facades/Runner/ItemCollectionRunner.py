@@ -56,7 +56,7 @@ def inTopLeverItemCollection():
             break
         resp, ok = flash.isLoading()
         if ok:
-            time.sleep(0.5)
+            time.sleep(1)
             times = 10
             continue
         # 处理快闪战斗
@@ -78,7 +78,7 @@ def inTopLeverItemCollection():
             time.sleep(0.5)
             continue
         times-=1
-        logx.info(f"剩余次数 {times}")
+        logx.debug(f"剩余次数 {times}")
     logx.info("高难副本结束")
 
 # 每日高难副本

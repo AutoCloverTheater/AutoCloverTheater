@@ -16,7 +16,7 @@ def custom_format(record):
         "ERROR": "red>",
     }
     color = color_map.get(record["level"].name, "white>")  # 默认白色
-    return f"<{color}{{time:YYYY-MM-DD HH:mm:ss}} | {{level}} | {{message}}</{color}\n"
+    return f"<{color}{{time:HH:mm:ss}} | {{level}} | {{message}}</{color}\n"
 
 
 def setup_logger():
@@ -31,7 +31,7 @@ def setup_logger():
                rotation="1 week", enqueue=True,backtrace=True, diagnose=True,level=logging.ERROR)
 
     logger.add(sys.stdout,format=custom_format,
-               level=logging.INFO)
+               level=logging.DEBUG)
 
     logger.add(sseOutPut,format=custom_format,
                level=logging.INFO)

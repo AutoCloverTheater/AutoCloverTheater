@@ -64,4 +64,10 @@ def mainWindow(port = 8233):
 
 threading.Thread(target=app.run, kwargs={'port': port, 'threaded': True}, daemon=True).start()
 logx.info(f"listing port at {port}")
+# while True:
+#     logx.info(f"listing port at {port}")
+#     logx.debug(f"listing port at {port}")
+#     logx.warning(f"listing port at {port}")
+#     logx.exception(f"listing port at {port}")
+#     time.sleep(1)
 mainWindow(port)

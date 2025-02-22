@@ -6,13 +6,16 @@ from typing import Optional
 import numpy
 import uiautomator2
 
+import src.app
 from src.facades.Configs.Config import Config
 import uiautomator2 as u2
 
 from src.facades.Emulator.mac.bluestacks import Bluestacks
 from src.facades.Emulator.mac.mumu import Mumu as MumuMac
 from src.facades.Emulator.win.mumu import Mumu as MumuWin
+from src.facades.Exceptions.HumanHandleException import HumanHandleException
 from src.facades.Logx.Logx import logx
+from src.runtime.runtime import IS_STOP
 
 # 可用的模拟器驱动
 UsefulEmulator = {
@@ -77,6 +80,11 @@ class Emulator:
         return self
 
     def updateSnapShop(self):
+        if IS_STOP :
+            logx.warning("用户手动接管")
+            raise HumanHandleException("用户手动接管")
+        else:
+            logx.debug("用户没有手动接管")
         with self.lock:
             self.snapshotCache = self.device.screenshot(format='opencv')
             return self.snapshotCache

@@ -98,7 +98,7 @@ def Login():
             times = 0
             continue
         times+=1
-        logx.info("未知页面")
+        logx.debug("未知页面")
 
     return matchResult
 

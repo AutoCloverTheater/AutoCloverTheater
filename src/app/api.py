@@ -6,12 +6,14 @@ from pathlib import Path
 
 from flask import request, Blueprint, Response, stream_with_context
 
+import src
 from src.config.app import get_config
-from src.facades.App.App import data_queue, send_event, clients_lock, clients, timer_executed, getExecuted, setExecuted
+from src.facades.App.App import data_queue, send_event, clients_lock, clients,setExecuted
 from src.facades.Configs.Config import Config
 from src.facades.Constant.Constant import ROOT_PATH
 from src.facades.Emulator.Emulator import ActivityEmulator, ConnectEmulator
 from src.facades.Env.Env import EnvDriver
+from src.facades.Logx.Logx import logx
 from src.facades.QueueSchedule.QueueSchedule import taskQueue
 from src.facades.Runner.ItemCollectionRunner import inTopLeverItemCollection, beforeTopLeverItemCollection
 from src.facades.Runner.RefineryRunner import BeforeRefinery, InRefinery
@@ -20,6 +22,7 @@ from src.facades.Runner.guildRunner import beforeInGuild, donate, getReward
 from src.facades.Runner.layout.AdventureRunner import FindAdventure
 from src.facades.Runner.layout.Back import backMain
 from src.facades.Runner.layout.LoginRunner import Login
+from src.runtime.runtime import IS_STOP, TASK_THREAD
 
 
 def generate(client_id):
@@ -265,9 +268,11 @@ def startRun():
         taskQueue.push(FindAdventure, "hasWorldTreeButton")
         taskQueue.push(BeforeInWorldTree)
         taskQueue.push(InWorldTree)
-    # if Config("app.relic.switch"):
 
-    threading.Thread(target=taskQueue.run, daemon=True).start()
+    # if Config("app.relic.switch"):
+    if src.runtime.runtime.TASK_THREAD is None:
+        src.runtime.runtime.TASK_THREAD = threading.Thread(target=taskQueue.run, daemon=True)
+        src.runtime.runtime.TASK_THREAD.start()
 
     return {
         "code":0,
@@ -285,9 +290,11 @@ def stopRun():
     # - 矿厂每日
     # - 世界树
     def stop():
-        raise Exception("human click stop")
+        src.runtime.runtime.IS_STOP = True
+        taskQueue.clear()
+        logx.debug("任务已停止")
 
-    threading.Thread(target=stop, daemon=True).start()
+    threading.Thread(target=stop).start()
 
     return {
         "code":0,

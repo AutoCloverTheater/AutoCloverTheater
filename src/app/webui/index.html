@@ -170,6 +170,23 @@
             font-family: monospace;
         }
 
+        .text-debug {
+          color: #2196f3; /* 蓝色 */
+        }
+        .text-info {
+            color: #00ff00;/* 绿色 */
+        }
+        .text-warning {
+          color: #ff9800; /* 橙色 */
+        }
+        .text-error {
+          color: #f44336; /* 红色 */
+        }
+        .text-critical {
+          color: #8b0000; /* 暗红色 */
+          font-weight: bold;
+        }
+
         #log-container div{
             padding: 3px;
         }
@@ -376,7 +393,7 @@
                 </div>
             </div>
             <div id="log-container"  ref="scrollContainer">
-                <div v-for="msg in sse">{{msg}}</div>
+                <div :class="[`text-${data.level}`]" v-for="data in sse">{{data.content}}</div>
             </div>
         </div>
     </div>
@@ -597,13 +614,23 @@
                             }
 
                             if (event.data !== '1') {
-                                sse.value.push(event.data);
+                                // 按照|切割消息
+                                const parts = event.data.split('|');
+                                // 去除空格
+                                for (let i = 0; i < parts.length; i++) {
+                                    parts[i] = parts[i].trim();
+                                    // 小写
+                                    parts[i] = parts[i].toLowerCase();
+                                }
+                                const data = {content:event.data,level:parts[1]}
+                                console.table(data)
+                                sse.value.push(data);
                                 scrollContainer.value.scrollTop = scrollContainer.value.scrollHeight;
                             }
                         };
                         events.onopen = function(event) {
                             console.log(event);
-                            sse.value.push('连接成功');
+                            sse.value.push({content:'连接成功',lever:'info'});
                         };
                         events.onerror = function(event) {
                             console.log(event);
