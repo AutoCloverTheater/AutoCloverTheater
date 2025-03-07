@@ -9,6 +9,55 @@ from src.facades.Ocr.MyCnocr import MyCnocr
 
 
 class ItemsDetect:
+    @matchResult
+    def checkSkipFormat(self):
+        """
+        检查是否跳过编队
+        :return:
+        """
+        img = {
+            "url":"skip__899_533_34_29__849_483_134_129.png",
+            "roi": [899, 533, 34, 29]
+        }
+        template, ok =MyImread(img['url'])
+        pot, ok = imgSearchArea(GetSnapShot(), template, img["roi"])
+        if ok:
+            pot = pot[0]
+
+        return {"name":"勾选了跳过编队", "pot":pot},ok
+
+    @matchResult
+    def checkRepeatBattle(self):
+        """
+        开始重复战斗
+        :return:
+        """
+        img = {
+            "url":"repeatBattle__1135_25_41_32__1085_0_141_107.png",
+            "roi": [1135, 25, 41, 32]
+        }
+        template, ok =MyImread(img['url'])
+        pot, ok = imgSearchArea(GetSnapShot(), template, img["roi"])
+        if ok:
+            pot = pot[0]
+
+        return {"name":"开始重复战斗", "pot":pot},ok
+    @matchResult
+    def startBattle(self):
+        """
+        开始表演
+        :return:
+        """
+        img = {
+            "url":"",
+            "roi": [1059, 655, 81, 45]
+        }
+        template, ok =MyImread(img['url'])
+        pot, ok = imgSearchArea(GetSnapShot(), template, img["roi"])
+        if ok:
+            pot = pot[0]
+
+        return {"name":"开始表演", "pot":pot},ok
 
     @matchResult
     def hasTopLeverButton(self):

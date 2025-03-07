@@ -7,7 +7,7 @@ def matchResult(func):
         # 调用原始方法
         result,ok = func(self, *args, **kwargs)
         if ok :
-            logx.info(f"识别到页面:{result['name']}")
+            logx.debug(f"识别到页面:{result['name']}")
 
         return result,ok
 
