@@ -6,7 +6,7 @@ from typing import Optional
 import numpy
 import uiautomator2
 
-import src.app
+
 from src.facades.Configs.Config import Config
 import uiautomator2 as u2
 

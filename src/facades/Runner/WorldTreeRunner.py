@@ -193,9 +193,3 @@ def InWorldTree():
 
     return matchResult
 
-if __name__ == '__main__':
-    ConnectEmulator()
-    Login()
-    FindAdventure("hasWorldTreeButton")
-    BeforeInWorldTree()
-    InWorldTree()
