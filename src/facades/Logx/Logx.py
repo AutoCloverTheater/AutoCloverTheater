@@ -22,7 +22,7 @@ def custom_format(record):
 def setup_logger():
     logger.remove()
 
-    now = datetime.datetime.now().strftime("%Y-%m-%d-%H")
+    now = datetime.datetime.now().strftime("%Y/%m/%d/%H")
 
     # logger.add(f"{RUNTIME_PATH.joinpath('logs')}/{now}/info.log",format="<green>{time:YYYY-MM-DD HH:mm:ss} - {message}</green>",
     #            rotation="1 week", enqueue=True,backtrace=True, diagnose=True,level=logging.INFO)

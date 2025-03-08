@@ -3,6 +3,7 @@ import sys
 import threading
 import time
 from pathlib import Path
+from typing_extensions import deprecated
 
 from flask import request, Blueprint, Response, stream_with_context
 
@@ -191,8 +192,9 @@ def mumuInfoList():
             "msg":f"{error}",
         }
 @api_bp.route('/api/getEmulatorInstallPath', methods=['GET'])
+@deprecated("此函数已废弃，不再提供此类功能")
 def getEmulatorInstallPath():
-    """
+    """[Deprecated] 此函数已废弃
     尝试获取模拟器安装地址
     :return:
     """
@@ -292,7 +294,7 @@ def stopRun():
     def stop():
         src.runtime.runtime.IS_STOP = True
         taskQueue.clear()
-        logx.debug("任务已停止")
+        logx.warning("任务已停止")
 
     threading.Thread(target=stop).start()
 

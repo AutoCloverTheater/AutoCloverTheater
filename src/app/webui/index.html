@@ -119,25 +119,37 @@
     <style>
         body {
             margin: 0;
-            height: 100vh;
-            display: flex;
+            min-width: 1000px;
             justify-content: center;
             align-items: center;
             background-color: #f0f2f5;
             font-family: Arial, sans-serif;
+            box-sizing: border-box; /* 包含内边距的计算 */
         }
+    @media screen and (min-width: 1120px) {
+        body {
+            margin: 0;
+            min-width: 1000px;
+            justify-content: center;
+            align-items: center;
+            padding: 0 200px;
+            background-color: #f0f2f5;
+            font-family: Arial, sans-serif;
+            box-sizing: border-box; /* 包含内边距的计算 */
+        }
+    }
+
 
         .container {
-            width: 1000px;
-            height: 720px;
             background: white;
             border-radius: 8px;
+            height: 100vh;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             display: flex;
         }
 
         #left-panel {
-            width: 350px;
+            flex: 0 0 25%;     /* 不放大不缩小，固定45% */
             padding: 20px;
             border-right: 1px solid #e8e8e8;
             overflow-y: auto;

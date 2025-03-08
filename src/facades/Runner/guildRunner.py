@@ -1,3 +1,4 @@
+from src.facades.Configs.Config import Config
 from src.facades.Detect.Guild.GuildDetect import GuildDetect
 from src.facades.Emulator.Emulator import ConnectEmulator, UpdateSnapShot, Click
 from src.facades.Logx.Logx import logx
@@ -22,6 +23,7 @@ def beforeInGuild():
 def donate():
     guild = GuildDetect()
     times = 12
+
     while True:
         if times <= 0:
             logx.info("退出捐献")
@@ -39,8 +41,13 @@ def donate():
                 # 退出回到工会大厅
                 Click((0.9,0.5), 0.3)
             break
+        ocrDonatedTimes = guild.ocrDonatedTimes()
+        if ocrDonatedTimes >= Config("app.guildDonateLimit"):
+            logx.info("达到捐献次数")
+            break
         if not ok1 and ok2:
             Click(resp['pot'], 2)
+            logx.info("捐献一次")
             continue
         times -= 1
     return

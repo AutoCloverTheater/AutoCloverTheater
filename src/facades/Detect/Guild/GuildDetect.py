@@ -3,6 +3,7 @@ from src.facades.Detect.DetectLog import matchResult
 from src.facades.Emulator.Emulator import GetSnapShot
 from src.facades.Img.ImgRead import MyImread
 from src.facades.Img.ImgSearch import imgSearchArea
+from src.facades.Ocr.MyCnocr import MyCnocr
 
 
 class GuildDetect:
@@ -58,6 +59,26 @@ class GuildDetect:
             pot = pot[0]
 
         return {"name":"捐献次数达到上限", "pot":pot},ok
+
+    def ocrDonatedTimes(self):
+        """
+        识别已捐献次数
+        :return:
+        """
+        # 截取指定位置
+        dewXY = GetSnapShot()
+        dewXY = dewXY[507:212, 464:127]
+        ocr = MyCnocr.ocrNum(dewXY)
+        lv = 0
+        for roc in ocr:
+            roc['text'] = roc['text'].replace(" ","")
+            roc['text'] = roc['text'].replace("每","")
+            roc['text'] = roc['text'].replace("日","")
+            roc['text'] = roc['text'].replace("捐","")
+            roc['text'] = roc['text'].replace("献","")
+            lv = int(roc["text"])
+        return  lv
+
 
     @matchResult
     def donate(self):

@@ -7,7 +7,7 @@ from src.app import app
 
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWebEngineWidgets import QWebEngineView
-from PyQt5.QtWidgets import QApplication, QDesktopWidget
+from PyQt5.QtWidgets import QApplication, QDesktopWidget, QSizePolicy
 
 from src.facades.Constant.Constant import IMG_PATH, APP_PATH
 from src.facades.Logx.Logx import logx
@@ -27,7 +27,7 @@ def mainWindow(port = 8233):
 
     content = file_path.read_text(encoding="utf-8").replace("http://localhost:8233", f"http://localhost:{port}")  # 读取文本文件
 
-    window = (1000,720)
+    window = (1190,720)
 
     # 启动应用
     app = QApplication([])
@@ -50,9 +50,14 @@ def mainWindow(port = 8233):
 
     # 创建浏览器窗口
     browser = QWebEngineView()
-    browser.setFixedSize(window[0], window[1])
     browser.setHtml(content)  # 渲染 HTML 内容
     # 设置窗口位置和大小（x, y, width, height）
+    # 设置大小策略（关键）
+    browser.setSizePolicy(
+        QSizePolicy.Expanding,  # 水平策略
+        QSizePolicy.Expanding  # 垂直策略
+    )
+    browser.setMinimumSize(window[0], window[1])
     browser.setGeometry(left_point[0], left_point[1], window[0], window[1])  # 窗口左上角
     browser.setWindowIcon(icon)
     browser.setAcceptDrops(False)

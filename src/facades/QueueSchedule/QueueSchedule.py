@@ -33,14 +33,14 @@ class QueueSchedule:
                     except HumanHandleException as e:
                         logx.warning(e)
                     except Exception as e:
-                        logx.exception(f"Error executing function: {e}")
+                        logx.warning(f"Error executing function: {e}")
                         raise Exception(f"Error executing function: {e}")
                     finally:
                         self.queue.task_done()  # 标记任务完成
                 else:
                     time.sleep(0.1)  # 队列为空时稍作等待，避免过度占用CPU
         else:
-            logx.info("任务队列已停止")
+            logx.warning("任务队列已停止")
 
 taskQueue = QueueSchedule()
 
