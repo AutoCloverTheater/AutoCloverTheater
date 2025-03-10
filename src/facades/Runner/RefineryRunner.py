@@ -129,10 +129,3 @@ def InRefinery():
         times += 1
 
     return matchResult
-# 神秘矿厂
-if __name__ == '__main__':
-    ConnectEmulator()
-    Login()
-    BeforeRefinery()
-    InRefinery()
-    backMain()

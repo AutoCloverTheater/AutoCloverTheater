@@ -60,15 +60,24 @@ def inTopLeverItemCollection():
             time.sleep(1)
             times = 20
             continue
-        # 设置次数
-        pot,ok = item.checkRepeatBattle()
+        windowPot,ok = item.openRepeatBattleWindow()
         if ok :
-            Click((0,0))# 开启次数
+            logx.debug("windowsPot")
+            logx.debug(windowPot)
+            Click(windowPot['pot'])
+        # 设置次数
+        matchResp,ok = item.checkRepeatBattle()
+        if ok :
+            # [279, 435, 4, 6]
+            Click((279,435))# 开启次数
             logx.debug("开启次数")
-            Click((0,0))# 激活输入框
+            # [836, 441, 5, 0]
+            Click((836,441))# 激活输入框
             logx.debug("激活输入框")
             Text("5")
-            Click(pot)
+            Click((1192, 603))
+            # [1192, 603, 7, 6]
+            Click(matchResp['pot'])
             logx.debug("开始重复战斗")
             continue
 

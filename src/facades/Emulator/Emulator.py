@@ -120,7 +120,8 @@ def Click(point:tuple[float|int,float|int], sleep=0.3):
     if type(x) == float and int(x) <= 1 and int(y) <= 1:
         x = int(x * ActivityEmulator.device.info["displayWidth"])
         y = int(y * ActivityEmulator.device.info["displayHeight"])
-
+    logx.debug(f"点击坐标：{x} ,类型: {type(x).__name__}")
+    logx.debug(f"点击坐标：{y} ,类型: {type(y).__name__}")
     ActivityEmulator.device.click(x, y)
     time.sleep(sleep)
 

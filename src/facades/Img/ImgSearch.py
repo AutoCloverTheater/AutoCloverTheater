@@ -169,12 +169,12 @@ def imgSearchArea(image :numpy.array, template :numpy.array,roi, threshold=0.9):
 
     resp = find_all_template(local_region, template, threshold)
 
-    # results = [item['result'] for item in resp]
+    # results = [items['result'] for items in resp]
     results = []
     # 遍历所有匹配结果
-    for item in resp:
-        top_left = item['result']
-        center = (top_left[0] + roi[0], top_left[1] + roi[1])
+    for items in resp:
+        top_left = items['result']
+        center = (int(top_left[0] + roi[0]), int(top_left[1] + roi[1]))
         results.append(center)
 
     # 在原始图像上绘制矩形框
