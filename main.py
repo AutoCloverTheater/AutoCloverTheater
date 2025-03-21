@@ -71,15 +71,15 @@ def mainWindow(port = 8233):
     # 运行应用
     app.exec_()
 
-# threading.Thread(target=app.run, kwargs={'port': port, 'threaded': True}, daemon=True).start()
-# logx.info(f"listing port at {port}")
+threading.Thread(target=app.run, kwargs={'port': port, 'threaded': True}, daemon=True).start()
+logx.info(f"listing port at {port}")
 # while True:
 #     logx.info(f"listing port at {port}")
 #     logx.debug(f"listing port at {port}")
 #     logx.warning(f"listing port at {port}")
 #     logx.exception(f"listing port at {port}")
 #     time.sleep(1)
-# mainWindow(port)
+
 
 def checkAdbutilsBinaries():
     FILE_PLATFORM = {
@@ -152,5 +152,4 @@ def extract_archive_file(archive_file, file, destination_folder):
         with zipfile.ZipFile(archive_file, 'r') as archive:
             archive.extract(member=file, path=destination_folder)
 
-if __name__ == "__main__":
-    checkAdbutilsBinaries()
+mainWindow(port)
