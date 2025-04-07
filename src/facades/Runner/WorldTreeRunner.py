@@ -82,7 +82,7 @@ def InWorldTree():
     FlashBattle = FlashBattleDetect()
 
     matchResult = True
-
+    offset = 0
     times = 0
     while 1:
         if times >= 12:
@@ -98,6 +98,12 @@ def InWorldTree():
         #     logx.info(f"当前露水：{dew}")
 
         # 开启快闪，跳过编队
+        _,ok = worldTree.hasOffset()
+        if ok :
+            offset += 1
+        else:
+            offset = 0
+
         resp, ok = FlashBattle.isLoading()
         if ok:
             continue
@@ -179,7 +185,7 @@ def InWorldTree():
         # 奇遇卡
         BizarreCard, ok = worldTree.hasBizarreCard()
         if ok:
-            pot = BizarreCard.pop(-1)
+            pot = BizarreCard.pop(offset)
             Click(pot['pot'])
             times = 0
         reSelectResp, ok = worldTree.reSelect()

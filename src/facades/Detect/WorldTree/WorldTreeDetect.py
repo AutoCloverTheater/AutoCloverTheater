@@ -136,7 +136,7 @@ class WorldTreeDetect:
                 cards.append(img)
 
         cards = cards+ nb + eb
-
+        logx.debug(cards)
 
         if 3 > len(cards) > 1:
             logx.exception("卡片长度异常")
@@ -249,6 +249,13 @@ class WorldTreeDetect:
         inGame = MyImread(path)
         pot, ok  = imgSearch(GetSnapShot(), inGame)
         return {"name":"世界树探索中","pot":pot},ok
+
+    @matchResult
+    def hasOffset(self):
+        path = IMG_PATH.joinpath("Main").joinpath("worldTree").joinpath("offset").joinpath("re__462_301_358_22__412_251_458_122.png")
+        topLever = MyImread(path)
+        pot, ok  = imgSearch(GetSnapShot(), topLever)
+        return {"name":"偏移","pot":pot},ok
 
     @matchResult
     def selectConfirm2(self):
