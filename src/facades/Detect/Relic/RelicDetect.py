@@ -314,6 +314,14 @@ class RelicDetect:
                 "url":"hot.png",
             }
         ]
+        maps = {
+            "热沙寨落":{
+                "url":"hot.png",
+            },
+            "沙漠星城":{
+                "url":"desert__138_205_108_40__88_155_208_140.png",
+            }
+        }
 
         path = IMG_PATH.joinpath("main/relic/hot.png")
         img = MyImread(path)
@@ -329,9 +337,16 @@ class RelicDetect:
         选择难度
         :return:
         """
-        ranks = [
-            "噩梦"
-        ]
+        ranks = {
+            "噩梦难度":{
+                'url':"nightmare__350_233_96_24__300_183_196_124.png",
+                'roi':[350, 233, 96, 24],
+            },
+            "普通难度":{
+                'url':"normal__352_105_97_25__302_55_197_125.png",
+                'roi':[ 352, 105, 97, 25],
+            },
+        }
 
         path = IMG_PATH.joinpath("main/relic/nightmare__350_233_96_24__300_183_196_124.png")
         img = MyImread(path)
