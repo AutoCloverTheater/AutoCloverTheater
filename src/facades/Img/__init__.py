@@ -200,8 +200,7 @@ def find_all_template(im_source: ndarray, im_template: ndarray, threshold: float
     sw, sh = im_source.shape[1], im_source.shape[0]
     if w > sw or h > sh:
         raise RuntimeError(
-            "source image size must larger than template image size, but not source is {}x{}, template is {}x{}",
-            sw, sh, w, h)
+            f"source image size must larger than template image size, but not source is {sw}x{sh}, template is {w}x{h}")
 
     start_time = time.time()
     gray_template = _to_gray(im_template)

@@ -1,5 +1,6 @@
 import cv2
 
+from src.facades.Configs.Config import Config
 from src.facades.Constant.Constant import IMG_PATH
 from src.facades.Detect.DetectLog import matchResult
 from src.facades.Emulator.Emulator import GetSnapShot, ConnectEmulator, UpdateSnapShot
@@ -126,8 +127,8 @@ class RelicDetect:
         :return:
         """
         rois = [
-            [969, 219, 50, 24],  # 第一个选择
-            [969,322,51,27],# 第二个选择
+            [928,207,130,49],  # 第一个选择
+            [928,311,133,51],# 第二个选择
         ]
 
         pot = ()
@@ -308,28 +309,26 @@ class RelicDetect:
         Returns:
 
         """
-        maps = [
-            {
-                "name":"热砂",
-                "url":"hot.png",
-            }
-        ]
         maps = {
             "热沙寨落":{
                 "url":"hot.png",
+                "roi": [124, 63, 161, 645],
             },
             "沙漠星城":{
                 "url":"desert__138_205_108_40__88_155_208_140.png",
+                "roi":[124,63,161,645],
             }
         }
+        logx.debug(f'配置文件地图:{Config("app.relic.map")}')
+        target = maps.get(Config("app.relic.map"))
 
-        path = IMG_PATH.joinpath("main/relic/hot.png")
+        path = IMG_PATH.joinpath(f'main/relic/{target["url"]}')
         img = MyImread(path)
-        pot,ok = imgSearchArea(GetSnapShot(), img, [124,63,161,645])
+        pot,ok = imgSearchArea(GetSnapShot(), img, target["roi"])
         if ok:
             pot = pot[0]
 
-        return {"name": f"选择地图 {maps[0]}", "pot": pot}, ok
+        return {"name": f'选择地图 {Config("app.relic.map")}', "pot": pot}, ok
 
     @matchResult
     def hasSettingRank(self):
@@ -347,14 +346,16 @@ class RelicDetect:
                 'roi':[ 352, 105, 97, 25],
             },
         }
+        logx.info(f'配置文件难度:{Config("app.relic.lever")}')
+        target = ranks.get(Config("app.relic.lever"))
 
-        path = IMG_PATH.joinpath("main/relic/nightmare__350_233_96_24__300_183_196_124.png")
+        path = IMG_PATH.joinpath(f'main/relic/{target["url"]}')
         img = MyImread(path)
-        pot,ok = imgSearchArea(GetSnapShot(), img, [350, 233, 96, 24])
+        pot,ok = imgSearchArea(GetSnapShot(), img, target["roi"])
         if ok:
             pot = pot[0]
 
-        return {"name": f"选择难度 {ranks[0]}", "pot": pot}, ok
+        return {"name": f'选择难度 {Config("app.relic.lever")}', "pot": pot}, ok
 
     @matchResult
     def getItems(self):
