@@ -86,7 +86,7 @@ class WorldTreeDetect:
         """
 
         def matchCards():
-            cardRoi = [[293, 565, 200, 40], [555, 565, 200, 40], [800, 565, 200, 40]]
+            cardRoi = [[257,560,214,34], [475,512,300,130], [800, 565, 200, 40]]
             path = ['l', 'm', 'r']
 
             result = []
@@ -104,6 +104,7 @@ class WorldTreeDetect:
                     if ok:
                         fName = file.split('/')[-1].split('.')[0]
                         result.append({"pot": (roi[0], roi[1]), "name": fName})
+                        logx.debug(f"{fName} path{path[i]} 匹配成功")
                         # 找到了就直接返回
                         break
 
@@ -140,6 +141,7 @@ class WorldTreeDetect:
 
         if 3 > len(cards) > 1:
             logx.exception("卡片长度异常")
+            raise Exception("卡片长度异常")
 
         # logx.info([item['name'] for item in cards])
         #
