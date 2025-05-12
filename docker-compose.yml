@@ -1,4 +1,4 @@
-name: "act"
+name: "autoclovertheater"
 services:
     act:
         image: "alex78218/autoclovertheater:latest"
