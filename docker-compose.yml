@@ -1,0 +1,10 @@
+name: "act"
+services:
+    act:
+        image: "alex78218/autoclovertheater:latest"
+        container_name: "act"
+        volumes:
+            - ".:/app/env.yaml"
+        restart: "unless-stopped"
+        ports:
+          - "58000:8000"
