@@ -4,7 +4,7 @@ ImageHash==4.3.1
 loguru==0.7.3
 cnocr==2.3.1
 cnstd==1.2.5.2
-numpy==1.26.4
+numpy
 opencv_contrib_python==4.11.0.86
 opencv_python==4.11.0.86
 Pillow==11.1.0
