@@ -5,11 +5,9 @@ from typing import Optional
 
 import numpy
 import uiautomator2
-
-
-from src.facades.Configs.Config import Config
 import uiautomator2 as u2
 
+from src.facades.Configs.Config import Config
 from src.facades.Emulator.mac.bluestacks import Bluestacks
 from src.facades.Emulator.mac.mumu import Mumu as MumuMac
 from src.facades.Emulator.win.mumu import Mumu as MumuWin

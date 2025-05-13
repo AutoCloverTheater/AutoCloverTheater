@@ -9,7 +9,7 @@ from flask import request, Blueprint, Response, stream_with_context
 
 import src
 from src.config.app import get_config
-from src.facades.App.App import data_queue, send_event, clients_lock, clients,setExecuted
+from src.facades.App.App import data_queue, send_event, clients_lock, clients, setExecuted
 from src.facades.Configs.Config import Config
 from src.facades.Constant.Constant import ROOT_PATH
 from src.facades.Emulator.Emulator import ActivityEmulator, ConnectEmulator
@@ -23,7 +23,7 @@ from src.facades.Runner.guildRunner import beforeInGuild, donate, getReward
 from src.facades.Runner.layout.AdventureRunner import FindAdventure
 from src.facades.Runner.layout.Back import backMain
 from src.facades.Runner.layout.LoginRunner import Login
-from src.runtime.runtime import IS_STOP, TASK_THREAD
+from src.runtime.runtime import IS_STOP
 
 
 def generate(client_id):

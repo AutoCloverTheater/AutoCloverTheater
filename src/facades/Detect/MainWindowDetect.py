@@ -3,10 +3,8 @@ import cv2
 from src.facades.Constant.Constant import IMG_PATH
 from src.facades.Detect.DetectLog import matchResult
 from src.facades.Emulator.Emulator import GetSnapShot
-from src.facades.Img import find_template
 from src.facades.Img.ImgRead import MyImread
 from src.facades.Img.ImgSearch import imgSearch, imgSearchArea
-from src.facades.Logx.Logx import logx
 
 
 class MainWindowDetect:

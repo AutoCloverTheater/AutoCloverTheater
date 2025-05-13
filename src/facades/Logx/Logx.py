@@ -8,6 +8,7 @@ from loguru import logger
 from src.facades.App.App import sseOutPut
 from src.facades.Constant.Constant import RUNTIME_PATH
 
+
 # 自定义日志格式和颜色
 def custom_format(record):
     color_map = {

@@ -1,10 +1,9 @@
 from collections import Counter
 
+import cv2
 import numpy as np
 
 from src.facades.Emulator.Emulator import UpdateSnapShot, ConnectEmulator, GetSnapShot
-import cv2
-
 from src.facades.Logx.Logx import logx
 
 

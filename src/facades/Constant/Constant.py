@@ -1,5 +1,3 @@
-import pathlib
-
 from src import ROOT
 
 ROOT_PATH = ROOT

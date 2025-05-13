@@ -27,8 +27,8 @@ def resize_image(img):
 
 def create_env_if_not_exists():
     # 定义文件路径
-    env_file = ROOT_PATH.joinpath("env.yaml")
-    env_example_file = ROOT_PATH.joinpath("env.yaml.example")
+    env_file = ROOT_PATH.joinpath("etc/env.yaml")
+    env_example_file = ROOT_PATH.joinpath("etc/env.yaml.example")
 
     # 检查 .env 文件是否存在
     if not os.path.exists(env_file):

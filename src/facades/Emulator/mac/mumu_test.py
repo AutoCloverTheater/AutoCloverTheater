@@ -1,7 +1,8 @@
 import logging
 
-from src.facades.Configs.Config import Config
 from mac.emulator.mumu import Mumu
+
+from src.facades.Configs.Config import Config
 
 
 def testSearchAndOpenDevice():

@@ -3,6 +3,7 @@ import cv2
 from src.facades.Constant.Constant import ROOT_PATH
 from src.facades.Ocr.MyCnocr import MyCnocr
 
+
 def TestOcr_for_single_line():
     path = ROOT_PATH.joinpath("img").joinpath("WorldTree")
     出发冒险 = MyImread(f"{path}/chufamaoxian.png")

@@ -1,9 +1,10 @@
 # Config.py
-import os
 import importlib.util
+import os
 from collections import defaultdict
 
 from src.facades.Constant.Constant import CONFIG_PATH
+
 
 def merge_dicts(dict1, dict2):
     merged = dict1.copy()

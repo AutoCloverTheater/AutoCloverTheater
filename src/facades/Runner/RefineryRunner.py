@@ -1,12 +1,9 @@
 import time
 
-
 from src.facades.Detect.Common.FlashBattleDetect import FlashBattleDetect
 from src.facades.Detect.Refinery.RefineryDetect import RefineryDetect
-from src.facades.Emulator.Emulator import ConnectEmulator, UpdateSnapShot, Click, Swipe
+from src.facades.Emulator.Emulator import UpdateSnapShot, Click, Swipe
 from src.facades.Logx.Logx import logx
-from src.facades.Runner.layout.Back import backMain
-from src.facades.Runner.layout.LoginRunner import Login
 
 
 def find():

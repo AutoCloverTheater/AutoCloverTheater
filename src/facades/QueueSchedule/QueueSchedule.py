@@ -1,7 +1,5 @@
-import threading
-import time
-
 import queue
+import time
 
 from src.facades.Emulator.Emulator import ConnectEmulator
 from src.facades.Exceptions.HumanHandleException import HumanHandleException

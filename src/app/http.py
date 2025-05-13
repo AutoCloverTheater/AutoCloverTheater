@@ -1,12 +1,11 @@
 import sys
-import threading
-import time
 import traceback
 
 from flask import request, jsonify
 
-from src.app import send_event, clients_lock,  data_queue, app
+from src.app import app
 from src.facades.Emulator.Emulator import UsefulEmulator
+
 
 @app.route('/api/getEmulatorType', methods=['GET'])
 def getEmulatorType():

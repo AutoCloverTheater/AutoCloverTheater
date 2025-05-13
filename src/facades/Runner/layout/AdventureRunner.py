@@ -4,6 +4,7 @@ from src.facades.Detect.Common.AdventureDetect import AdventureDetect
 from src.facades.Emulator.Emulator import UpdateSnapShot, ConnectEmulator, Click, Swipe
 from src.facades.Logx.Logx import logx
 
+
 def FindAdventure(callAdv:str):
     """
     从游戏主页面到冒险列表中寻找相应的副本

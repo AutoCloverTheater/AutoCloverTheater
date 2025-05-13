@@ -4,13 +4,11 @@ FROM python:3.10-slim AS builder
 WORKDIR /app
 
 # Create and activate virtual environment
-RUN python -m venv /opt/venvs
 ENV PATH="/opt/venvs/bin:$PATH"
 
 # Install dependencies
 COPY requirements.txt .
-RUN pip install --upgrade pip
-RUN pip install --no-cache-dir -r requirements.txt
+RUN python -m venv /opt/venvs && pip install --upgrade pip && pip install cnocr && pip install --no-cache-dir -r requirements.txt
 
 # 使用官方 Python 镜像
 FROM python:3.10-slim

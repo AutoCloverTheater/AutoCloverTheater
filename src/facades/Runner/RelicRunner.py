@@ -1,8 +1,8 @@
 import time
+from collections import Counter
 
 import imagehash
 from PIL import Image
-from collections import Counter
 
 from src.facades.Detect.Common.FlashBattleDetect import FlashBattleDetect
 from src.facades.Detect.Relic.RelicDetect import RelicDetect
@@ -11,7 +11,6 @@ from src.facades.Logx.Logx import logx
 from src.facades.Ocr.MyCnocr import MyCnocr
 from src.facades.Runner.layout.AdventureRunner import FindAdventure
 from src.facades.Runner.layout.LoginRunner import Login
-
 
 TearCrystal = 0
 def beforeRelic():
