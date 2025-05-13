@@ -29,7 +29,7 @@ jobs:
         uses: docker/setup-buildx-action@v3
         with:
           driver: docker-container
-          platforms: linux/amd64,linux/arm64,linux/arm/v7,windows/amd64
+          platforms: linux/arm64,windows/amd64
 
       # 步骤4：提取版本元数据
       - name: Extract version metadata
