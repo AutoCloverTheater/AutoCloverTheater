@@ -1,5 +1,5 @@
 # 使用官方 Python 镜像
-FROM python:3.13-slim
+FROM python:3.10-slim
 
 # 设置工作目录
 WORKDIR /app
@@ -7,7 +7,13 @@ WORKDIR /app
 # 复制当前目录内容到容器中的 /app 目录
 COPY . /app
 
+RUN apt-get update && apt-get install -y \
+    libgl1-mesa-glx \
+    libglib2.0-0 \
+    && rm -rf /var/lib/apt/lists/*
+
 RUN pip install --upgrade pip
+
 # 安装依赖
 RUN pip install --no-cache-dir -r requirements.txt
 
