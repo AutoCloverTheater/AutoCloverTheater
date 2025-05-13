@@ -1,8 +1,6 @@
-import ctypes
 import logging
 import os
 import sys
-import threading
 import requests
 import shutil
 import zipfile
@@ -14,16 +12,6 @@ logging.getLogger("flask").setLevel(logging.ERROR)
 logging.getLogger("werkzeug").setLevel(logging.ERROR)
 
 port = 8233
-if __name__ == '__main__':
-    app.run(port=port, threaded=True)
-# threading.Thread(target=app.run, kwargs={'port': port, 'threaded': True}, daemon=True).start()
-# logx.info(f"listing port at {port}")
-# while True:
-#     logx.info(f"listing port at {port}")
-#     logx.debug(f"listing port at {port}")
-#     logx.warning(f"listing port at {port}")
-#     logx.exception(f"listing port at {port}")
-#     time.sleep(1)
 
 
 def checkAdbutilsBinaries():
@@ -96,3 +84,7 @@ def extract_archive_file(archive_file, file, destination_folder):
     if extension == 'zip':
         with zipfile.ZipFile(archive_file, 'r') as archive:
             archive.extract(member=file, path=destination_folder)
+
+if __name__ == '__main__':
+    checkAdbutilsBinaries()
+    app.run(port=port, threaded=True)

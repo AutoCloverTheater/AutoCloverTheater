@@ -39,7 +39,7 @@ class EnvDriver:
         return key in self.data
 def Env(key: str, default=None):
     keyList = key.split(".")
-    obj = EnvDriver().iniFromFile(ROOT_PATH.joinpath("env.yaml"))
+    obj = EnvDriver().iniFromFile(ROOT_PATH.joinpath("etc/env.yaml"))
     temp = obj.data
     for i in keyList:
         if i in temp :
