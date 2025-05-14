@@ -49,3 +49,4 @@ env.yaml
 /runtime/cnstd/
 /build/
 /venv
+/venvs

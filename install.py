@@ -1,10 +1,16 @@
+import datetime
 import os
+import shutil
 import sys
 import subprocess
+import time
+
+import requests
+import zipfile
 
 # 定义常量
 PYTHON_VERSION = "3.1"
-VENV_DIR = os.path.join(os.getcwd(), "venv")  # 虚拟环境绝对路径
+VENV_DIR = os.path.join(os.getcwd(), "venvs")  # 虚拟环境绝对路径
 
 REQUIREMENTS_FILE = "requirements.txt"
 FILES_TO_CHECK = ["requirements.txt", "main.py"]  # 需要检查的文件列表
@@ -38,7 +44,7 @@ def create_venv():
     """创建虚拟环境"""
     try:
         print(f"创建虚拟环境 {VENV_DIR}...")
-        subprocess.run(['python', "-m", "venv", VENV_DIR], check=True, capture_output=True,text=True)
+        subprocess.run(['python', "-m", "venvs", VENV_DIR], check=True, capture_output=True,text=True)
         print(f"虚拟环境 {VENV_DIR} 创建完成。")
     except subprocess.CalledProcessError as e:
         print(f"创建虚拟环境失败：{e}")
@@ -160,6 +166,78 @@ def check_dependencies(file = 'requirements.txt'):
 
     return len(missing_packages) >0 or len(version_mismatch) > 0
 
+def checkAdbutilsBinaries():
+    FILE_PLATFORM = {
+        "darwin": ["adb"],
+        "linux": ["adb"],
+        "win32": ["adb.exe", "AdbWinApi.dll", "AdbWinUsbApi.dll"],
+    }
+
+    import adbutils
+    print(adbutils.__file__)  # 查看包路径，检查 binaries/ 目录
+
+    from pathlib import Path
+    path = Path(f"{adbutils.__file__}").parent.joinpath("binaries")
+
+    for file in FILE_PLATFORM[sys.platform]:
+        f = f"{path.joinpath(file)}"
+        if os.path.exists(f) is True:
+            return True
+        else:
+            copy_binaries(path, sys.platform)
+
+    return True
+
+BINARIES_URL = {
+    "darwin": "https://dl.google.com/android/repository/platform-tools-latest-darwin.zip",
+    "linux": "https://dl.google.com/android/repository/platform-tools-latest-linux.zip",
+    "win32": "https://dl.google.com/android/repository/platform-tools-latest-windows.zip"
+}
+FNAMES_PER_PLATFORM = {
+    "darwin": ["adb"],
+    "linux": ["adb"],
+    "win32": ["adb.exe", "AdbWinApi.dll", "AdbWinUsbApi.dll"],
+}
+def copy_binaries(target_dir, platform: str):
+    assert os.path.isdir(target_dir)
+
+    base_url = BINARIES_URL[platform]
+    archive_name = os.path.join(target_dir, f'{platform}.zip')
+
+    print("Downloading", base_url, "...", end=" ", flush=True)
+    with open(archive_name, 'wb') as handle:
+        response = requests.get(base_url, stream=True)
+        if not response.ok:
+            print(response)
+        for block in response.iter_content(1024):
+            if not block:
+                break
+            handle.write(block)
+    print("done")
+
+    for fname in FNAMES_PER_PLATFORM[platform]:
+        print("Extracting", fname, "...", end=" ")
+        # extract the specified file from the archive
+        member_name = f'platform-tools/{fname}'
+        extract_archive_file(archive_file=archive_name, file=member_name, destination_folder=target_dir)
+        shutil.move(src=os.path.join(target_dir, member_name), dst=os.path.join(target_dir, fname))
+
+        # extracted files
+        filename = os.path.join(target_dir, fname)
+        if fname == "adb":
+            os.chmod(filename, 0o755)
+        print("done")
+
+    os.rmdir(path=os.path.join(target_dir, 'platform-tools'))
+    os.remove(path=archive_name)
+
+def extract_archive_file(archive_file, file, destination_folder):
+    extension = archive_file.rsplit('.', 1)[-1].lower()
+
+    if extension == 'zip':
+        with zipfile.ZipFile(archive_file, 'r') as archive:
+            archive.extract(member=file, path=destination_folder)
+
 def main():
     if not check_python_version():
         print("请安装 Python 3.10 后再运行此脚本。")
@@ -184,6 +262,9 @@ def main():
     else:
         subprocess.Popen([ExePath, 'main.py'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
+    print("检查adb可执行文件")
+    checkAdbutilsBinaries()
+
     print("安装引导程序执行完成。")
     # 退出当前脚本
     sys.exit()
@@ -191,3 +272,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+    while True:
+        print("🚀🏆")
+        time.sleep(1)
