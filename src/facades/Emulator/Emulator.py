@@ -8,10 +8,10 @@ import uiautomator2
 import uiautomator2 as u2
 
 from src.facades.Configs.Config import Config
+from src.facades.Emulator.linux.mumu import Mumu as MumuLinux
 from src.facades.Emulator.mac.bluestacks import Bluestacks
 from src.facades.Emulator.mac.mumu import Mumu as MumuMac
 from src.facades.Emulator.win.mumu import Mumu as MumuWin
-from src.facades.Emulator.linux.mumu import Mumu as MumuLinux
 from src.facades.Exceptions.HumanHandleException import HumanHandleException
 from src.facades.Logx.Logx import logx
 from src.runtime.runtime import IS_STOP

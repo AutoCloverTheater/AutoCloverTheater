@@ -7,7 +7,6 @@ from src.facades.Emulator.Emulator import GetSnapShot
 from src.facades.Img.ImgRead import MyImread
 from src.facades.Img.ImgSearch import imgSearch, imgMultipleResultSearch, imgSearchArea
 from src.facades.Logx.Logx import logx
-from src.facades.Ocr.MyCnocr import MyCnocr
 
 """
 世界树，死境难度。
@@ -49,17 +48,17 @@ class WorldTreeDetect:
         :return:
         """
         # 截取指定位置
-        dewXY = GetSnapShot()
-        dewXY = dewXY[490:545, 824:1195]
-        res = MyCnocr.ocrNum(img=dewXY)
+        # dewXY = GetSnapShot()
+        # dewXY = dewXY[490:545, 824:1195]
+        # res = MyCnocr.ocrNum(img=dewXY)
         lv = 0
-        for roc in res:
-            if "lv" in roc["text"]:
-                roc["text"] = roc["text"].replace('lv.', '')
-                roc["text"] = roc["text"].replace('l', '1')
-
-                lv = int(roc["text"])
-        self.lv = lv
+        # for roc in res:
+        #     if "lv" in roc["text"]:
+        #         roc["text"] = roc["text"].replace('lv.', '')
+        #         roc["text"] = roc["text"].replace('l', '1')
+        #
+        #         lv = int(roc["text"])
+        # self.lv = lv
         return lv
 
     def updateDew(self):
@@ -67,15 +66,12 @@ class WorldTreeDetect:
         更新露水数量
         :return:
         """
-        dewXY = GetSnapShot()
+        # dewXY = GetSnapShot()
         # 截取指定位置
-        dewXY = dewXY[43:80, 960:1150]
-        res = MyCnocr.ocrNum(img=dewXY)
+        # dewXY = dewXY[43:80, 960:1150]
+        # res = MyCnocr.ocrNum(img=dewXY)
 
-        text = [item["text"] for item in res]
-        text = ''.join(text)
-
-        self.dew = text.replace("露水数量", "")
+        # self.dew = text.replace("露水数量", "")
 
         return self.dew
     def hasBizarreCard(self) :

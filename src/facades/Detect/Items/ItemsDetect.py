@@ -5,7 +5,6 @@ from src.facades.Detect.DetectLog import matchResult
 from src.facades.Emulator.Emulator import GetSnapShot
 from src.facades.Img.ImgRead import MyImread
 from src.facades.Img.ImgSearch import imgSearchArea
-from src.facades.Ocr.MyCnocr import MyCnocr
 
 
 class ItemsDetect:
@@ -116,11 +115,11 @@ class ItemsDetect:
         img = GetSnapShot()
         img = img[roc[1]:roc[1] + roc[3], roc[0]:roc[0] + roc[2]]
         img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        ocr = MyCnocr.ocrNum(img)
+        # ocr = MyCnocr.ocrNum(img)
 
         num = 0
-        if len(ocr):
-            if ocr[0]['text'] != '':
-                num = int(ocr[0]['text'].replace("/3", ""))
+        # if len(ocr):
+        #     if ocr[0]['text'] != '':
+        #         num = int(ocr[0]['text'].replace("/3", ""))
         str = f"挑战次数 {num}"
         return {"name":str,"pot":pot},num<=0

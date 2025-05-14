@@ -8,7 +8,6 @@ from src.facades.Detect.Common.FlashBattleDetect import FlashBattleDetect
 from src.facades.Detect.Relic.RelicDetect import RelicDetect
 from src.facades.Emulator.Emulator import UpdateSnapShot, ConnectEmulator, GetSnapShot, Click, Swipe
 from src.facades.Logx.Logx import logx
-from src.facades.Ocr.MyCnocr import MyCnocr
 from src.facades.Runner.layout.AdventureRunner import FindAdventure
 from src.facades.Runner.layout.LoginRunner import Login
 
@@ -265,19 +264,10 @@ def beforeClickEventPoint():
     """
     更新泪精数量
     Returns:
-    [826,9,63,80]
     """
     roc = [825,28,61,44]
 
-    img = GetSnapShot()
-    img = img[roc[1]:roc[1]+roc[3],roc[0]:roc[0]+roc[2]]
-    ocr = MyCnocr.ocrNum(img)
-
     num = 0
-    if len(ocr):
-        if ocr[0]['text'] != '':
-         num = int(ocr[0]['text'])
-    logx.info(f"更新泪精数量 {num}")
     return num
 
 def beforeClickSelect():
@@ -289,14 +279,14 @@ def beforeClickSelect():
 
     img = GetSnapShot()
     img = img[roc[1]:roc[1]+roc[3],roc[0]:roc[0]+roc[2]]
-    ocr = MyCnocr.ocrNum(img)
+    # ocr = MyCnocr.ocrNum(img)
 
-    num = 0
-    if len(ocr):
-        if ocr[0]['text'] != '':
-         num = int(ocr[0]['text'])
+    num = 1
+    # if len(ocr):
+    #     if ocr[0]['text'] != '':
+    #      num = int(ocr[0]['text'])
 
-    logx.info(f"所需泪精数量 {num}")
+    # logx.info(f"所需泪精数量 {num}")
     return num
 
 # 遗迹探索-【噩梦难度】【热砂】
