@@ -1,13 +1,12 @@
 name: "autoclovertheater"
 services:
     act:
-#        image: "alex78218/autoclovertheater:latest"
         build:
             context: .
             dockerfile: Dockerfile
         container_name: "act"
         volumes:
-            - "./etc:/app/etc"
+            - ".:/app"
         restart: "unless-stopped"
         # 特权模式
         privileged: true

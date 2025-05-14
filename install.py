@@ -274,4 +274,4 @@ if __name__ == "__main__":
     main()
     while True:
         print("🚀🏆")
-        time.sleep(1)
+        time.sleep(60)
