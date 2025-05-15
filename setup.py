@@ -89,7 +89,7 @@ def extract_archive_file(archive_file, file, destination_folder):
 
 setup(
     name="act",
-    version="1.0.10",
+    version="1.0.11",
     packages=find_packages(),
     cmdclass={
         "install": CustomInstallCommand,
