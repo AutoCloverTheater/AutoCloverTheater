@@ -1,3 +1,5 @@
+import os
+
 from src.facades.Emulator.Emulator import ConnectEmulator, UpdateSnapShot, GetSnapShot
 import pytesseract
 

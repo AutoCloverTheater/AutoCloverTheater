@@ -13,6 +13,7 @@ RUN apt-get update && apt-get install -y \
     libgl1-mesa-glx \
     libglib2.0-0 \
     tesseract-ocr \
+    android-tools-adb \
     && rm -rf /var/lib/apt/lists/*
 # 运行应用
 CMD ["python", "main.py"]

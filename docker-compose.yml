@@ -10,5 +10,4 @@ services:
         restart: "unless-stopped"
         # 特权模式
         privileged: true
-        ports:
-          - "58000:8233"
+        network_mode: "host"
