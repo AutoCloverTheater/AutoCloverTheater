@@ -2,6 +2,7 @@ import os
 import shutil
 
 import cv2
+import numpy
 
 from src.facades.Constant.Constant import ROOT_PATH
 from src.facades.Logx.Logx import logx
@@ -43,6 +44,10 @@ def create_env_if_not_exists():
             print(f"错误：{env_example_file} 文件不存在，无法创建 {env_file}。")
     else:
         print(f"{env_file} 文件已存在，无需创建。")
+
+def cutImgByRoi(img, roi)-> numpy.array:
+    x, y, w, h = roi
+    return img[y:y+h, x:x+w]
 
 if __name__ == '__main__':
     create_env_if_not_exists()
