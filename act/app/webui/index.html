@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>四叶草🍀小助手</title>
+    <link rel="icon" href="https://static.jianniang.com/clover1/pc/images/p1/favicon.ico" type="image/x-icon">
+<!--    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>-->
+    <script src="https://unpkg.com/vue@3"></script>
+    <!-- import CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/element-plus/dist/index.css">
+    <!-- import JavaScript -->
+    <script src="https://unpkg.com/element-plus"></script>
+    <!-- 引入新页面样式 -->
+    <link rel="stylesheet" href="new_page.css">
+<!--    弹出消息样式-->
+    <style>
+        /* 消息容器样式 */
+        .message-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-width: 400px;
+        }
+
+        /* 消息框基础样式 */
+        .message-box {
+            position: relative;
+            display: flex;
+            align-items: flex-start;
+            padding: 15px 20px;
+            border-radius: 6px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            background: white;
+            transition: all 0.3s ease;
+            min-width: 280px;
+        }
+
+        /* 状态颜色 */
+        .message-box.success {
+            border-left: 4px solid #4CAF50;
+            background: #f5fbf5;
+
+        }
+
+        .message-box.error {
+            border-left: 4px solid #f44336;
+            background: #fff5f5;
+        }
+
+        .message-box.warning {
+            border-left: 4px solid gold;
+            background: rgb(247.5, 227.1, 196.5);
+            color: rgb(247.5, 227.1, 196.5);
+        }
+
+        /* 图标样式 */
+        .message-icon {
+            flex-shrink: 0;
+            margin-right: 12px;
+            padding-top: 2px;
+        }
+
+        .message-icon svg {
+            vertical-align: middle;
+        }
+
+        /* 内容区域 */
+        .message-content {
+            flex: 1;
+        }
+
+        .message-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: #333;
+        }
+
+        .message-text {
+            font-size: 0.9em;
+            color: #666;
+            line-height: 1.4;
+        }
+
+        /* 关闭按钮 */
+        .message-close {
+            flex-shrink: 0;
+            margin-left: 15px;
+            background: none;
+            border: none;
+            color: #999;
+            font-size: 18px;
+            line-height: 1;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .message-close:hover {
+            color: #666;
+        }
+
+        /* 过渡动画 */
+        .message-slide-enter-from {
+            opacity: 0;
+            transform: translateX(100%);
+        }
+
+        .message-slide-leave-to {
+            opacity: 0;
+            transform: translateY(-20%);
+        }
+
+        .message-slide-leave-active {
+            position: absolute;
+        }
+    </style>
+<!--    主页面样式-->
+    <style>
+        body {
+            margin: 0;
+            min-width: 1000px;
+            justify-content: center;
+            align-items: center;
+            background-color: #f0f2f5;
+            font-family: Arial, sans-serif;
+            box-sizing: border-box; /* 包含内边距的计算 */
+        }
+    @media screen and (min-width: 1120px) {
+        body {
+            margin: 0;
+            min-width: 1000px;
+            justify-content: center;
+            align-items: center;
+            padding: 0 200px;
+            background-color: #f0f2f5;
+            font-family: Arial, sans-serif;
+            box-sizing: border-box; /* 包含内边距的计算 */
+        }
+    }
+
+
+        .container {
+            background: white;
+            border-radius: 8px;
+            height: 100vh;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            display: flex;
+        }
+
+        #left-panel {
+            flex: 0 0 25%;     /* 不放大不缩小，固定45% */
+            padding: 20px;
+            border-right: 1px solid #e8e8e8;
+            overflow-y: auto;
+        }
+
+        .config-section {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .config-section h3 {
+            margin: 0 0 10px 0;
+            color: #1890ff;
+            font-size: 14px;
+        }
+
+        #right-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #log-container {
+            flex: 1;
+            padding: 10px;
+            overflow-y: auto;
+            background: #000;
+            color: #00ff00;
+            font-family: monospace;
+        }
+
+        .text-debug {
+          color: #2196f3; /* 蓝色 */
+        }
+        .text-info {
+            color: #00ff00;/* 绿色 */
+        }
+        .text-warning {
+          color: #ff9800; /* 橙色 */
+        }
+        .text-error {
+          color: #f44336; /* 红色 */
+        }
+        .text-critical {
+          color: #8b0000; /* 暗红色 */
+          font-weight: bold;
+        }
+
+        #log-container div{
+            padding: 3px;
+        }
+
+        #top-bar {
+            height: 60px;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            border-bottom: 1px solid #e8e8e8;
+        }
+
+        .control-btn {
+            margin-left: auto;
+            padding: 5px 15px;
+            background: #1890ff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .control-btn-sm {
+            padding: 5px 5px;
+            background: #1890ff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            line-height: 16px;
+        }
+        .control-btn-sm-disable{
+            padding: 5px 5px;
+            background: #333333;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            line-height: 16px;
+        }
+
+        select, input {
+            width: 50%;
+            padding: 5px;
+            margin: 5px 0;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .horizontal select {
+            flex: 1;
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <div class="container">
+        <div class="left-panel">
+            <div class="avatar">
+                <img src="https://static.jianniang.com/clover1/pc/images/p1/favicon.ico" alt="网站头像">
+            </div>
+            <div  style="display: flex;align-content: center">
+                 <el-button style="margin: 0 auto" @click="toggleSettings">设置</el-button>
+            </div>
+        </div>
+        <div class="right-panel">
+            <template v-if="schedule">
+                <div v-for="item in items" :key="item.title" class="item">
+                    <h3>{{ item.title }}</h3>
+                    <div>
+                        <el-button style="margin: 0 10px" @click="configureItem(item)">设置</el-button>
+                        <el-switch v-model="item.enabled"></el-switch>
+                    </div>
+
+                </div>
+            </template>
+            <template v-if="showSettings">
+                <div class="settings-form">
+                    <el-form label-position="top">
+                        <el-form-item label="账号">
+                            <el-input v-model="settings.account"></el-input>
+                        </el-form-item>
+                        <el-form-item label="密码">
+                            <el-input v-model="settings.password" type="password"></el-input>
+                        </el-form-item>
+                        <el-form-item label="IP地址">
+                            <el-input v-model="settings.ipAddress"></el-input>
+                        </el-form-item>
+                        <el-form-item label="端口">
+                            <el-input v-model.number="settings.port" type="number"></el-input>
+                        </el-form-item>
+                    </el-form>
+                </div>
+            </template>
+            <div class="controls">
+                <el-button @click="saveSettings">保存</el-button>
+                <el-button @click="startLogging" type="primary">开始</el-button>
+            </div>
+            <div v-if="logging" class="log-output">
+                <h3>日志输出</h3>
+                <div class="log-messages">
+                    <p v-for="(message, index) in logMessages" :key="index">{{ message }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    const { createApp } = Vue;
+    const app = createApp({
+        data() {
+            return {
+                showSettings: false,
+                schedule: true,
+                logging: false,
+                items: [
+                    { title: '素材', enabled: false },
+                    { title: '高难度素材', enabled: false },
+                    { title: '神秘矿产', enabled: false },
+                    { title: '世界树', enabled: false },
+                    { title: '遗迹探索', enabled: false }
+                ],
+                settings: {
+                    account: '',
+                    password: '',
+                    ipAddress: '',
+                    port: null
+                },
+                logMessages: []
+            };
+        },
+        methods: {
+            toggleSettings() {
+                this.showSettings = !this.showSettings;
+            },
+            configureItem(item) {
+                // 这里可以添加具体的配置逻辑
+                console.log('Configuring item:', item);
+            },
+            saveSettings() {
+                // 这里可以添加保存设置的逻辑
+                console.log('Saving settings:', this.settings);
+            },
+            startLogging() {
+                this.logging = !this.logging;
+                this.schedule = !this.schedule;
+                // 这里使用SSE连接后端API
+                const eventSource = new EventSource('http://0.0.0.0:8233/sse');
+                eventSource.onmessage = (event) => {
+                    this.logMessages.push(event.data);
+                    // 自动滚动到底部
+                    this.$nextTick(() => {
+                        const container = document.querySelector('.log-messages');
+                        if (container) {
+                            container.scrollTop = container.scrollHeight;
+                        }
+                    });
+                };
+                eventSource.onerror = (error) => {
+                    console.error('EventSource failed:', error);
+                };
+            }
+        }
+    });
+    app.use(ElementPlus);
+    app.mount('#app');
+</script>
+</body>
+
+</html>

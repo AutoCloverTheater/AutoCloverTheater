@@ -1,0 +1,70 @@
+/* 左右两栏布局样式 */
+.container {
+    display: flex;
+    height: 100vh;
+    margin: 0 auto;
+    max-width: 1280px;
+}
+
+.left-panel {
+    width: 25%;
+    background-color: #f5f7fa;
+    padding: 20px;
+    box-shadow: 2px 0 6px rgba(0,0,0,0.1);
+}
+
+.right-panel {
+    flex-grow: 1;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.avatar {
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.avatar img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+}
+
+.item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: white;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.item h3 {
+    margin: 0;
+}
+
+.settings-form {
+    margin-bottom: 20px;
+}
+
+.controls {
+    margin-top: 20px;
+}
+
+.log-output {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #f9fafb;
+    border-radius: 6px;
+}
+
+.log-messages {
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid #ebeef5;
+    padding: 10px;
+    border-radius: 4px;
+    background-color: white;
+}

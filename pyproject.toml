@@ -1,0 +1,50 @@
+[build-system]
+requires = ["setuptools>=42", "wheel", "requests"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "act"
+version = "1.0.11"
+requires-python = ">=3.6"
+dependencies = [
+    "requests",
+    "adbutils",
+    "blinker==1.9.0",
+    "certifi==2025.4.26",
+    "charset-normalizer==3.4.2",
+    "click==8.2.0",
+    "decorator==5.2.1",
+    "deprecation==2.1.0",
+    "Flask==3.1.0",
+    "flask-cors==5.0.1",
+    "idna==3.10",
+    "itsdangerous==2.2.0",
+    "Jinja2==3.1.6",
+    "loguru==0.7.3",
+    "lxml==5.4.0",
+    "MarkupSafe==3.0.2",
+    "numpy==2.2.5",
+    "opencv-python==4.11.0.86",
+    "packaging==25.0",
+    "pillow==11.2.1",
+    "requests==2.32.3",
+    "retry2==0.9.5",
+    "uiautomator2==3.2.10",
+    "urllib3==2.4.0",
+    "Werkzeug==3.1.3",
+    "typing_extensions",
+    "PyYAML",
+    "imagehash",
+    "pytesseract"
+]
+
+[project.scripts]
+# 这里可以添加您的命令行脚本（如果有的话）
+
+[tool.setuptools]
+packages = ["act"]  # 或者使用 find: 自动发现包
+# 或者使用 find_packages 的等效方式
+# packages = {find = {}}
+
+[tool.setuptools.cmdclass]
+#install = "act.install_utils.PostInstall"

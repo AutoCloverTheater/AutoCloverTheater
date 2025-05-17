@@ -1,9 +1,9 @@
 import os
 
-from src.facades.Emulator.Emulator import ConnectEmulator, UpdateSnapShot, GetSnapShot
+from act.facades.Emulator.Emulator import ConnectEmulator, UpdateSnapShot, GetSnapShot
 import pytesseract
 
-from src.facades.Logx.Logx import logx
+from act.facades.Logx.Logx import logx
 
 if __name__ == '__main__':
     ConnectEmulator()
