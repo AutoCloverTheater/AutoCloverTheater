@@ -43,6 +43,7 @@ FodyWeavers.xsd
 # Tools
 dist/
 *.log
+*.db
 
 env.yaml
 .benchmarks
