@@ -14,6 +14,7 @@ from act.facades.Emulator.mac.mumu import Mumu as MumuMac
 from act.facades.Emulator.win.mumu import Mumu as MumuWin
 from act.facades.Exceptions.HumanHandleException import HumanHandleException
 from act.facades.Logx.Logx import logx
+from act.install_utils import checkAdbutilsBinaries
 from act.runtime.runtime import IS_STOP
 
 # 可用的模拟器驱动
@@ -104,6 +105,7 @@ def ConnectEmulator() :
     """
     连接模拟器
     """
+    checkAdbutilsBinaries()
     return ActivityEmulator.ConnectDevice()
 
 

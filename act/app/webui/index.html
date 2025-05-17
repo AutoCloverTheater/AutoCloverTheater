@@ -276,6 +276,8 @@
                     <div>
                         <el-button style="margin: 0 10px" @click="configureItem(item)">设置</el-button>
                         <el-switch v-model="item.enabled"></el-switch>
+                        <el-button v-if="!item.enabled" style="margin: 0 10px" @click="startScript(item.script)">开始</el-button>
+                        <el-button v-if="item.enabled" style="margin: 0 10px" @click="stopScript(item.script)">停止</el-button>
                     </div>
 
                 </div>
@@ -320,11 +322,11 @@
                 schedule: true,
                 logging: false,
                 items: [
-                    { title: '素材', enabled: false },
-                    { title: '高难度素材', enabled: false },
-                    { title: '神秘矿产', enabled: false },
-                    { title: '世界树', enabled: false },
-                    { title: '遗迹探索', enabled: false }
+                    { title: '素材', enabled: false , script: 'collection'},
+                    { title: '高难度素材', enabled: false , script: 'collection_high'},
+                    { title: '神秘矿产', enabled: false , script: 'refinery'},
+                    { title: '世界树', enabled: false , script: 'worldTree'},
+                    { title: '遗迹探索', enabled: false , script: 'relic'}
                 ],
                 settings: {
                     account: '',
@@ -347,11 +349,57 @@
                 // 这里可以添加保存设置的逻辑
                 console.log('Saving settings:', this.settings);
             },
+            startScript(script){
+                this.startLogging()
+                this.items.forEach(item => {
+                    if (item.script === script) {
+                        item.enabled = true
+                    }
+                })
+                fetch(`http://127.0.0.1:8233/api/startRun`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        script: script
+                    })
+                }).then(response => response.json())
+                    .then(data => {
+                        console.log('Script started:', data);
+                    })
+                    .catch(error => {
+                        console.error('Error starting script:', error);
+                    })
+            },
+            stopScript(script){
+                this.items.forEach(item => {
+                    if (item.script === script) {
+                        item.enabled = false
+                    }
+                })
+
+                fetch(`http://127.0.0.1:8233/api/stopRun`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        script: script
+                    })
+                }).then(response => response.json())
+                    .then(data => {
+                        console.log('Script started:', data);
+                    })
+                    .catch(error => {
+                        console.error('Error starting script:', error);
+                    })
+            },
             startLogging() {
                 this.logging = !this.logging;
-                this.schedule = !this.schedule;
+                // this.schedule = !this.schedule;
                 // 这里使用SSE连接后端API
-                const eventSource = new EventSource('http://0.0.0.0:8233/sse');
+                const eventSource = new EventSource('http://127.0.0.1:8233/sse');
                 eventSource.onmessage = (event) => {
                     this.logMessages.push(event.data);
                     // 自动滚动到底部

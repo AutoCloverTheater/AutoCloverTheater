@@ -5,7 +5,7 @@ from act.facades.Runner.layout.AdventureRunner import FindAdventure
 from act.facades.Runner.layout.Back import backMain
 from act.facades.Runner.layout.LoginRunner import Login
 
-if __name__ == '__main__':
+def run():
     ConnectEmulator()
 
     Login()
@@ -16,3 +16,6 @@ if __name__ == '__main__':
         inTopLeverItemCollection()
 
     backMain()
+
+if __name__ == '__main__':
+    run()

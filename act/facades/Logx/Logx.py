@@ -37,8 +37,9 @@ def setup_logger():
     logger.add(sseOutPut,format=custom_format,
                level=logging.INFO)
 
-setup_logger()
-logx = logger
+    return logger
+
+logx = setup_logger()
 
 # 示例使用
 if __name__ == "__main__":

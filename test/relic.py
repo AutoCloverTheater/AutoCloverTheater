@@ -4,14 +4,13 @@ from act.facades.Runner.RelicRunner import beforeRelic, inRelic
 from act.facades.Runner.layout.AdventureRunner import FindAdventure
 from act.facades.Runner.layout.LoginRunner import Login
 
-if __name__ == '__main__':
+
+def run():
     ConnectEmulator()
+    Login()
+    FindAdventure("hasRelicButton")
+    beforeRelic()
+    inRelic()
 
-    def run():
-        Login()
-        FindAdventure("hasRelicButton")
-        beforeRelic()
-        inRelic()
-
-    for i in range(10):
-        run()
+if __name__ == '__main__':
+    run()

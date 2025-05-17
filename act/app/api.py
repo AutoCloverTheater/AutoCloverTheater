@@ -1,29 +1,18 @@
+import multiprocessing
 import os.path
 import sys
-import threading
 import time
-from pathlib import Path
 from typing_extensions import deprecated
 
 from flask import request, Blueprint, Response, stream_with_context
 
-import act
 from act.config.app import get_config
 from act.facades.App.App import data_queue, send_event, clients_lock, clients, setExecuted
-from act.facades.Configs.Config import Config
-from act.facades.Constant.Constant import ROOT_PATH
-from act.facades.Emulator.Emulator import ActivityEmulator, ConnectEmulator
+from act.facades.Constant.Constant import ROOT_PATH, APP_PATH
+from act.facades.Emulator.Emulator import ActivityEmulator
 from act.facades.Env.Env import EnvDriver
 from act.facades.Logx.Logx import logx
-from act.facades.QueueSchedule.QueueSchedule import taskQueue
-from act.facades.Runner.ItemCollectionRunner import inTopLeverItemCollection, beforeTopLeverItemCollection
-from act.facades.Runner.RefineryRunner import BeforeRefinery, InRefinery
-from act.facades.Runner.WorldTreeRunner import BeforeInWorldTree, InWorldTree
-from act.facades.Runner.guildRunner import beforeInGuild, donate, getReward
-from act.facades.Runner.layout.AdventureRunner import FindAdventure
-from act.facades.Runner.layout.Back import backMain
-from act.facades.Runner.layout.LoginRunner import Login
-from act.runtime.runtime import IS_STOP
+from test import collection, refinery, worldTree
 
 
 def generate(client_id):
@@ -76,10 +65,18 @@ def trigger():
 
 @api_bp.route('/', methods=['GET'])
 def index():
-    file_path = Path("./src/app/webui/index.html")  # 替换为你的文件路径
+
+    file_path = APP_PATH.joinpath("webui/index.html")  # 替换为你的文件路径
 
     content = file_path.read_text(encoding="utf-8")  # 读取文本文件
     return content,200
+@api_bp.route('/new_page.css', methods=['GET'])
+def css():
+    file_path = APP_PATH.joinpath("webui/new_page.css")  # 替换为你的文件路径
+
+    content = file_path.read_text(encoding="utf-8")  # 读取文本文件
+
+    return Response(content, mimetype='text/css'),200
 
 @api_bp.route('/api/setting', methods=['GET'])
 def getBaseSetting():
@@ -239,42 +236,34 @@ def stopEmulatorReq():
         "msg":"success"
     }
 
+process = {
+}
+
 @api_bp.route('/api/startRun', methods=['POST'])
 def startRun():
     """
     开始任务
     :return:
     """
-    # 1 读取配置开始编排任务
-    # - 高难度每日
-    # - 矿厂每日
-    # - 世界树
-    taskQueue.push(ConnectEmulator)
-    taskQueue.push(Login)
-    if Config("app.itemCollectionTopLever.switch"):
-        for i in range(4):
-            taskQueue.push(FindAdventure, "hasItemsCollectionButton")
-            taskQueue.push(beforeTopLeverItemCollection)
-            taskQueue.push(inTopLeverItemCollection)
-        taskQueue.push(backMain)
-    if Config("app.refinery.switch"):
-        taskQueue.push(BeforeRefinery)
-        taskQueue.push(InRefinery)
-        taskQueue.push(backMain)
-    if Config("app.refinery.switch"):
-        taskQueue.push(beforeInGuild)
-        taskQueue.push(donate)
-        taskQueue.push(getReward)
-        taskQueue.push(backMain)
-    if Config("app.worldTree.switch"):
-        taskQueue.push(FindAdventure, "hasWorldTreeButton")
-        taskQueue.push(BeforeInWorldTree)
-        taskQueue.push(InWorldTree)
+    request_data = request.get_json()
+    global process
 
-    # if Config("app.relic.switch"):
-    if act.runtime.runtime.TASK_THREAD is None:
-        act.runtime.runtime.TASK_THREAD = threading.Thread(target=taskQueue.run, daemon=True)
-        act.runtime.runtime.TASK_THREAD.start()
+    p = {
+        'collection': multiprocessing.Process(target=collection.run),
+        'refinery': multiprocessing.Process(target=refinery.run),
+        'worldTree': multiprocessing.Process(target=worldTree.run),
+        'collectionTop': multiprocessing.Process(target=collection.run),
+    }
+
+    if request_data['script'] not in p:
+        return {
+            "code":400400,
+            "msg":"script not found"
+        },400
+
+    process[request_data['script']] = p[request_data['script']]
+    a_process = process.get(request_data['script'])
+    a_process.start()
 
     return {
         "code":0,
@@ -287,16 +276,20 @@ def stopRun():
     停止任务
     :return:
     """
-    # 1 读取配置开始编排任务
-    # - 高难度每日
-    # - 矿厂每日
-    # - 世界树
-    def stop():
-        act.runtime.runtime.IS_STOP = True
-        taskQueue.clear()
-        logx.warning("任务已停止")
+    global process
+    request_data = request.get_json()
+    if request_data["script"] not in process:
+        return {
+            "code":400400,
+            "msg":"script not found"
+        },400
 
-    threading.Thread(target=stop).start()
+    a_process = process.get(request_data["script"])
+    if a_process is not None:
+        a_process.terminate()  # 终止进程
+        logx.info(f'Stopped {request_data["script"]}')
+    else:
+        logx.info(f'{request_data["script"]} is not running')
 
     return {
         "code":0,

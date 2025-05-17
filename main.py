@@ -8,4 +8,4 @@ logging.getLogger("werkzeug").setLevel(logging.ERROR)
 port = 8233
 
 if __name__ == '__main__':
-    app.run(port=port, threaded=True)
+    app.run(port=port, threaded=True, debug=True)

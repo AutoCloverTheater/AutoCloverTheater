@@ -4,9 +4,12 @@ from act.facades.Runner.RefineryRunner import BeforeRefinery, InRefinery
 from act.facades.Runner.layout.Back import backMain
 from act.facades.Runner.layout.LoginRunner import Login
 
-if __name__ == '__main__':
+def run():
     ConnectEmulator()
     Login()
     BeforeRefinery()
     InRefinery()
     backMain()
+
+if __name__ == '__main__':
+    run()

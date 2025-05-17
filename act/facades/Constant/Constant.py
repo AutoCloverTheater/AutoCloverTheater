@@ -1,8 +1,8 @@
 from act import ROOT
 
 ROOT_PATH = ROOT
-APP_PATH = ROOT_PATH.joinpath("src/app")
-CONFIG_PATH = ROOT_PATH.joinpath("src/config")
+APP_PATH = ROOT_PATH.joinpath("act/app")
+CONFIG_PATH = ROOT_PATH.joinpath("act/config")
 RUNTIME_PATH = ROOT_PATH.joinpath("runtime")
 IMG_PATH = ROOT_PATH.joinpath("img")
 
