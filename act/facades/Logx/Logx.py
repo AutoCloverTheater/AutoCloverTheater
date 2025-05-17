@@ -7,6 +7,7 @@ from loguru import logger
 
 from act.facades.App.App import sseOutPut
 from act.facades.Constant.Constant import RUNTIME_PATH
+from act.facades.sqlite.logs import LogsModel
 
 
 # 自定义日志格式和颜色
@@ -34,10 +35,13 @@ def setup_logger():
     logger.add(sys.stdout,format=custom_format,
                level=logging.DEBUG)
 
-    logger.add(sseOutPut,format=custom_format,
+    logger.add(insertLog,format=custom_format,
                level=logging.INFO)
 
     return logger
+
+def insertLog(message):
+    LogsModel.add_log("info", message)
 
 logx = setup_logger()
 
