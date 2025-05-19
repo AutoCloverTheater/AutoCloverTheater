@@ -302,13 +302,13 @@
                 <el-input v-model="settings.account"></el-input>
             </el-form-item>
             <el-form-item label="密码">
-                <el-input v-model="settings.password" type="password"></el-input>
+                <el-input show-password v-model="settings.password" type="password"></el-input>
             </el-form-item>
             <el-form-item label="IP地址">
-                <el-input v-model="settings.ipAddress"></el-input>
+                <el-input v-model="settings.addr"></el-input>
             </el-form-item>
             <el-form-item label="端口">
-                <el-input v-model.number="settings.port" type="number"></el-input>
+                <el-input v-model.number="settings.serial" type="number"></el-input>
             </el-form-item>
 
             <!-- 按钮组 -->
@@ -326,7 +326,7 @@
                 <el-input
                         id="times"
                         type="number"
-                        v-model.number="items[0].limit"
+                        v-model.number="settings.itemCollection.limit"
                         min="1"
                         class="form-input"
                         @keydown=""></el-input>
@@ -334,7 +334,7 @@
 
             <!-- 地图选择 -->
             <el-form-item label="地图">
-                <el-select id="map" v-model="items[0].map" class="form-select" placeholder="请选择地图">
+                <el-select id="map" v-model="settings.itemCollection.map" class="form-select" placeholder="请选择地图">
                     <el-option v-for="(map, index) in items[0].mapItem" :key="index" :value="map">
                         {{ map }}
                     </el-option>
@@ -354,7 +354,7 @@
 
             <!-- 地图选择 -->
             <el-form-item label="地图">
-                <el-select id="map" v-model="items[1].map" class="form-select" placeholder="请选择地图">
+                <el-select id="map" v-model="settings.itemCollectionTopLever.lever" class="form-select" placeholder="请选择地图">
                     <el-option v-for="(map, index) in items[1].mapItem" :key="index" :value="map">
                         {{ map }}
                     </el-option>
@@ -390,14 +390,14 @@
     <el-dialog v-model="items[4].settingWindow" title="遗迹探索" width="700">
         <el-form class="modal-content">
            <el-form-item label="难度">
-                <el-select id="map" v-model="items[4].lever" class="form-select" placeholder="请选择难度">
+                <el-select id="map" v-model="settings.relic.lever" class="form-select" placeholder="请选择难度">
                     <el-option v-for="(map, index) in items[4].leverItem" :key="index" :value="map">
                         {{ map }}
                     </el-option>
                 </el-select>
             </el-form-item>
            <el-form-item label="地图">
-                <el-select id="map" v-model="items[4].map" class="form-select" placeholder="请选择地图">
+                <el-select id="map" v-model="settings.relic.map" class="form-select" placeholder="请选择地图">
                     <el-option v-for="(map, index) in items[4].mapItem" :key="index" :value="map">
                         {{ map }}
                     </el-option>
@@ -438,8 +438,22 @@
                 settings: {
                     account: '',
                     password: '',
-                    ipAddress: '',
-                    port: null
+                    addr: '',
+                    serial: '',
+                    itemCollection: {
+                        limit: 0,
+                        map: ""
+                     },
+                    itemCollectionTopLever:{
+                        lever: "",
+                     },
+                    relic:{
+                        lever:"",
+                        map:""
+                    },
+                    worldTree:{
+                        lever:"",
+                    }
                 },
                 logMessages: []
             };
@@ -521,8 +535,21 @@
                     console.error('EventSource failed:', error);
                 };
             },
+            getConfig(){
+              fetch('http://127.0.0.1:8233/api/setting', {method:'GET'}).then(response => response.json()).then((data)=>{
+                  this.settings.addr = data.addr
+                  this.settings.account = data.account
+                  this.settings.password = data.password
+                  this.settings.serial = data.serial
+                  this.settings = data
+                  console.log(data)
+              }).catch(()=>{
+
+              })
+            },
         },
         created(){
+            this.getConfig()
             this.startLogging()
         }
     });
