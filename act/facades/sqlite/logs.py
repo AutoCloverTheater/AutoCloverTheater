@@ -20,6 +20,7 @@ class LogModel:
                            (id INTEGER PRIMARY KEY AUTOINCREMENT,
                             level TEXT NOT NULL,
                             info TEXT NOT NULL,
+                            is_read INT DEFAULT 0,
                             created_at DATETIME DEFAULT CURRENT_TIMESTAMP
                            )
                            ''')
@@ -54,7 +55,7 @@ class LogModel:
             cursor.execute('''
                            SELECT id, level, info, created_at
                            FROM logs
-                           WHERE id = ?
+                           WHERE id = ? AND is_read = 0
                            ''', (log_id,))
             row = cursor.fetchone()
             return dict(row) if row else None
@@ -75,37 +76,15 @@ class LogModel:
             cursor.execute(query)
             return [dict(row) for row in cursor.fetchall()]
 
-    def update_log(self, log_id: int, level: Optional[str] = None, info: Optional[str] = None) -> bool:
+    def update_log(self) -> bool:
         """更新日志记录
         Args:
-            log_id: 要更新的日志ID
-            level: 新的日志级别（可选）
-            info: 新的日志信息（可选）
         Returns:
             是否成功更新
         """
-        updates = []
-        params = []
-
-        if level is not None:
-            updates.append("level = ?")
-            params.append(level)
-        if info is not None:
-            updates.append("info = ?")
-            params.append(info)
-
-        if not updates:
-            return False
-
-        params.append(log_id)
-
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.cursor()
-            cursor.execute(f'''
-                UPDATE logs 
-                SET {', '.join(updates)}
-                WHERE id = ?
-            ''', params)
+            cursor.execute(f'''UPDATE logs SET is_read = 1 WHERE id > 0''')
             conn.commit()
             return cursor.rowcount > 0
     def getLastestLogs(self, offset: int = 0,limit: int = 10):
@@ -116,7 +95,7 @@ class LogModel:
         params = []
         params.append(offset)
         params.append(limit)
-        query = '''SELECT * FROM logs WHERE id > ? ORDER BY id DESC LIMIT ? '''
+        query = '''SELECT * FROM logs WHERE id > ? AND is_read = 0 ORDER BY id DESC LIMIT ? '''
         with sqlite3.connect(self.db_path) as conn:
             conn.row_factory = sqlite3.Row
             cursor = conn.cursor()

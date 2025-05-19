@@ -92,6 +92,11 @@ def _findNextNode():
 
         # 视角复位
         UpdateSnapShot()
+        resp, ok = relic.findBoss()
+        if ok:
+            Click(resp['pot'], 2)
+            time.sleep(2)
+            break
         resp, ok = relic.location()
         if ok:
             Click(resp['pot'])
@@ -107,6 +112,11 @@ def _findNextNode():
         for i in range(6):
             Swipe(point[0], point[1])
             UpdateSnapShot()
+            resp, ok = relic.findBoss()
+            if ok:
+                Click(resp['pot'], 2)
+                time.sleep(2)
+                break
             # 在遗迹内
             _, inGame = relic.isInRelicGame()
             if not inGame:

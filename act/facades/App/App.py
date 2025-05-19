@@ -22,12 +22,13 @@ def setExecuted(value):
     return timer_executed
 
 def startSseData():
+    LogsModel.update_log()
     # 创建一个线程，用于定时取数据
     offset = 0
     while True:
-        raw = LogsModel.getLastestLogs(offset, 10)
+        raw = LogsModel.getLastestLogs(offset, 30)
         if len(raw) >0:
             offset = raw[0]['id']
         for item in raw:
-            data_queue.append(item)
+            data_queue.append(item['info'])
         time.sleep(1)

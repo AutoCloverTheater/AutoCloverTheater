@@ -12,7 +12,7 @@ from act.facades.Constant.Constant import ROOT_PATH, APP_PATH
 from act.facades.Emulator.Emulator import ActivityEmulator
 from act.facades.Env.Env import EnvDriver
 from act.facades.Logx.Logx import logx
-from test import collection, refinery, worldTree
+from test import collection, refinery, worldTree, relic
 
 
 def generate(client_id):
@@ -88,6 +88,12 @@ def getBaseSetting():
     config['platform'] = sys.platform
 
     payload = {
+        "collection":{
+            "map":[
+                "晶币",
+                "技能",
+            ],
+        },
         "itemCollectionTopLever": {  # 高难度每日，打完为止
             "payload": [
                 {
@@ -171,6 +177,7 @@ def startRun():
         'refinery': multiprocessing.Process(target=refinery.run),
         'worldTree': multiprocessing.Process(target=worldTree.run),
         'collectionTop': multiprocessing.Process(target=collection.run),
+        'relic': multiprocessing.Process(target=relic.run),
     }
 
     if request_data['script'] not in p:

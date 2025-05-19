@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>四叶草🍀小助手</title>
     <link rel="icon" href="https://static.jianniang.com/clover1/pc/images/p1/favicon.ico" type="image/x-icon">
-<!--    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>-->
+    <!--    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>-->
     <script src="https://unpkg.com/vue@3"></script>
     <!-- import CSS -->
     <link rel="stylesheet" href="https://unpkg.com/element-plus/dist/index.css">
@@ -12,7 +12,7 @@
     <script src="https://unpkg.com/element-plus"></script>
     <!-- 引入新页面样式 -->
     <link rel="stylesheet" href="new_page.css">
-<!--    弹出消息样式-->
+    <!--    弹出消息样式-->
     <style>
         /* 消息容器样式 */
         .message-container {
@@ -33,7 +33,7 @@
             align-items: flex-start;
             padding: 15px 20px;
             border-radius: 6px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
             background: white;
             transition: all 0.3s ease;
             min-width: 280px;
@@ -117,7 +117,7 @@
             position: absolute;
         }
     </style>
-<!--    主页面样式-->
+    <!--    主页面样式-->
     <style>
         body {
             margin: 0;
@@ -128,33 +128,35 @@
             font-family: Arial, sans-serif;
             box-sizing: border-box; /* 包含内边距的计算 */
         }
-    @media screen and (min-width: 1120px) {
-        body {
-            margin: 0;
-            min-width: 1000px;
-            justify-content: center;
-            align-items: center;
-            padding: 0 200px;
-            background-color: #f0f2f5;
-            font-family: Arial, sans-serif;
-            box-sizing: border-box; /* 包含内边距的计算 */
+
+        @media screen and (min-width: 1120px) {
+            body {
+                margin: 0;
+                min-width: 1000px;
+                justify-content: center;
+                align-items: center;
+                padding: 0 200px;
+                background-color: #f0f2f5;
+                font-family: Arial, sans-serif;
+                box-sizing: border-box; /* 包含内边距的计算 */
+            }
         }
-    }
 
 
         .container {
             background: white;
             border-radius: 8px;
             height: 100vh;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             display: flex;
         }
 
         #left-panel {
-            flex: 0 0 25%;     /* 不放大不缩小，固定45% */
+            flex: 0 0 25%; /* 不放大不缩小，固定45% */
             padding: 20px;
             border-right: 1px solid #e8e8e8;
             overflow-y: auto;
+            max-width: 270px;
         }
 
         .config-section {
@@ -185,23 +187,27 @@
         }
 
         .text-debug {
-          color: #2196f3; /* 蓝色 */
-        }
-        .text-info {
-            color: #00ff00;/* 绿色 */
-        }
-        .text-warning {
-          color: #ff9800; /* 橙色 */
-        }
-        .text-error {
-          color: #f44336; /* 红色 */
-        }
-        .text-critical {
-          color: #8b0000; /* 暗红色 */
-          font-weight: bold;
+            color: #2196f3; /* 蓝色 */
         }
 
-        #log-container div{
+        .text-info {
+            color: #00ff00; /* 绿色 */
+        }
+
+        .text-warning {
+            color: #ff9800; /* 橙色 */
+        }
+
+        .text-error {
+            color: #f44336; /* 红色 */
+        }
+
+        .text-critical {
+            color: #8b0000; /* 暗红色 */
+            font-weight: bold;
+        }
+
+        #log-container div {
             padding: 3px;
         }
 
@@ -233,7 +239,8 @@
             font-size: 16px;
             line-height: 16px;
         }
-        .control-btn-sm-disable{
+
+        .control-btn-sm-disable {
             padding: 5px 5px;
             background: #333333;
             color: white;
@@ -262,11 +269,9 @@
 <div id="app">
     <div class="container">
         <div class="left-panel">
-            <div class="avatar">
-                <img src="https://static.jianniang.com/clover1/pc/images/p1/favicon.ico" alt="网站头像">
-            </div>
-            <div  style="display: flex;align-content: center">
-                 <el-button style="margin: 0 auto" @click="toggleSettings">设置</el-button>
+            <div style="display: flex;align-content: center;flex-direction: column">
+                <el-image src="https://static.jianniang.com/clover1/pc/images/pre-9/logo.png"></el-image>
+                <el-button style="margin: 0 auto" @click="toggleSettings">基本设置</el-button>
             </div>
         </div>
         <div class="right-panel">
@@ -274,37 +279,16 @@
                 <div v-for="item in items" :key="item.title" class="item">
                     <h3>{{ item.title }}</h3>
                     <div>
-                        <el-button style="margin: 0 10px" @click="configureItem(item)">设置</el-button>
-                        <el-switch v-model="item.enabled"></el-switch>
-                        <el-button v-if="!item.enabled" style="margin: 0 10px" @click="startScript(item.script)">开始</el-button>
-                        <el-button v-if="item.enabled" style="margin: 0 10px" @click="stopScript(item.script)">停止</el-button>
+                        <el-button v-if="item.enabledSetting" style="margin: 0 10px" @click="configureItem(item)">设置</el-button>
+                        <el-button v-if="!item.enabled" style="margin: 0 10px" @click="startScript(item.script)">开始
+                        </el-button>
+                        <el-button v-if="item.enabled" style="margin: 0 10px" @click="stopScript(item.script)">停止
+                        </el-button>
                     </div>
 
                 </div>
             </template>
-            <template v-if="showSettings">
-                <div class="settings-form">
-                    <el-form label-position="top">
-                        <el-form-item label="账号">
-                            <el-input v-model="settings.account"></el-input>
-                        </el-form-item>
-                        <el-form-item label="密码">
-                            <el-input v-model="settings.password" type="password"></el-input>
-                        </el-form-item>
-                        <el-form-item label="IP地址">
-                            <el-input v-model="settings.ipAddress"></el-input>
-                        </el-form-item>
-                        <el-form-item label="端口">
-                            <el-input v-model.number="settings.port" type="number"></el-input>
-                        </el-form-item>
-                    </el-form>
-                </div>
-            </template>
-            <div class="controls">
-                <el-button @click="saveSettings">保存</el-button>
-                <el-button @click="startLogging" type="primary">开始</el-button>
-            </div>
-            <div v-if="logging" class="log-output">
+            <div class="log-output">
                 <h3>日志输出</h3>
                 <div class="log-messages">
                     <p v-for="(message, index) in logMessages" :key="index">{{ message }}</p>
@@ -312,9 +296,123 @@
             </div>
         </div>
     </div>
+    <el-dialog v-model="showSettings" title="基本设置" width="700">
+        <el-form label-width="auto">
+            <el-form-item label="账号">
+                <el-input v-model="settings.account"></el-input>
+            </el-form-item>
+            <el-form-item label="密码">
+                <el-input v-model="settings.password" type="password"></el-input>
+            </el-form-item>
+            <el-form-item label="IP地址">
+                <el-input v-model="settings.ipAddress"></el-input>
+            </el-form-item>
+            <el-form-item label="端口">
+                <el-input v-model.number="settings.port" type="number"></el-input>
+            </el-form-item>
+
+            <!-- 按钮组 -->
+            <div class="button-group">
+                <el-button @click="saveSettings" type="primary">保存</el-button>
+            </div>
+        </el-form>
+    </el-dialog>
+
+    <!--设置弹窗-->
+    <el-dialog v-model="items[0].settingWindow" title="素材" width="700">
+        <el-form class="modal-content">
+            <!-- 次数输入 -->
+            <el-form-item label="次数">
+                <el-input
+                        id="times"
+                        type="number"
+                        v-model.number="items[0].limit"
+                        min="1"
+                        class="form-input"
+                        @keydown=""></el-input>
+            </el-form-item>
+
+            <!-- 地图选择 -->
+            <el-form-item label="地图">
+                <el-select id="map" v-model="items[0].map" class="form-select" placeholder="请选择地图">
+                    <el-option v-for="(map, index) in items[0].mapItem" :key="index" :value="map">
+                        {{ map }}
+                    </el-option>
+                </el-select>
+            </el-form-item>
+
+
+            <!-- 按钮组 -->
+            <div class="button-group">
+                <el-button @click="saveSettings" type="primary">保存</el-button>
+            </div>
+        </el-form>
+    </el-dialog>
+
+    <el-dialog v-model="items[1].settingWindow" title="高级素材" width="700">
+        <el-form class="modal-content">
+
+            <!-- 地图选择 -->
+            <el-form-item label="地图">
+                <el-select id="map" v-model="items[1].map" class="form-select" placeholder="请选择地图">
+                    <el-option v-for="(map, index) in items[1].mapItem" :key="index" :value="map">
+                        {{ map }}
+                    </el-option>
+                </el-select>
+            </el-form-item>
+
+
+            <!-- 按钮组 -->
+            <div class="button-group">
+                <el-button @click="saveSettings" type="primary">保存</el-button>
+            </div>
+        </el-form>
+    </el-dialog>
+
+    <el-dialog v-model="items[2].settingWindow" title="神秘矿厂" width="700">
+        <el-form class="modal-content">
+            <!-- 按钮组 -->
+            <div class="button-group">
+                <el-button @click="saveSettings" type="primary">保存</el-button>
+            </div>
+        </el-form>
+    </el-dialog>
+
+    <el-dialog v-model="items[3].settingWindow" title="世界树" width="700">
+        <el-form class="modal-content">
+            <!-- 按钮组 -->
+            <div class="button-group">
+                <el-button @click="saveSettings" type="primary">保存</el-button>
+            </div>
+        </el-form>
+    </el-dialog>
+
+    <el-dialog v-model="items[4].settingWindow" title="遗迹探索" width="700">
+        <el-form class="modal-content">
+           <el-form-item label="难度">
+                <el-select id="map" v-model="items[4].lever" class="form-select" placeholder="请选择难度">
+                    <el-option v-for="(map, index) in items[4].leverItem" :key="index" :value="map">
+                        {{ map }}
+                    </el-option>
+                </el-select>
+            </el-form-item>
+           <el-form-item label="地图">
+                <el-select id="map" v-model="items[4].map" class="form-select" placeholder="请选择地图">
+                    <el-option v-for="(map, index) in items[4].mapItem" :key="index" :value="map">
+                        {{ map }}
+                    </el-option>
+                </el-select>
+            </el-form-item>
+            <!-- 按钮组 -->
+            <div class="button-group">
+                <el-button @click="saveSettings" type="primary">保存</el-button>
+            </div>
+        </el-form>
+    </el-dialog>
 </div>
+
 <script>
-    const { createApp } = Vue;
+    const {createApp} = Vue;
     const app = createApp({
         data() {
             return {
@@ -322,11 +420,20 @@
                 schedule: true,
                 logging: false,
                 items: [
-                    { title: '素材', enabled: false , script: 'collection'},
-                    { title: '高难度素材', enabled: false , script: 'collection_high'},
-                    { title: '神秘矿产', enabled: false , script: 'refinery'},
-                    { title: '世界树', enabled: false , script: 'worldTree'},
-                    { title: '遗迹探索', enabled: false , script: 'relic'}
+                    {
+                        title: '素材',
+                        enabled: false,
+                        script: 'collection',
+                        settingWindow: false,
+                        mapItem: ["晶币", "技能"],
+                        map: "",
+                        limit: 0,
+                        enabledSetting:true,
+                    },
+                    {title: '高难度素材', enabled: false, script: 'collection_high', settingWindow: false, mapItem: ["绝境战I", "绝境战II", "绝境战III", "绝境战IV"], map: "", enabledSetting:true},
+                    {title: '神秘矿厂', enabled: false, script: 'refinery', settingWindow: false, enabledSetting: false},
+                    {title: '世界树', enabled: false, script: 'worldTree', settingWindow: false, enabledSetting: false},
+                    {title: '遗迹探索', enabled: false, script: 'relic', settingWindow: false, leverItem: ["普通难度", "噩梦难度"],  map: "", mapItem: ["沙漠星城", "热沙寒落"], lever: "",enabledSetting:true},
                 ],
                 settings: {
                     account: '',
@@ -344,19 +451,19 @@
             configureItem(item) {
                 // 这里可以添加具体的配置逻辑
                 console.log('Configuring item:', item);
+                item.settingWindow = !item.settingWindow
             },
             saveSettings() {
                 // 这里可以添加保存设置的逻辑
                 console.log('Saving settings:', this.settings);
             },
-            startScript(script){
-                this.startLogging()
+            startScript(script) {
                 this.items.forEach(item => {
                     if (item.script === script) {
                         item.enabled = true
                     }
                 })
-                fetch(`http://127.0.0.1:8233/api/startRun`, {
+                fetch('http://127.0.0.1:8233/api/startRun', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -372,14 +479,14 @@
                         console.error('Error starting script:', error);
                     })
             },
-            stopScript(script){
+            stopScript(script) {
                 this.items.forEach(item => {
                     if (item.script === script) {
                         item.enabled = false
                     }
                 })
 
-                fetch(`http://127.0.0.1:8233/api/stopRun`, {
+                fetch('http://127.0.0.1:8233/api/stopRun', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -413,7 +520,10 @@
                 eventSource.onerror = (error) => {
                     console.error('EventSource failed:', error);
                 };
-            }
+            },
+        },
+        created(){
+            this.startLogging()
         }
     });
     app.use(ElementPlus);
