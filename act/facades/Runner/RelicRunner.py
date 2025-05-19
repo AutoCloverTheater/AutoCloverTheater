@@ -226,10 +226,10 @@ def inRelic():
         if ok:
             need = beforeClickSelect()
             logx.info(f"所需 {need}, 拥有 {TearCrystal}")
-            if need > TearCrystal:
-                Click((969 + 25, 322 + 12))
+            if (need > TearCrystal) and (len(hasSelectButton['pot']) > 1):
+                Click(hasSelectButton['pot'][1])
             else:
-                Click(hasSelectButton['pot'])
+                Click(hasSelectButton['pot'][0])
             times = 0
             continue
         # 击杀boss了
@@ -250,6 +250,11 @@ def inRelic():
         if ok and inGame:
             TearCrystal = beforeClickEventPoint()
             Click(resp['pot'][0], 2)
+            times = 0
+            continue
+        resp, ok = relic.findBoss()
+        if ok:
+            Click(resp['pot'], 2)
             times = 0
             continue
         # 没有找到探索点，开始寻找下一个探索点

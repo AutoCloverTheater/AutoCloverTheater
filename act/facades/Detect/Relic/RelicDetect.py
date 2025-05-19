@@ -131,7 +131,7 @@ class RelicDetect:
             [928,311,133,51],# 第二个选择
         ]
 
-        pot = ()
+        pots = []
         ok = False
         for k, roi in enumerate(rois):
             path = IMG_PATH.joinpath("main/relic/select.png")
@@ -139,10 +139,10 @@ class RelicDetect:
             pot,ok = imgSearchArea(GetSnapShot(), img, roi)
             if ok :
                 logx.info(f"选择按钮{k}")
-                pot = (int(roi[0] + roi[2] / 2),int(roi[1]+ roi[3] / 2))
-                break
+                p = (int(roi[0] + roi[2] / 2),int(roi[1]+ roi[3] / 2))
+                pots.append(p)
 
-        return {"name": "选择", "pot": pot}, ok
+        return {"name": "选择", "pot": pots}, len(pots) > 0
 
     def pointNotEnough(self):
         """
@@ -273,6 +273,19 @@ class RelicDetect:
         ok = imgFindByColor(img, "281e96", 0.6)
 
         return {"name": "击杀过boss了", "pot": pot}, ok
+
+    @matchResult
+    def findBoss(self):
+        """
+        找到boss
+        :return:
+        """
+        img = MyImread(IMG_PATH.joinpath("Main/relic/boss_0__542_304_49_20__492_254_149_120.png"))
+        ros, ok = imgSearchArea(GetSnapShot(), img, [0,0,1280,720])
+        pot = ()
+        if ok > 0:
+            pot = ros.pop()
+        return {"name": "找到boss", "pot": pot}, ok
 
     @matchResult
     def reLocation(self):

@@ -5,7 +5,6 @@ import time
 
 from loguru import logger
 
-from act.facades.App.App import sseOutPut
 from act.facades.Constant.Constant import RUNTIME_PATH
 from act.facades.sqlite.logs import LogsModel
 
