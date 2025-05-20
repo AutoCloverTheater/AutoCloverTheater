@@ -10,4 +10,6 @@ services:
         restart: "unless-stopped"
         # 特权模式
         privileged: true
-        network_mode: "host"
+        network_mode: bridge
+        ports:
+            - "8233:8233"
