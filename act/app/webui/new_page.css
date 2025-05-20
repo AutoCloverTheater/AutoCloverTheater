@@ -61,10 +61,10 @@
 }
 
 .log-messages {
-    max-height: 400px;
-    overflow-y: auto;
     border: 1px solid #ebeef5;
     padding: 10px;
     border-radius: 4px;
     background-color: white;
+    max-height: 318px;
+    overflow-y: auto;
 }

@@ -472,11 +472,7 @@
                 console.log('Saving settings:', this.settings);
             },
             startScript(script) {
-                this.items.forEach(item => {
-                    if (item.script === script) {
-                        item.enabled = true
-                    }
-                })
+                const that = this
                 fetch('http://127.0.0.1:8233/api/startRun', {
                     method: 'POST',
                     headers: {
@@ -487,6 +483,9 @@
                     })
                 }).then(response => response.json())
                     .then(data => {
+                        that.items.forEach(item => {
+                            item.enabled = item.script === script;
+                        })
                         console.log('Script started:', data);
                     })
                     .catch(error => {
@@ -494,12 +493,7 @@
                     })
             },
             stopScript(script) {
-                this.items.forEach(item => {
-                    if (item.script === script) {
-                        item.enabled = false
-                    }
-                })
-
+                const that = this
                 fetch('http://127.0.0.1:8233/api/stopRun', {
                     method: 'POST',
                     headers: {
@@ -510,7 +504,9 @@
                     })
                 }).then(response => response.json())
                     .then(data => {
-                        console.log('Script started:', data);
+                        that.items.forEach(item => {
+                            item.enabled = false
+                        })
                     })
                     .catch(error => {
                         console.error('Error starting script:', error);
@@ -518,7 +514,6 @@
             },
             startLogging() {
                 this.logging = !this.logging;
-                // this.schedule = !this.schedule;
                 // 这里使用SSE连接后端API
                 const eventSource = new EventSource('http://127.0.0.1:8233/sse');
                 eventSource.onmessage = (event) => {

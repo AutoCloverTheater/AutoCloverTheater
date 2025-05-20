@@ -1,15 +1,11 @@
 import multiprocessing
-import os.path
 import sys
-import time
-from typing_extensions import deprecated
 
 from flask import request, Blueprint, Response, stream_with_context
 
 from act.config.app import get_config
 from act.facades.App.App import data_queue, send_event, clients_lock, clients, setExecuted
 from act.facades.Constant.Constant import ROOT_PATH, APP_PATH
-from act.facades.Emulator.Emulator import ActivityEmulator
 from act.facades.Env.Env import EnvDriver
 from act.facades.Logx.Logx import logx
 from test import collection, refinery, worldTree, relic
@@ -160,8 +156,7 @@ def saveBaseSetting():
         "msg":"success",
     }
 
-process = {
-}
+process = None
 
 @api_bp.route('/api/startRun', methods=['POST'])
 def startRun():
@@ -186,9 +181,12 @@ def startRun():
             "msg":"script not found"
         },400
 
-    process[request_data['script']] = p[request_data['script']]
-    a_process = process.get(request_data['script'])
-    a_process.start()
+    if process is not None:
+        process.terminate()
+        logx.info(f'Stopped')
+
+    process = p[request_data['script']]
+    process.start()
 
     return {
         "code":0,
@@ -202,19 +200,12 @@ def stopRun():
     :return:
     """
     global process
-    request_data = request.get_json()
-    if request_data["script"] not in process:
-        return {
-            "code":400400,
-            "msg":"script not found"
-        },400
 
-    a_process = process.get(request_data["script"])
-    if a_process is not None:
-        a_process.terminate()  # 终止进程
-        logx.info(f'Stopped {request_data["script"]}')
+    if process is not None:
+        process.terminate()  # 终止进程
+        logx.info(f'Stopped')
     else:
-        logx.info(f'{request_data["script"]} is not running')
+        logx.info(f'not running')
 
     return {
         "code":0,
