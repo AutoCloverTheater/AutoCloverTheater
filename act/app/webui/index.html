@@ -279,7 +279,8 @@
                 <div v-for="item in items" :key="item.title" class="item">
                     <h3>{{ item.title }}</h3>
                     <div>
-                        <el-button v-if="item.enabledSetting" style="margin: 0 10px" @click="configureItem(item)">设置</el-button>
+                        <el-button v-if="item.enabledSetting" style="margin: 0 10px" @click="configureItem(item)">设置
+                        </el-button>
                         <el-button v-if="!item.enabled" style="margin: 0 10px" @click="startScript(item.script)">开始
                         </el-button>
                         <el-button v-if="item.enabled" style="margin: 0 10px" @click="stopScript(item.script)">停止
@@ -313,7 +314,7 @@
 
             <!-- 按钮组 -->
             <div class="button-group">
-                <el-button @click="saveSettings" type="primary">保存</el-button>
+                <el-button @click="saveSettings(showSettings)" type="primary">保存</el-button>
             </div>
         </el-form>
     </el-dialog>
@@ -354,7 +355,8 @@
 
             <!-- 地图选择 -->
             <el-form-item label="地图">
-                <el-select id="map" v-model="settings.itemCollectionTopLever.lever" class="form-select" placeholder="请选择地图">
+                <el-select id="map" v-model="settings.itemCollectionTopLever.lever" class="form-select"
+                           placeholder="请选择地图">
                     <el-option v-for="(map, index) in items[1].mapItem" :key="index" :value="map">
                         {{ map }}
                     </el-option>
@@ -373,7 +375,7 @@
         <el-form class="modal-content">
             <!-- 按钮组 -->
             <div class="button-group">
-                <el-button @click="saveSettings" type="primary">保存</el-button>
+                <el-button @click="saveSettings(items[2].settingWindow)" type="primary">保存</el-button>
             </div>
         </el-form>
     </el-dialog>
@@ -382,21 +384,21 @@
         <el-form class="modal-content">
             <!-- 按钮组 -->
             <div class="button-group">
-                <el-button @click="saveSettings" type="primary">保存</el-button>
+                <el-button @click="saveSettings(items[3].settingWindow)" type="primary">保存</el-button>
             </div>
         </el-form>
     </el-dialog>
 
     <el-dialog v-model="items[4].settingWindow" title="遗迹探索" width="700">
         <el-form class="modal-content">
-           <el-form-item label="难度">
+            <el-form-item label="难度">
                 <el-select id="map" v-model="settings.relic.lever" class="form-select" placeholder="请选择难度">
                     <el-option v-for="(map, index) in items[4].leverItem" :key="index" :value="map">
                         {{ map }}
                     </el-option>
                 </el-select>
             </el-form-item>
-           <el-form-item label="地图">
+            <el-form-item label="地图">
                 <el-select id="map" v-model="settings.relic.map" class="form-select" placeholder="请选择地图">
                     <el-option v-for="(map, index) in items[4].mapItem" :key="index" :value="map">
                         {{ map }}
@@ -405,7 +407,7 @@
             </el-form-item>
             <!-- 按钮组 -->
             <div class="button-group">
-                <el-button @click="saveSettings" type="primary">保存</el-button>
+                <el-button @click="saveSettings(items[4].settingWindow)" type="primary">保存</el-button>
             </div>
         </el-form>
     </el-dialog>
@@ -428,12 +430,36 @@
                         mapItem: ["晶币", "技能"],
                         map: "",
                         limit: 0,
-                        enabledSetting:true,
+                        enabledSetting: true,
                     },
-                    {title: '高难度素材', enabled: false, script: 'collection_high', settingWindow: false, mapItem: ["绝境战I", "绝境战II", "绝境战III", "绝境战IV"], map: "", enabledSetting:true},
-                    {title: '神秘矿厂', enabled: false, script: 'refinery', settingWindow: false, enabledSetting: false},
+                    {
+                        title: '高难度素材',
+                        enabled: false,
+                        script: 'collection_high',
+                        settingWindow: false,
+                        mapItem: ["绝境战I", "绝境战II", "绝境战III", "绝境战IV"],
+                        map: "",
+                        enabledSetting: true
+                    },
+                    {
+                        title: '神秘矿厂',
+                        enabled: false,
+                        script: 'refinery',
+                        settingWindow: false,
+                        enabledSetting: false
+                    },
                     {title: '世界树', enabled: false, script: 'worldTree', settingWindow: false, enabledSetting: false},
-                    {title: '遗迹探索', enabled: false, script: 'relic', settingWindow: false, leverItem: ["普通难度", "噩梦难度"],  map: "", mapItem: ["沙漠星城", "热沙寒落"], lever: "",enabledSetting:true},
+                    {
+                        title: '遗迹探索',
+                        enabled: false,
+                        script: 'relic',
+                        settingWindow: false,
+                        leverItem: ["普通难度", "噩梦难度"],
+                        map: "",
+                        mapItem: ["沙漠星城", "热沙寒落"],
+                        lever: "",
+                        enabledSetting: true
+                    },
                 ],
                 settings: {
                     account: '',
@@ -443,16 +469,16 @@
                     itemCollection: {
                         limit: 0,
                         map: ""
-                     },
-                    itemCollectionTopLever:{
-                        lever: "",
-                     },
-                    relic:{
-                        lever:"",
-                        map:""
                     },
-                    worldTree:{
-                        lever:"",
+                    itemCollectionTopLever: {
+                        lever: "",
+                    },
+                    relic: {
+                        lever: "",
+                        map: ""
+                    },
+                    worldTree: {
+                        lever: "",
                     }
                 },
                 logMessages: []
@@ -468,6 +494,7 @@
                 item.settingWindow = !item.settingWindow
             },
             saveSettings() {
+                const that = this
                 // 这里可以添加保存设置的逻辑
                 fetch('http://127.0.0.1:8233/api/setting', {
                     method: 'POST',
@@ -476,6 +503,14 @@
                     },
                     body: JSON.stringify(this.settings)
                 }).then(response => response.json()).then(data => {
+                    that.showSettings  = false
+                    that.items.forEach(item => {
+                        if (item.settingWindow) {
+                            item.settingWindow = false
+                        }
+                    })
+                    that.getConfig()
+
                     ElementPlus.ElMessage({
                         message: '保存成功',
                         type: 'success',
@@ -563,29 +598,29 @@
                 };
                 eventSource.onerror = (error) => {
                     ElmentPlus.ElMessage({
-                        message: '服务错误：'+error,
+                        message: '服务错误：' + error,
                         type: 'error',
                         plain: true,
                     })
                 };
             },
-            getConfig(){
-              fetch('http://127.0.0.1:8233/api/setting', {method:'GET'}).then(response => response.json()).then((data)=>{
-                  this.settings.addr = data.addr
-                  this.settings.account = data.account
-                  this.settings.password = data.password
-                  this.settings.serial = data.serial
-                  this.settings = data
-              }).catch((error)=>{
+            getConfig() {
+                fetch('http://127.0.0.1:8233/api/setting', {method: 'GET'}).then(response => response.json()).then((data) => {
+                    this.settings.addr = data.addr
+                    this.settings.account = data.account
+                    this.settings.password = data.password
+                    this.settings.serial = data.serial
+                    this.settings = data
+                }).catch((error) => {
                     ElmentPlus.ElMessage({
-                        message: '服务错误：'+error,
+                        message: '服务错误：' + error,
                         type: 'error',
                         plain: true,
                     })
-              })
+                })
             },
         },
-        created(){
+        created() {
             this.getConfig()
             this.startLogging()
         }

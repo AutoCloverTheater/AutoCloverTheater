@@ -5,7 +5,7 @@ from flask import request, Blueprint, Response, stream_with_context
 
 from act.config.app import get_config
 from act.facades.App.App import data_queue, send_event, clients_lock, clients, setExecuted
-from act.facades.Constant.Constant import ROOT_PATH, APP_PATH
+from act.facades.Constant.Constant import APP_PATH, ENV_PATH
 from act.facades.Env.Env import EnvDriver
 from act.facades.Logx.Logx import logx
 from test import collection, refinery, worldTree, relic
@@ -83,61 +83,6 @@ def getBaseSetting():
     config = get_config()
     config['platform'] = sys.platform
 
-    payload = {
-        "collection":{
-            "map":[
-                "晶币",
-                "技能",
-            ],
-        },
-        "itemCollectionTopLever": {  # 高难度每日，打完为止
-            "payload": [
-                {
-                    "label": "绝境战I",
-                    "value": "绝境战I"
-                }, {
-                    "label": "绝境战II",
-                    "value": "绝境战II"
-                }, {
-                    "label": "绝境战III",
-                    "value": "绝境战III"
-                }, {
-                    "label": "绝境战IV",
-                    "value": "绝境战IV"
-                }
-            ]
-        },
-        "relic": {
-            "leverPayload": [{
-                "label": "普通难度",
-                "value": "普通难度"
-            }, {
-                "label": "噩梦难度",
-                "value": "噩梦难度"
-            }],
-            "mapPayload": [
-                {
-                    "label": "沙漠星城",
-                    "value": "沙漠星城"
-                }, {
-                    "label": "热沙寒落",
-                    "value": "热沙寒落"
-                },
-            ]
-        },
-        "worldTree": {  # 世界树
-            "payload": [{
-                "label": "死境",
-                "value": "死境"
-            }]
-        }
-    }
-
-    config['itemCollectionTopLever']['payload'] = payload['itemCollectionTopLever']['payload']
-    config['relic']['leverPayload'] = payload['relic']['leverPayload']
-    config['relic']['mapPayload'] = payload['relic']['mapPayload']
-    config['worldTree']['payload'] = payload['worldTree']['payload']
-
     return config,200
 @api_bp.route('/api/setting', methods=['POST'])
 def saveBaseSetting():
@@ -146,11 +91,11 @@ def saveBaseSetting():
     :return:
     """
     data = request.get_json()
-    envx = EnvDriver().iniFromFile(ROOT_PATH.joinpath("env.yaml"))
+    envx = EnvDriver().iniFromFile(ENV_PATH)
 
     for key, value in data.items():
             envx.setValue(key.upper(), value)
-    envx.saveToFile(ROOT_PATH.joinpath("env.yaml"))
+    envx.saveToFile(ENV_PATH)
     return {
         "code":0,
         "msg":"success",

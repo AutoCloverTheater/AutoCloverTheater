@@ -1,6 +1,6 @@
 import yaml
 
-from act.facades.Constant.Constant import ROOT_PATH
+from act.facades.Constant.Constant import ROOT_PATH, ENV_PATH
 from act.facades.Logx.Logx import logx
 from act.facades.tool import create_env_if_not_exists
 
@@ -39,7 +39,7 @@ class EnvDriver:
         return key in self.data
 def Env(key: str, default=None):
     keyList = key.split(".")
-    obj = EnvDriver().iniFromFile(ROOT_PATH.joinpath("etc/env.yaml"))
+    obj = EnvDriver().iniFromFile(ENV_PATH)
     temp = obj.data
     for i in keyList:
         if i in temp :
