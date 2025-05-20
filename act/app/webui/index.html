@@ -411,7 +411,7 @@
     </el-dialog>
 </div>
 
-<script>
+<script setup>
     const {createApp} = Vue;
     const app = createApp({
         data() {
@@ -469,7 +469,25 @@
             },
             saveSettings() {
                 // 这里可以添加保存设置的逻辑
-                console.log('Saving settings:', this.settings);
+                fetch('http://127.0.0.1:8233/api/setting', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(this.settings)
+                }).then(response => response.json()).then(data => {
+                    ElementPlus.ElMessage({
+                        message: '保存成功',
+                        type: 'success',
+                        plain: true,
+                    })
+                }).catch(error => {
+                    ElementPlus.ElMessage({
+                        message: '保存失败',
+                        type: 'error',
+                        plain: true,
+                    })
+                })
             },
             startScript(script) {
                 const that = this
@@ -486,10 +504,18 @@
                         that.items.forEach(item => {
                             item.enabled = item.script === script;
                         })
-                        console.log('Script started:', data);
+                        ElmentPlus.ElMessage({
+                            message: '启动成功',
+                            type: 'success',
+                            plain: true,
+                        })
                     })
                     .catch(error => {
-                        console.error('Error starting script:', error);
+                        ElmentPlus.ElMessage({
+                            message: '启动失败',
+                            type: 'error',
+                            plain: true,
+                        })
                     })
             },
             stopScript(script) {
@@ -507,9 +533,18 @@
                         that.items.forEach(item => {
                             item.enabled = false
                         })
+                        ElmentPlus.ElMessage({
+                            message: '停止成功',
+                            type: 'success',
+                            plain: true,
+                        })
                     })
                     .catch(error => {
-                        console.error('Error starting script:', error);
+                        ElmentPlus.ElMessage({
+                            message: '停止失败',
+                            type: 'error',
+                            plain: true,
+                        })
                     })
             },
             startLogging() {
@@ -527,7 +562,11 @@
                     });
                 };
                 eventSource.onerror = (error) => {
-                    console.error('EventSource failed:', error);
+                    ElmentPlus.ElMessage({
+                        message: '服务错误：'+error,
+                        type: 'error',
+                        plain: true,
+                    })
                 };
             },
             getConfig(){
@@ -537,9 +576,12 @@
                   this.settings.password = data.password
                   this.settings.serial = data.serial
                   this.settings = data
-                  console.log(data)
-              }).catch(()=>{
-
+              }).catch((error)=>{
+                    ElmentPlus.ElMessage({
+                        message: '服务错误：'+error,
+                        type: 'error',
+                        plain: true,
+                    })
               })
             },
         },
