@@ -16,71 +16,15 @@
 ### 项目概述
 本项目是一个自动化脚本集合，旨在实现游戏内的多种自动化任务，如自动世界树、每日矿场、自动登录等。项目使用Python编写，并依赖于uiautomator2库与模拟器进行交互。
 
-### 目录说明
-```
-.
-├── README.md                             # 项目简介及使用指南
-├── LICENSE                               # 许可证
-├── env.yaml.example                      # 环境变量配置
-├── requirements.txt                      # 依赖项
-├── img                                   # 图片模板
-├── runtime                               # 运行时临时文件
-├── install.py                            # 打包配置
-├── main.py                               # 主程序入口
-├── src                                   # 项目主目录
-    ├── facades                           # 各类功能模块封装
-    │   ├── App                           # 主程序
-    │   ├── Configs                       # config驱动
-    │   ├── Constant                      # 常量定义
-    │   ├── Detect                        # 图像识别与检测
-    │   │   ├── Common                    # 常用检测逻辑
-    │   │   ├── Guild                     # 工会相关检测
-    │   │   ├── Items                     # 素材副本相关检测
-    │   │   ├── Refinery                  # 神秘矿厂相关检测
-    │   │   ├── Relic                     # 遗迹相关检测
-    │   │   └── WorldTree                 # 世界树相关检测
-    │   ├── Emulator                      # 模拟器驱动程序
-    │   ├── Env                           # 环境变量驱动
-    │   ├── Img                           # 图像处理工具
-    │   ├── Logx                          # 日志记录工具
-    │   ├── Ocr                           # OCR文字识别
-    │   ├── Runner                        # 任务执行器
-    │   │   └── core                      # 暂时没用到的函数
-    │   │   └── layout                    # 可通用的任务执行器
-    │   └── Tool                          # 辅助工具（主要是截取世界树卡组的图片）
-    │   └── Uiauto                        # uiautomator2测试
-    ├── configs                           # 配置项
-    └── app                               # 应用服务端代码
-        ├── api                           # API接口
-        └── webui                         # Web界面
-```
 
 ### 使用指引
-## 1. 直接使用发行版本
-🚀 一键下载 [![GitHub Release](https://img.shields.io/github/v/release/AutoCloverTheater/AutoCloverTheater)](https://github.com/AutoCloverTheater/AutoCloverTheater/releases)
+## 1. docker
+- 使用docker-compose运行docker镜像
 
-**运行程序**：
+**docker-compose**：
 ```bash
-   # 解压文件
-   unzip repository-source-*.zip -d clover-theater
-   
-   # 进入目录并运行
-   cd clover-theater && ./clover
+   docker-compose up -d
 ```
-## 2. 源码运行
-
-在运行本项目之前，请确保已安装以下依赖项：
-- python 3.10
-- git
-- pip（Python 包管理工具）
-
-#### 快捷方式:
-安装好python后直接运行 
-```bash
-  python install.py
-```
-安装程序帮你搞定
-
 #### 或者
 
 1. 克隆本仓库：
@@ -89,27 +33,21 @@
 ```
 2. 复制 `env.yaml.example` 文件并重命名为 `env.yaml`：
 ```bash
-  cd /yourpath/AutoCloverTheater
+  cd /yourpath/AutoCloverTheater/etc
   cp env.yaml.example env.yaml
 ```
 3. 安装 依赖项：
 ```bash
+  pip install -e .
   pip install -r requirements.txt
 ```
-4. 修改env.yaml中的参数
+4. 运行
 ```
-// 你的账号（可选），因为你游换设备登录会把旧设备踢下线，我经常换设备所以保留了输入账号密码。
-ACCOUNT:'your_account'
-// 你的密码（可选）
-PASSWORD:'your_password'
-// 模拟器路径类似
-EMULATORPATH:'/Applications/MuMuPlayer.app/Contents/MacOS'
-// 模拟器类型:mumu（目前仅在mumu上测试过
-EMULATORTYPE:'mumu'
-// 模拟器地址
-ADDR: '127.0.0.1'
-// 模拟器端口
-SERIAL: 5555
+python  main.py
+```
+5. 浏览器访问
+```angular2html
+http://127.0.0.1:8233/
 ```
 ### 已完成功能
 - 自动世界树

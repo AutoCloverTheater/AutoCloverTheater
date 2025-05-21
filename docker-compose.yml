@@ -1,9 +1,10 @@
 name: "autoclovertheater"
 services:
     act:
-        build:
-            context: .
-            dockerfile: Dockerfile
+        image: "alex78218/autoclovertheater"
+#        build:
+#            context: .
+#            dockerfile: Dockerfile
         container_name: "act"
         volumes:
             - ".:/app"
