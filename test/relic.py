@@ -6,11 +6,12 @@ from act.facades.Runner.layout.LoginRunner import Login
 
 
 def run():
-    ConnectEmulator()
-    Login()
-    FindAdventure("hasRelicButton")
-    beforeRelic()
-    inRelic()
+    while True:
+        ConnectEmulator()
+        Login()
+        FindAdventure("hasRelicButton")
+        beforeRelic()
+        inRelic()
 
 if __name__ == '__main__':
-    run()
+        run()
