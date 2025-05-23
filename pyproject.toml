@@ -23,7 +23,7 @@ dependencies = [
     "loguru==0.7.3",
     "lxml==5.4.0",
     "MarkupSafe==3.0.2",
-    "numpy==2.2.5",
+    "numpy",
     "opencv-python==4.11.0.86",
     "packaging==25.0",
     "pillow==11.2.1",
@@ -35,7 +35,8 @@ dependencies = [
     "typing_extensions",
     "PyYAML",
     "imagehash",
-    "pytesseract"
+    "pytesseract",
+    "paddlepaddle==3.0.0"
 ]
 
 [project.scripts]

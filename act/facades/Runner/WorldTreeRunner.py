@@ -2,7 +2,7 @@ import time
 
 from act.facades.Detect.Common.FlashBattleDetect import FlashBattleDetect
 from act.facades.Detect.WorldTree.WorldTreeDetect import WorldTreeDetect
-from act.facades.Emulator.Emulator import UpdateSnapShot, Click
+from act.facades.Emulator.Emulator import UpdateSnapShot, Click, Pipe
 from act.facades.Logx.Logx import logx
 from act.facades.Runner.core.Limit import error_function
 
@@ -90,6 +90,15 @@ def InWorldTree():
             break
         # 更新截图
         UpdateSnapShot()
+
+        # 世界树探索中，发现满级了就会退出
+        pipe = Pipe()
+        (pipe.waitThrough(worldTree.isLeverMaxInGame)
+         .waitAndClick(worldTree.hasExitBtn)
+         .waitAndClickThrough(worldTree.hasCnfExitBtn)
+         .waitThrough(worldTree.hasCnfExitBtnDia)
+         .waitAndClickThrough(worldTree.hasCnfExitBtnDiaCnf))
+
         # dewResp,ok = worldTree.canSeeDew()
         # if ok:
         #     # 更新露水数量
@@ -182,7 +191,7 @@ def InWorldTree():
             times = 0
             time.sleep(0.5)
         # 奇遇卡
-        BizarreCard, ok = worldTree.hasBizarreCard()
+        BizarreCard, ok = worldTree.hasBizarreCardV2()
         if ok:
             pot = BizarreCard.pop(offset)
             Click(pot['pot'])

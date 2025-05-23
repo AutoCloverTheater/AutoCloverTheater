@@ -12,10 +12,8 @@ from act.facades.Emulator.linux.mumu import Mumu as MumuLinux
 from act.facades.Emulator.mac.bluestacks import Bluestacks
 from act.facades.Emulator.mac.mumu import Mumu as MumuMac
 from act.facades.Emulator.win.mumu import Mumu as MumuWin
-from act.facades.Exceptions.HumanHandleException import HumanHandleException
 from act.facades.Logx.Logx import logx
 from act.install_utils import checkAdbutilsBinaries
-from act.runtime.runtime import IS_STOP
 
 # 可用的模拟器驱动
 UsefulEmulator = {
@@ -83,11 +81,6 @@ class Emulator:
         return self
 
     def updateSnapShop(self):
-        if IS_STOP :
-            logx.warning("用户手动接管")
-            raise HumanHandleException("用户手动接管")
-        else:
-            logx.debug("用户没有手动接管")
         with self.lock:
             self.snapshotCache = self.device.screenshot(format='opencv')
             return self.snapshotCache
@@ -160,6 +153,74 @@ def AppCurrent():
 def AppStart():
     ActivityEmulator.device.app_start(Config('app.appName'), wait=True)
 
+class Pipe:
+    def __init__(self) -> None:
+        self.breakCondition = False
+    def wait(self, fun, retry = 45):
+        if self.breakCondition:
+            return self
+
+        for i in range(retry):
+            UpdateSnapShot()
+            res, ok = fun()
+            if ok :
+                break
+            if i == retry - 1:
+                self.breakCondition = True
+
+        return self
+
+    def waitThrough(self, fun, retry = 45):
+        if self.breakCondition:
+            return self
+
+        for i in range(retry):
+            UpdateSnapShot()
+            res, ok = fun()
+            if ok :
+                break
+
+        return self
+
+    def waitAndClick(self, fun, retryFps = 45):
+        """
+        等待并且点击-调用中断
+        :param fun:
+        :param retryFps:
+        :return:
+        """
+        if self.breakCondition:
+            return self
+
+        for i in range(retryFps):
+            UpdateSnapShot()
+            res, ok = fun()
+            if ok :
+                Click(res['pot'])
+                break
+            if i == retryFps - 1:
+                self.breakCondition = True
+
+        return self
+
+    def waitAndClickThrough(self, fun, retryFps = 45):
+        """
+        等待并且点击-链式调用不中断
+        :param fun:
+        :param retryFps:
+        :return:
+        """
+        if self.breakCondition:
+            return self
+
+        for i in range(retryFps):
+            UpdateSnapShot()
+            res, ok = fun()
+            if ok :
+                Click(res['pot'])
+                break
+
+        return self
 
 if __name__ == "__main__":
     ConnectEmulator()

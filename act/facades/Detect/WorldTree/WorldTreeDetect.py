@@ -1,12 +1,18 @@
 import glob
 import os
+import string
+import time
+from ftplib import print_line
 
+import cv2
+from paddlex import create_pipeline
 from act.facades.Constant.Constant import IMG_PATH
 from act.facades.Detect.DetectLog import matchResult
-from act.facades.Emulator.Emulator import GetSnapShot
+from act.facades.Emulator.Emulator import GetSnapShot, UpdateSnapShot, ConnectEmulator, Pipe
 from act.facades.Img.ImgRead import MyImread
 from act.facades.Img.ImgSearch import imgSearch, imgMultipleResultSearch, imgSearchArea
 from act.facades.Logx.Logx import logx
+from act.facades.tool import cutImgByRoi
 
 """
 世界树，死境难度。
@@ -14,6 +20,7 @@ from act.facades.Logx.Logx import logx
 """
 class WorldTreeDetect:
     memeryOf = []
+    pipeline = create_pipeline(pipeline="OCR")
     def __init__(self):
         # 探索等级
         self.lv = 0
@@ -74,6 +81,69 @@ class WorldTreeDetect:
         # self.dew = text.replace("露水数量", "")
 
         return self.dew
+    def hasBizarreCardV2(self):
+        """
+        是否存在奇遇卡片可选
+        一共三个位置，同时匹配
+        :return:
+        """
+        def  matchCards():
+            roi = (257, 560, 800, 40)
+            img = cutImgByRoi(GetSnapShot(), roi)
+            output = self.pipeline.predict(
+                input=img,
+                use_doc_orientation_classify=False,
+                use_doc_unwarping=False,
+                use_textline_orientation=False,
+                text_rec_score_thresh=0.8
+            )
+            x,y,_,_ = roi
+            iCards = []
+
+            def is_chinese(char) -> bool:
+                return '\u4e00' <= char <= '\u9fff'
+
+            reRoc = False
+            for res in output:
+                if reRoc:
+                    break
+
+                for  poly in res["rec_texts"]:
+                    for s in poly:
+                        if is_chinese(s):
+                            continue
+                        else:
+                            reRoc = True
+                            break
+                for k,poly in enumerate(res["rec_polys"]):
+                        x1, y1, *rest = poly[0]
+                        # 小图上的四点坐标我们只要取第一个坐标就好
+                        card = {
+                            "name": res["rec_texts"][k],
+                            "pot": (float(x + x1), float(y + y1)),
+                        }
+                        iCards.append(card)
+
+            return  iCards, reRoc
+
+        cards,ok = matchCards()
+
+        # 排序所有跟战斗有关的卡都排到最后面
+        nameP = [i["name"] for i in cards]
+        logx.info("卡牌排序前："+ ".".join(nameP))
+
+        tCards = []
+        for k,i in enumerate(cards):
+            if "战" in i["name"]:
+                tCards = tCards + [i]
+            else:
+                tCards = [i] + tCards
+        nameAf = [i["name"] for i in tCards]
+        logx.info("卡牌排序后：" + ".".join(nameAf))
+
+        return tCards, len(cards) == 3
+
+
     def hasBizarreCard(self) :
         """
         是否存在奇遇卡片可选
@@ -394,3 +464,81 @@ class WorldTreeDetect:
         if ok:
             pot = pots[-1]
         return {"name":"当前路径不可用请重新选择","pot":pot},ok
+
+    @matchResult
+    def isLeverMaxInGame(self):
+        """
+        探索中的时候等级是否已经满了
+        Returns:
+        """
+        path = IMG_PATH.joinpath("Main").joinpath("worldTree").joinpath("maxInGame__450_19_46_20__400_0_146_89.png")
+        items = MyImread(path)
+        pots,ok = imgSearchArea(GetSnapShot(), items, [450,19,46,20])
+        if ok:
+            pot = pots[-1]
+        else:
+            pot = (0,0)
+        return {"name":"探索中的时候等级是否已经满了","pot":pot},ok
+
+    @matchResult
+    def hasExitBtn(self):
+        """
+        退出
+        Returns:
+        """
+        path = IMG_PATH.joinpath("Main").joinpath("worldTree").joinpath("exitBtn__1191_40_50_41__1141_0_139_131.png")
+        items = MyImread(path)
+        pots,ok = imgSearchArea(GetSnapShot(), items, [1191,40,50,41])
+        if ok:
+            pot = pots[-1]
+        else:
+            pot = (0,0)
+        return {"name":"退出世界树探索","pot":pot},ok
+
+    @matchResult
+    def hasCnfExitBtn(self):
+        """
+        直接退出
+        Returns:
+        """
+        path = IMG_PATH.joinpath("Main").joinpath("worldTree").joinpath("cnfExit__469_472_106_28__419_422_206_128.png")
+        items = MyImread(path)
+        pots,ok = imgSearchArea(GetSnapShot(), items, [469,472,106,28])
+        if ok:
+            pot = pots[-1]
+        else:
+            pot = (0,0)
+        return {"name":"直接退出","pot":pot},ok
+
+    @matchResult
+    def hasCnfExitBtnDia(self):
+        path = IMG_PATH.joinpath("Main").joinpath("worldTree").joinpath("confExit2__582_155_114_29__532_105_214_129.png")
+        items = MyImread(path)
+        pots,ok = imgSearchArea(GetSnapShot(), items, [582,155,114,29])
+        if ok:
+            pot = pots[-1]
+        else:
+            pot = (0,0)
+        return {"name":"确认退出确认框","pot":pot},ok
+    @matchResult
+    def hasCnfExitBtnDiaCnf(self):
+        path = IMG_PATH.joinpath("Main").joinpath("worldTree").joinpath("cnfExit3__728_471_61_29__678_421_161_129.png")
+        items = MyImread(path)
+        pots,ok = imgSearchArea(GetSnapShot(), items, [728,471,61,29])
+        if ok:
+            pot = pots[-1]
+        else:
+            pot = (0,0)
+        return {"name":"确认退出确认框-[确认]","pot":pot},ok
+
+if __name__ == '__main__':
+    ConnectEmulator()
+    c = WorldTreeDetect()
+
+    while True:
+        UpdateSnapShot()
+        time.sleep(1)
+        # imc = GetSnapShot()
+        # imc = cutImgByRoi(imc, [450,19,46,20])
+        # cv2.imshow("imc", imc)
+        # cv2.waitKey(0)
