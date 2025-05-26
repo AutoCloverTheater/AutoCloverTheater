@@ -1,7 +1,6 @@
-# 每日高难副本
-from act.facades.Detect.Items.ItemsDetect import ItemsDetect
-from act.facades.Emulator.Emulator import ConnectEmulator, Pipe, Text, Click
-from act.facades.Runner.ItemCollectionRunner import beforeTopLeverItemCollection, inTopLeverItemCollection
+# 每日素材本
+from act.facades.Emulator.Emulator import ConnectEmulator
+from act.facades.Runner.ItemCollectionRunner import ItemCollectionInBattleWaitResult, ItemCollectionRepSetting
 from act.facades.Runner.layout.AdventureRunner import FindAdventure
 from act.facades.Runner.layout.Back import backMain
 from act.facades.Runner.layout.LoginRunner import Login
@@ -12,20 +11,13 @@ def run():
     Login()
     FindAdventure("hasItemsCollectionButton")
 
-    def setInputCallBack():
-        Text("99")
-        Click((0.5,0.5))
+    ItemCollectionRepSetting()
 
-    pic = Pipe()
-    itemsDetect = ItemsDetect()
-    (pic.waitAndClickThrough(itemsDetect.selectMap())
-     .waitAndClickThrough(itemsDetect.goFormation)
-     .waitUntil(itemsDetect.nowLoading, itemsDetect.openRepeatBattleWindow)
-     .waitAndClick(itemsDetect.setLimit)
-     .waitAndClickCallback(itemsDetect.setLimitInput,setInputCallBack)
-     .waitAndClickThrough(itemsDetect.checkRepeatBattle))
+    # 自动战斗中，等待结束
+    ItemCollectionInBattleWaitResult()
 
-    # backMain()
+    # 返回主界面
+    backMain()
 
 if __name__ == '__main__':
     run()

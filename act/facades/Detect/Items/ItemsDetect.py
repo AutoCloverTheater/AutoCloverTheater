@@ -296,3 +296,36 @@ class ItemsDetect:
             raise Exception("输入了不存在的副本："+setting)
 
         return maps[setting]
+    @matchResult
+    def inBattle(self):
+        """
+        重复战斗中
+        :return:
+        """
+        img = {
+            "url":"Main/normalBattle/inBattle__985_63_280_38__935_13_345_138.png",
+            "roi":[985,63,280,38]
+        }
+        template =MyImread(IMG_PATH.joinpath(img['url']))
+        pot, ok = imgSearchArea(GetSnapShot(), template, img["roi"])
+        if ok:
+            pot = pot[0]
+
+        return {"name":"重复战斗中", "pot":pot},ok
+
+    @matchResult
+    def battleResult(self):
+        """
+        重复战斗结算
+        :return:
+        """
+        img = {
+            "url":"Main/normalBattle/battleResult__581_63_118_33__531_13_218_133.png",
+            "roi":[581,63,118,33]
+        }
+        template =MyImread(IMG_PATH.joinpath(img['url']))
+        pot, ok = imgSearchArea(GetSnapShot(), template, img["roi"])
+        if ok:
+            pot = pot[0]
+
+        return {"name":"重复战斗结算", "pot":pot},ok

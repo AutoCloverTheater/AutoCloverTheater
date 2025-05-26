@@ -3,11 +3,15 @@ import time
 from act.facades.Detect.Common.ErrorDetect import ErrorDetect
 from act.facades.Detect.Common.FlashBattleDetect import FlashBattleDetect
 from act.facades.Detect.Items.ItemsDetect import ItemsDetect
-from act.facades.Emulator.Emulator import Click, UpdateSnapShot, Text
+from act.facades.Emulator.Emulator import Click, UpdateSnapShot, Text, Pipe
 from act.facades.Logx.Logx import logx
 
 
 def beforeTopLeverItemCollection():
+    """
+    困难素材地图选择
+    :return:
+    """
     item = ItemsDetect()
 
     times  = 20
@@ -40,6 +44,10 @@ def beforeTopLeverItemCollection():
     pass
 
 def inTopLeverItemCollection():
+    """
+    困难素材战斗中
+    :return:
+    """
     item = ItemsDetect()
     flash = FlashBattleDetect()
     lag = ErrorDetect()
@@ -102,3 +110,46 @@ def inTopLeverItemCollection():
         times-=1
         logx.debug(f"剩余次数 {times}")
     logx.info("高难副本结束")
+
+def ItemCollectionRepSetting():
+    """
+    普通素材-重复战斗设置
+    :return:
+    """
+    def setInputCallBack():
+        Text("99")
+        Click((0.5,0.5))
+
+    pic = Pipe()
+    itemsDetect = ItemsDetect()
+    (pic.waitAndClickThrough(itemsDetect.selectMap())
+     .waitAndClickThrough(itemsDetect.goFormation)
+     .waitUntil(itemsDetect.nowLoading, itemsDetect.openRepeatBattleWindow)
+     .waitAndClick(itemsDetect.setLimit)
+     .waitAndClickCallback(itemsDetect.setLimitInput,setInputCallBack)
+     .waitAndClickThrough(itemsDetect.checkRepeatBattle))
+    pass
+
+def ItemCollectionInBattleWaitResult():
+    itemsDetect = ItemsDetect()
+    """
+    普通素材-战斗中等待结果
+    :return:
+    """
+    while True:
+        resp, ok1 = itemsDetect.inBattle()
+        if ok1:
+            time.sleep(1)
+            continue
+        resp, ok2 = itemsDetect.nowLoading()
+        if ok2:
+            time.sleep(1)
+            continue
+        resp, ok3 = itemsDetect.battleResult()
+        if ok3:
+            Click((0.5,0.5))
+            break
+        if not any([ok1, ok2, ok3]):
+            raise Exception("未知页面")
+
+    pass
