@@ -329,3 +329,19 @@ class ItemsDetect:
             pot = pot[0]
 
         return {"name":"重复战斗结算", "pot":pot},ok
+    @matchResult
+    def resultIncome(self):
+        """
+        演出结算
+        :return:
+        """
+        img = {
+            "url":"Main/normalBattle/resultIncome__499_31_283_75__449_0_383_156.png",
+            "roi":[499,31,283,75]
+        }
+        template =MyImread(IMG_PATH.joinpath(img['url']))
+        pot, ok = imgSearchArea(GetSnapShot(), template, img["roi"])
+        if ok:
+            pot = pot[0]
+
+        return {"name":"演出结算", "pot":pot},ok
