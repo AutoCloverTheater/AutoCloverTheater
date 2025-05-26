@@ -1,5 +1,6 @@
 import cv2
 
+from act.facades.Configs.Config import Config
 from act.facades.Constant.Constant import IMG_PATH
 from act.facades.Detect.DetectLog import matchResult
 from act.facades.Emulator.Emulator import GetSnapShot
@@ -25,6 +26,41 @@ class ItemsDetect:
             pot = pot[0]
 
         return {"name":"勾选了跳过编队", "pot":pot},ok
+
+    @matchResult
+    def nowLoading(self):
+        """
+        正在加载
+        :return:
+        """
+        img = {
+            "url":"lag/loading__867_579_343_97__817_529_443_191.png",
+            "roi": [867, 579, 343, 97]
+        }
+        template = MyImread(IMG_PATH.joinpath(img['url']))
+        pot, ok = imgSearchArea(GetSnapShot(), template, img["roi"])
+        if ok:
+            pot = pot[0]
+
+        return {"name":"正在加载", "pot":pot},ok
+
+    @matchResult
+    def goFormation(self):
+        """
+        前往编队
+        :return:
+        """
+        img = {
+            "url":"Main/normalBattle/go_formation__1065_536_106_26__1015_486_206_126.png",
+            "roi": [1065, 536, 106, 26]
+        }
+        template = MyImread(IMG_PATH.joinpath(img['url']))
+        pot, ok = imgSearchArea(GetSnapShot(), template, img["roi"])
+        if ok:
+            pot = pot[0]
+
+        return {"name":"前往编队", "pot":pot},ok
+
     @matchResult
     def openRepeatBattleWindow(self):
         """
@@ -40,7 +76,41 @@ class ItemsDetect:
         if ok:
             pot = pot[0]
 
-        return {"name":"开始重复战斗", "pot":pot},ok
+        return {"name":"进入重复战斗设置窗口", "pot":pot},ok
+
+    @matchResult
+    def setLimit(self):
+        """
+        设置重复次数
+        :return:
+        """
+        img = {
+            "url":"Main/normalBattle/setLimit__265_421_213_38__215_371_313_138.png",
+            "roi": [265,421,213,38]
+        }
+        template =MyImread(IMG_PATH.joinpath(img['url']))
+        pot, ok = imgSearchArea(GetSnapShot(), template, img["roi"])
+        if ok:
+            pot = pot[0]
+
+        return {"name":"设置重复次数", "pot":pot},ok
+
+    @matchResult
+    def setLimitInput(self):
+        """
+        设置重复次数-输入框
+        :return:
+        """
+        img = {
+            "url":"Main/normalBattle/setLimitInput__785_424_207_41__735_374_307_141.png",
+            "roi": [785,424,207,41]
+        }
+        template =MyImread(IMG_PATH.joinpath(img['url']))
+        pot, ok = imgSearchArea(GetSnapShot(), template, img["roi"])
+        if ok:
+            pot = pot[0]
+
+        return {"name":"设置重复次数-输入框", "pot":pot},ok
 
     @matchResult
     def checkRepeatBattle(self):
@@ -49,8 +119,8 @@ class ItemsDetect:
         :return:
         """
         img = {
-            "url":"Main/normalBattle/startRepeatBattle__562_531_156_28__512_481_256_128.png",
-            "roi": [562, 531, 156, 28]
+            "url":"Main/normalBattle/startRepeatBattle__562_531_156_20__512_481_256_120.png",
+            "roi": [562,531,156,20]
         }
         template =MyImread(IMG_PATH.joinpath(img['url']))
         pot, ok = imgSearchArea(GetSnapShot(), template, img["roi"])
@@ -123,3 +193,106 @@ class ItemsDetect:
         #         num = int(ocr[0]['text'].replace("/3", ""))
         str = f"挑战次数 {num}"
         return {"name":str,"pot":pot},num<=0
+
+    @matchResult
+    def coinMap(self):
+        """
+        晶币副本
+        :return:
+        """
+        img = {
+            "url":"Main/normalBattle/coin__329_666_93_24__279_616_193_104.png",
+            "roi": [329, 666, 93, 24]
+        }
+        template =MyImread(IMG_PATH.joinpath(img['url']))
+        pot, ok = imgSearchArea(GetSnapShot(), template, img["roi"])
+        if ok:
+            pot = pot[0]
+
+        return {"name":"晶币副本", "pot":pot},ok
+
+    @matchResult
+    def eqMap(self):
+        """
+        装备副本
+        :return:
+        """
+        img = {
+            "url":"Main/normalBattle/eq__140_667_97_25__90_617_197_103.png",
+            "roi": [140, 667, 97, 25]
+        }
+        template =MyImread(IMG_PATH.joinpath(img['url']))
+        pot, ok = imgSearchArea(GetSnapShot(), template, img["roi"])
+        if ok:
+            pot = pot[0]
+
+        return {"name":"装备副本", "pot":pot},ok
+
+    @matchResult
+    def exclusiveMap(self):
+        """
+        专属副本
+        :return:
+        """
+        img = {
+            "url":"Main/normalBattle/exclusive__699_665_93_28__649_615_193_105.png",
+            "roi": [699, 665, 93, 28]
+        }
+        template =MyImread(IMG_PATH.joinpath(img['url']))
+        pot, ok = imgSearchArea(GetSnapShot(), template, img["roi"])
+        if ok:
+            pot = pot[0]
+
+        return {"name":"专属副本", "pot":pot},ok
+
+    @matchResult
+    def expMap(self):
+        """
+        经验副本
+        :return:
+        """
+        img = {
+            "url":"Main/normalBattle/exp__884_666_92_28__834_616_192_104.png",
+            "roi": [884, 666, 92, 28]
+        }
+        template =MyImread(IMG_PATH.joinpath(img['url']))
+        pot, ok = imgSearchArea(GetSnapShot(), template, img["roi"])
+        if ok:
+            pot = pot[0]
+
+        return {"name":"经验副本", "pot":pot},ok
+
+    @matchResult
+    def skillMap(self):
+        """
+        技能副本
+        :return:
+        """
+        img = {
+            "url":"Main/normalBattle/skill__512_665_94_29__462_615_194_105.png",
+            "roi":[512,665,94,29]
+        }
+        template =MyImread(IMG_PATH.joinpath(img['url']))
+        pot, ok = imgSearchArea(GetSnapShot(), template, img["roi"])
+        if ok:
+            pot = pot[0]
+
+        return {"name":"技能副本", "pot":pot},ok
+
+    def selectMap(self):
+        """
+        选择副本
+        :return:
+        """
+        setting = Config("app.itemCollection.map")
+        maps = {
+            "技能副本":  self.skillMap,
+            "经验副本":  self.expMap,
+            "专属副本":  self.exclusiveMap,
+            "装备副本":  self.eqMap,
+            "晶币副本":  self.coinMap,
+        }
+        if setting not in maps:
+            raise Exception("输入了不存在的副本："+setting)
+
+        return maps[setting]

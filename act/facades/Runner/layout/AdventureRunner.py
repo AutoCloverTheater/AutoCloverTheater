@@ -72,6 +72,8 @@ def FindAdventure(callAdv:str):
 
     times += 1
 
+
+
 if __name__ == "__main__":
     ConnectEmulator()
     FindAdventure("hasRelicButton")
