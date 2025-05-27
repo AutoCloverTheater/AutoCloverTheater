@@ -116,7 +116,8 @@ def ItemCollectionRepSetting():
     普通素材-重复战斗设置
     :return:
     """
-    def setInputCallBack():
+    def setInputCallBack(res):
+        Click(res['pot'])
         Text("99")
         Click((0.5,0.5))
 
@@ -125,8 +126,8 @@ def ItemCollectionRepSetting():
     (pic.waitAndClickThrough(itemsDetect.selectMap())
      .waitAndClickThrough(itemsDetect.goFormation)
      .waitUntil(itemsDetect.nowLoading, itemsDetect.openRepeatBattleWindow)
-     .waitAndClick(itemsDetect.setLimit)
-     .waitAndClickCallback(itemsDetect.setLimitInput,setInputCallBack)
+     .waitAndClickThrough(itemsDetect.setLimit)
+     .waitAndCallback(itemsDetect.setLimitInput, setInputCallBack)
      .waitAndClickThrough(itemsDetect.checkRepeatBattle))
     pass
 
@@ -137,6 +138,7 @@ def ItemCollectionInBattleWaitResult():
     :return:
     """
     while True:
+        UpdateSnapShot()
         resp, ok1 = itemsDetect.inBattle()
         if ok1:
             time.sleep(1)
@@ -147,9 +149,15 @@ def ItemCollectionInBattleWaitResult():
             continue
         resp, ok3 = itemsDetect.battleResult()
         if ok3:
-            Click((0.5,0.5))
+            Click((0.5,0.0))
             break
         if not any([ok1, ok2, ok3]):
             raise Exception("未知页面")
+
+    pipe = Pipe()
+    (pipe.waitAndCallback(itemsDetect.resultIncome, lambda res: Click((0.5,0.0))).
+     waitAndCallback(itemsDetect.battleSuccess, lambda res: Click((0.5,0.0))).
+     waitAndCallback(itemsDetect.settlementOfBattle, lambda res: Click((0.5,0.0))))
+
 
     pass

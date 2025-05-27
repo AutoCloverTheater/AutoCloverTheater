@@ -1,4 +1,7 @@
 # 遗迹探索-【噩梦难度】【热砂】
+import threading
+import time
+
 from act.facades.Emulator.Emulator import ConnectEmulator
 from act.facades.Runner.RelicRunner import beforeRelic, inRelic
 from act.facades.Runner.layout.AdventureRunner import FindAdventure
@@ -6,7 +9,6 @@ from act.facades.Runner.layout.LoginRunner import Login
 
 
 def run():
-    while True:
         ConnectEmulator()
         Login()
         FindAdventure("hasRelicButton")
@@ -14,4 +16,5 @@ def run():
         inRelic()
 
 if __name__ == '__main__':
-        run()
+    for i in range(4):
+            run()

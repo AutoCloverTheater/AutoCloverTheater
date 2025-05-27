@@ -316,7 +316,7 @@ class ItemsDetect:
     @matchResult
     def battleResult(self):
         """
-        重复战斗结算
+        战斗收益
         :return:
         """
         img = {
@@ -328,7 +328,7 @@ class ItemsDetect:
         if ok:
             pot = pot[0]
 
-        return {"name":"重复战斗结算", "pot":pot},ok
+        return {"name":"战斗收益", "pot":pot},ok
     @matchResult
     def resultIncome(self):
         """
@@ -338,6 +338,39 @@ class ItemsDetect:
         img = {
             "url":"Main/normalBattle/resultIncome__499_31_283_75__449_0_383_156.png",
             "roi":[499,31,283,75]
+        }
+        template =MyImread(IMG_PATH.joinpath(img['url']))
+        pot, ok = imgSearchArea(GetSnapShot(), template, img["roi"])
+        if ok:
+            pot = pot[0]
+
+        return {"name":"演出结算", "pot":pot},ok
+
+    @matchResult
+    def battleSuccess(self):
+        """
+        战斗胜利
+        :return:
+        """
+        img = {
+            "url":"Main/normalBattle/battleSuccess__468_425_355_91__418_375_455_191.png",
+            "roi":[468,425,355,91]
+        }
+        template =MyImread(IMG_PATH.joinpath(img['url']))
+        pot, ok = imgSearchArea(GetSnapShot(), template, img["roi"])
+        if ok:
+            pot = pot[0]
+
+        return {"name":"战斗胜利", "pot":pot},ok
+    @matchResult
+    def settlementOfBattle(self):
+        """
+        演出结算
+        :return:
+        """
+        img = {
+            "url":"Main/normalBattle/settlementOfBattle__502_34_281_70__452_0_381_154.png",
+            "roi":[502,34,281,70]
         }
         template =MyImread(IMG_PATH.joinpath(img['url']))
         pot, ok = imgSearchArea(GetSnapShot(), template, img["roi"])

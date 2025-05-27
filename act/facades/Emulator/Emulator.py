@@ -227,6 +227,29 @@ class Pipe:
 
         return self
 
+    def waitAndCallback(self, fun, callback,retryFps = 45):
+        """
+        点击完成后调用回调函数
+        :param fun:
+        :param callback:
+        :param retryFps:
+        :return:
+        """
+        if self.breakCondition:
+            return self
+
+        for i in range(retryFps):
+            UpdateSnapShot()
+            res, ok = fun()
+            if ok :
+                # Click(res['pot'])
+                callback(res)
+                break
+            if i == retryFps - 1:
+                self.breakCondition = True
+
+        return self
+
     def waitAndClickThrough(self, fun, retryFps = 45):
         """
         等待并且点击-链式调用不中断
@@ -263,7 +286,8 @@ class Pipe:
                 Click(res2['pot'])
                 break
             if not ok1 and not ok2:
-                raise Exception("未知页面")
+                retryFps -= 1
+                # raise Exception("未知页面")
         return self
 
 if __name__ == "__main__":
