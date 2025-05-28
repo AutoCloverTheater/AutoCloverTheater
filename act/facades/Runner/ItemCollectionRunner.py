@@ -137,27 +137,31 @@ def ItemCollectionInBattleWaitResult():
     普通素材-战斗中等待结果
     :return:
     """
-    while True:
-        UpdateSnapShot()
-        resp, ok1 = itemsDetect.inBattle()
-        if ok1:
-            time.sleep(1)
-            continue
-        resp, ok2 = itemsDetect.nowLoading()
-        if ok2:
-            time.sleep(1)
-            continue
-        resp, ok3 = itemsDetect.battleResult()
-        if ok3:
-            Click((0.5,0.0))
-            break
-        if not any([ok1, ok2, ok3]):
-            raise Exception("未知页面")
+    for i in range(3):
+        try:
+            while True:
+                UpdateSnapShot()
+                resp, ok1 = itemsDetect.inBattle()
+                if ok1:
+                    time.sleep(1)
+                    continue
+                resp, ok2 = itemsDetect.nowLoading()
+                if ok2:
+                    time.sleep(1)
+                    continue
+                resp, ok3 = itemsDetect.battleResult()
+                if ok3:
+                    Click((0.5, 0.0))
+                    break
+                if not any([ok1, ok2, ok3]):
+                    time.sleep(1)
+                    raise Exception("未知页面")
+        except Exception as e:
+            logx.error(f"{e}")
 
     pipe = Pipe()
     (pipe.waitAndCallback(itemsDetect.resultIncome, lambda res: Click((0.5,0.0))).
      waitAndCallback(itemsDetect.battleSuccess, lambda res: Click((0.5,0.0))).
      waitAndCallback(itemsDetect.settlementOfBattle, lambda res: Click((0.5,0.0))))
-
 
     pass

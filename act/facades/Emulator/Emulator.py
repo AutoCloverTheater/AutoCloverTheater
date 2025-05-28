@@ -235,9 +235,6 @@ class Pipe:
         :param retryFps:
         :return:
         """
-        if self.breakCondition:
-            return self
-
         for i in range(retryFps):
             UpdateSnapShot()
             res, ok = fun()
