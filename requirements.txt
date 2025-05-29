@@ -27,3 +27,4 @@ PyYAML
 imagehash
 pytesseract
 paddlepaddle==3.0.0
+paddleocr==3.0.0

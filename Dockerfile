@@ -7,7 +7,7 @@ WORKDIR /app
 # 复制当前目录内容到容器中的 /app 目录
 COPY . /app
 
-RUN pip install -r requirements.txt && pip install -e .
+RUN pip install -r requirements.txt && pip install -e . && pip install paddlepaddle==3.0.0 && pip install paddleocr==3.0.0
 
 RUN apt-get update && apt-get install -y \
     libgl1-mesa-glx \
