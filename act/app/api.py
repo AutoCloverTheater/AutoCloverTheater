@@ -24,7 +24,7 @@ def generate(client_id):
             else:
                 yield ""
     except GeneratorExit:
-        print("生成器退出：客户端断开连接")
+        print("SSE生成器退出：客户端断开连接")
     except Exception as e:
         print(f"发生异常：{str(e)}")
 
@@ -42,7 +42,7 @@ def stream():
             'Cache-Control': 'no-cache',
             'Connection': 'keep-alive'
         })
-
+    data_queue.append(client_id)
     with clients_lock:
         clients[client_id] = response
     return response

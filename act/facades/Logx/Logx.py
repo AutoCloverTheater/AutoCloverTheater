@@ -9,6 +9,7 @@ from act.facades.Constant.Constant import RUNTIME_PATH
 from act.facades.sqlite.logs import LogsModel
 
 
+
 # 自定义日志格式和颜色
 def custom_format(record):
     color_map = {

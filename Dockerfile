@@ -7,13 +7,14 @@ WORKDIR /app
 # 复制当前目录内容到容器中的 /app 目录
 COPY . /app
 
-RUN pip install -r requirements.txt && pip install -e . && pip install paddlepaddle==3.0.0 && pip install paddleocr==3.0.0
+RUN chmod +x /app/start.sh
 
 RUN apt-get update && apt-get install -y \
     libgl1-mesa-glx \
     libglib2.0-0 \
     tesseract-ocr \
     android-tools-adb \
+    iputils-ping \
     && rm -rf /var/lib/apt/lists/*
 # 运行应用
-CMD ["python", "main.py"]
+CMD ["/bin/sh", "-x", "/app/start.sh"]

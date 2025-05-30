@@ -6,6 +6,9 @@ from act.facades.App.App import startSseData
 
 logging.getLogger("flask").setLevel(logging.ERROR)
 logging.getLogger("werkzeug").setLevel(logging.ERROR)
+logging.getLogger('paddlex').setLevel(logging.ERROR)
+logging.getLogger('paddle').setLevel(logging.ERROR)
+logging.getLogger('paddleocr').setLevel(logging.ERROR)
 
 port = 8233
 

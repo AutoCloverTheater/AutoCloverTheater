@@ -13,6 +13,7 @@ from act.facades.Emulator.mac.bluestacks import Bluestacks
 from act.facades.Emulator.mac.mumu import Mumu as MumuMac
 from act.facades.Emulator.win.mumu import Mumu as MumuWin
 from act.facades.Logx.Logx import logx
+from act.facades.tool.ips import get_host_ip
 from act.install_utils import checkAdbutilsBinaries
 
 # 可用的模拟器驱动
@@ -60,6 +61,9 @@ class Emulator:
             raise Exception(f"平台「{sys.platform}」,不支持模拟器「{Config('app').get('emulatorType')}」")
 
         serial = self.instance.getConnectStr()
+        logx.info(f"设备ip：{serial}")
+        serial = get_host_ip(serial)
+        logx.info(f"设备ip解析成：{serial}")
         logx.info(f"准备连接设备「{serial}」")
         self.device = u2.connect(serial)
         logx.info(f"连接设备成功「{serial}」")
